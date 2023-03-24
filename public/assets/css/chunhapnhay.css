@@ -1,0 +1,25 @@
+@-webkit-keyframes my {
+    99% { color: #0af849; }
+
+
+}
+@-moz-keyframes my {
+    99% { color: #0af849;  }
+
+
+}
+@-o-keyframes my {
+    99% { color: #0af849; }
+
+}
+@keyframes my {
+    99% { color: #0af849;  }
+
+
+}
+.chunhapnhay {
+    -webkit-animation: my 1300ms infinite;
+    -moz-animation: my 1300ms infinite;
+    -o-animation: my 1300ms infinite;
+    animation: my 1300ms infinite;
+}

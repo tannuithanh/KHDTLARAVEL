@@ -1,0 +1,21 @@
+table,
+th,
+td {
+    border: 1px solid !important;
+
+}
+
+div.scrollable-table-wrapper {
+    height: 1028px;
+    overflow: auto;
+}
+
+tr th {
+    position: sticky;
+    top: 0;
+}
+
+.table-header {
+    background: grey !important;
+    color: #fff;
+}
