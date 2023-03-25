@@ -78,6 +78,54 @@
         </div>
     </div>
 </div>
+@if (Session::has('no'))
+<div class="card alert border mt-4 mt-lg-0 p-0 mb-0">
+    <div class="card-header bg-soft-danger">
+        <div class="d-flex">
+            <div class="flex-grow-1">
+                <h5 class="font-size-16 text-danger my-1">Cảnh báo</h5>
+            </div>
+            <div class="flex-shrink-0">
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        </div>                                                                                                          
+    </div>
+    <div class="card-body">
+        <div class="text-center">
+            <div class="mb-4">
+                <i class="mdi mdi-alert-outline display-4 text-danger"></i>
+            </div>
+            <h4 class="alert-heading">Bạn không thể chọn ngày nhỏ hơn hoặc bằng ngày hôm nay</h4>
+
+            
+        </div>
+    </div>
+</div>
+@endif
+@if (Session::has('nono'))
+<div class="card alert border mt-4 mt-lg-0 p-0 mb-0">
+    <div class="card-header bg-soft-danger">
+        <div class="d-flex">
+            <div class="flex-grow-1">
+                <h5 class="font-size-16 text-danger my-1">Cảnh báo</h5>
+            </div>
+            <div class="flex-shrink-0">
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        </div>                                                                                                          
+    </div>
+    <div class="card-body">
+        <div class="text-center">
+            <div class="mb-4">
+                <i class="mdi mdi-alert-outline display-4 text-danger"></i>
+            </div>
+            <h4 class="alert-heading">Bạn không thể để trống phòng ban tham gia được</h4>
+
+            
+        </div>
+    </div>
+</div>
+@endif
 @include('include.footer')
 <script>
     $(document).ready(function() {
