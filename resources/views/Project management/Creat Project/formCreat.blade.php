@@ -38,7 +38,7 @@
                 
                 <div class="mb-3">
                     <label class="form-label">Phòng ban tham gia</label>
-                    <select class="select2 form-control select2-multiple" name="departments[]" multiple data-placeholder="Tên nhân sự hỗ trợ">
+                    <select class="select2 form-control select2-multiple" name="departments[]" multiple data-placeholder="Phòng ban tham gia">
                         <option value=""></option> <!-- Option trống -->
                         @foreach ($departments as $value)
                             <option value="{{ $value->id }}">{{ $value->name }}</option>
@@ -48,13 +48,13 @@
                 <div class="mb-3" >
                     <label class="form-label" >Chế độ</label>
                     <div class="form-check mb-2">
-                        <input class="form-check-input" type="radio" name="exampleRadios" id="exampleRadios1" value="1" checked="">
+                        <input class="form-check-input" type="radio" name="privacy" id="exampleRadios1" value="0" checked="">
                         <label class="form-check-label" for="exampleRadios1">
                             Công khai
                         </label>
                     </div>
                     <div class="form-check">
-                        <input class="form-check-input" type="radio" name="exampleRadios" id="exampleRadios2" value="2">
+                        <input class="form-check-input" type="radio" name="privacy" id="exampleRadios2" value="1">
                         <label class="form-check-label" for="exampleRadios2">
                             Riêng tư
                         </label>

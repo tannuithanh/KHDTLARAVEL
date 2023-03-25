@@ -2,9 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Department;
+use Illuminate\Support\Carbon;
 use App\Models\Team;
 use App\Models\User;
+use App\Models\Project;
+use App\Models\Department;
+use App\Models\project_department;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -42,7 +45,32 @@ class ProjecManagement extends Controller
     }
 
     public function insertCreatProject(request $request){
-        dd($request->toArray());
+        $user = Auth::user();
+
+     
+        $date = Carbon::createFromFormat('d/m/Y', $request['start_date']);
+        $date1 = Carbon::createFromFormat('d/m/Y', $request['end_date']);
+        $newDate = $date->format('Y-m-d');
+        $newDate1 = $date1->format('Y-m-d');
+        
+       
+        $project = Project::create([
+            'name_project' => $request['name_project'],
+            'describe_project' => $request['describe_project'],
+            'name_create'=> $user['name'],
+            'start_date' => $newDate,
+            'end_date' => $newDate1,
+        ]);
+
+        $idProject = $project->id;
+        foreach($request['departments'] as $value){
+            project_department::create([
+                'project_id' => $idProject,
+                'department_id' => $value,
+            ]);
+        }
+        
+        return redirect()->route('listProjectManagerment')->with('success','Tạo dự án Thành công');
         
     }
 }

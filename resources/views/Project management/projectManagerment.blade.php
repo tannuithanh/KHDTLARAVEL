@@ -9,7 +9,18 @@
                 <h4 class="card-title">Danh sách công việc <a href="{{route('creatProject.get')}}"
                     class="btn btn-danger btn-rounded waves-effect waves-light"><i class="mdi mdi-plus me-1"></i>Tạo dự án</a></h4>
               
-                
+                    @if (Session::has('success'))
+                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"
+                            aria-label="Close"></button>
+                        <strong>Thông báo!</strong> Đã thêm thành công dự án.
+                    </div>
+                    @elseif (Session::has('status'))
+                    <div class="alert alert-primary alert-dismissible fade show" role="alert">
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        <strong>Thông báo!</strong> Cập nhật thành công.
+                    </div>
+                    @endif
                 <form id="form_search" method="post" name="form_search">
                     @csrf
                     <div class="card-body" style="border: 1px solid; border-radius: 30px; ">

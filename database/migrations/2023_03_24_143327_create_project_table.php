@@ -20,7 +20,8 @@ return new class extends Migration
             $table->string('name_create');
             $table->date('start_date');
             $table->date('end_date');
-            $table->integer('status');
+            $table->integer('status')->default('0');
+            $table->integer('privacy')->default('0')->comment('0:Công Khai, 1:Riêng Tư');
             $table->timestamps();
         });
     }

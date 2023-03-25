@@ -75,7 +75,7 @@
                 <div class="alert alert-success alert-dismissible fade show" role="alert">
                     <button type="button" class="btn-close" data-bs-dismiss="alert"
                         aria-label="Close"></button>
-                    <strong>Thông báo!</strong> Đã thêm thành công việc ngày thành công, hãy tìm kiếm để xem chi tiết.
+                    <strong>Thông báo!</strong> Đã thêm công việc ngày thành công, hãy tìm kiếm để xem chi tiết.
                 </div>
                 @elseif (Session::has('status'))
                 <div class="alert alert-primary alert-dismissible fade show" role="alert">
