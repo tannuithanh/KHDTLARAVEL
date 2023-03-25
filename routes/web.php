@@ -200,3 +200,10 @@ route::get('/dashboard',[Dashboard::class,'dashboardGet'])->name('DashBoard')->m
         route::get('Creat-Projec-Form',[ProjecManagement::class,'formCreatProject'])->name('creatProject.get');
         route::post('Creat-Projec-Form',[ProjecManagement::class,'insertCreatProject'])->name('creatProject.post');
     }); 
+    //-------------------------------------- XÓA DỰ ÁN  --------------------------------------------//   
+    route::Delete('/Delete-projec/{id}',[ProjecManagement::class,'deleteProject'])->name('deleteProject'); 
+    //-------------------------------------- SỬA DỰ ÁN  --------------------------------------------//
+    route::middleware('checkLogin')->prefix('/Edit')->group(function () {
+        route::get('Edit-Projec-Form/{id}',[ProjecManagement::class,'formEditProject'])->name('edit.get');
+        route::post('Edit-Projec-Form/{id}',[ProjecManagement::class,'updateEditProject'])->name('edit.post');
+    });

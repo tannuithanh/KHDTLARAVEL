@@ -1,4 +1,9 @@
 @include('include.header')
+<style>
+    .anc{
+        color: violet
+    }
+</style>
 
 <div class="col-12">
     <div class="page-title-box d-sm-flex align-items-center justify-content-between">
@@ -20,6 +25,18 @@
                     <div class="alert alert-primary alert-dismissible fade show" role="alert">
                         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                         <strong>Thông báo!</strong> Cập nhật thành công.
+                    </div>
+                @elseif (Session::has('deleteSuccess'))
+                    <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"
+                            aria-label="Close"></button>
+                        <strong>Thông báo!</strong> Bạn đã xóa thành công.
+                    </div>
+                @elseif (Session::has('edit'))
+                    <div class="alert alert-info alert-dismissible fade show" role="alert">
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"
+                            aria-label="Close"></button>
+                        <strong>Thông báo!</strong> Chỉnh sửa dự án thành công.
                     </div>
                 @endif
                 <form id="form_search" method="post" name="form_search">
@@ -78,35 +95,55 @@
                         <tbody>
                             @php $stt = 1 @endphp
                             @foreach ($project as $value)
-                                <tr>
-                                    <td style="text-align:center ; vertical-align: middle;">{{ $stt++ }}</td>
-                                    <td style=" vertical-align: middle;">{{ $value->name_project }}</td>
-                                    <td style=" vertical-align: middle;">{{ $value->describe_project }}</td>
-                                    <td style="text-align:center ;vertical-align: middle;">{{ $value->name_create }}
-                                    </td>
-                                    <td style="text-align:center ;vertical-align: middle;">{{ $value->start_date }}</td>
-                                    <td style="text-align:center ;vertical-align: middle;">{{ $value->end_date }}</td>
-                                    <td>{!! nl2br($value->department_names) !!}</td>
-                                    @if ($today < $value->startdate && $value->status == 0)
-                                        <td class="hidden-column col6"
-                                            style="border:1px solid black; color:#ffffff;text-align: center;font-size: 20px; text-align:center ;vertical-align: middle; background-color:rgb(133, 58, 219)">
-                                            Chưa đến hạng </td>
-                                    @elseif($today <= $value->enddate && $value->status == 0)
-                                        <td class="hidden-column col6"
-                                            style="text-align: center;font-size: 20px; text-align:center ;vertical-align: middle; background-color:yellow">
-                                            Đang thực
-                                            hiện </td>
-                                    @elseif ($today > $value->enddate && $value->status == 0)
-                                        <td class="hidden-column col6"
-                                            style="border:1px solid black; color:#ffffff; text-align: center;font-size: 20px; text-align:center ;vertical-align: middle; background-color:red">
-                                            Trễ kế hoạch </td>
-                                    @elseif ($value->status == 1)
-                                        <td class="hidden-column col6"
-                                            style="border:1px solid black; color:#ffffff; text-align: center;font-size: 20px; text-align:center ;vertical-align: middle; background-color:green">
-                                            Hoàn thành </td>
-                                    @endif
-
-                                </tr>
+                                @if ($user->name == $value->name_create)
+                                    <tr>
+                                        <td style="text-align:center ; vertical-align: middle;">{{ $stt++ }}</td>
+                                        <td style=" vertical-align: middle;">{{ $value->name_project }}</td>
+                                        <td style=" vertical-align: middle;">{{ $value->describe_project }}</td>
+                                        <td style="text-align:center ;vertical-align: middle;">{{ $value->name_create }}
+                                        </td>
+                                        <td style="text-align:center ;vertical-align: middle;">{{ date('d/m/Y', strtotime($value->start_date)) }}</td>
+                                        <td style="text-align:center ;vertical-align: middle;">{{ date('d/m/Y', strtotime($value->end_date)) }}</td>
+                                        <td>{!! nl2br($value->department_names) !!}</td>
+                                        @if ($today < $value->start_date && $value->status == 0)
+                                            <td style="width: 10px">
+                                                <i class="mdi mdi-checkbox-blank-circle anc me-1 "></i> Chưa đến hạng
+                                            </td>
+                                            @elseif($today <= $value->end_date && $value->status == 0)
+                                            <td style="width: 10px">
+                                                <i class="mdi mdi-checkbox-blank-circle text-warning me-1"></i> Đang thực hiện
+                                            </td>
+                                            @elseif ($today > $value->end_date && $value->status == 0)
+                                            <td style="width: 10px">
+                                                <i class="mdi mdi-checkbox-blank-circle text-danger me-1"></i> Trễ kế hoạch
+                                            </td>
+                                            @elseif ($value->status == 1)
+                                            <td style="width: 10px">
+                                                <i class="mdi mdi-checkbox-blank-circle text-success me-1"></i> Hoàn thành
+                                            </td>
+                                            @elseif ($value->status == 2)
+                                            <td style="width: 10px">
+                                                <i class="mdi mdi-pause-circle-outline text-success me-1"></i> Tạm dừng
+                                            </td>
+                                            @elseif ($value->status == 3)
+                                            <td style="width: 10px">
+                                                <i class="mdi mdi-cancel text-danger me-1"></i> Hủy
+                                            </td>
+                                        @endif
+                                        <td style="text-align: center;"> 
+                                            <form id="delete-form-{{ $value->id }}"
+                                                action="{{ route('deleteProject', $value->id) }}"
+                                                method="POST" class="delete-form">
+                                                @csrf
+                                                @method('DELETE')
+                                            @if ($user->name == $value->name_create)
+                                            <button type="button" class="btn btn-outline-danger btn-sm delete ri-delete-bin-line" title="Xóa" data-dialog="dialog-{{ $value->id }}"></button>
+                                            <a href="{{route('edit.get',$value->id)}}"class="btn btn-outline-secondary btn-sm edit" title="Sửa"><i class="fas fa-pencil-alt"></i></a>
+                                            @endif
+                                            </form>
+                                        </td>
+                                    </tr>                              
+                                @endif
                             @endforeach
                         </tbody>
                     </table>
@@ -115,3 +152,22 @@
         </div>
     </div>
     @include('include.footer')
+<script>
+// ------------------------------------------ XÓA DỰ ÁN --------------------------------------------------// 
+     document.querySelectorAll('.delete').forEach(deleteButton => {
+        deleteButton.addEventListener('click', () => {
+            Swal.fire({
+                title: 'Bạn có muốn xóa dự án này?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Đồng ý',
+                cancelButtonText: 'Hủy bỏ'
+            }).then((result) => {
+                console.log(result)
+                if (result.isConfirmed) {
+                    deleteButton.closest('.delete-form').submit();
+                }
+            });
+        });
+    });
+</script>
