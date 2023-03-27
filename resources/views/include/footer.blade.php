@@ -99,7 +99,18 @@
 <script src="{{asset('assets/js/pages/form-advanced.init.js')}}"></script>
 <script src="{{asset('assets/js/app.js')}}"></script>
 
+<script>
+$(window).on("load", function() {
+  $("#loading").fadeOut(500);
+});
 
+$(document).on("ready", function() {
+  $("#loading").fadeIn(500);
+});
+$(window).on("beforeunload", function() {
+  $("#loading").fadeIn(500);
+});
+</script>
 
 </body>
 </html>

@@ -1,0 +1,49 @@
+#loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 9999;
+    background-color: #000;
+  }
+  
+  .car-container {
+    position: relative;
+    width: 200px;
+    height: 100px;
+    margin-right: 20px;
+  }
+  
+  .car {
+    position: absolute;
+    text-align: center;
+    top: 0;
+    left: -200px;
+    width: 200px;
+    height: 100px;
+    background-image: url('https://cdn.pixabay.com/photo/2014/04/03/00/29/car-308454_960_720.png');
+    background-size: cover;
+    animation: drive 1.5s linear infinite;
+  }
+  
+  .loading-text {
+    font-size: 50px;
+    font-weight: bold;
+    font-family: 'Times New Roman', Times, serif;
+    color: rgba(162, 167, 223, 0.727);
+    text-transform: uppercase;
+  }
+  
+  @keyframes drive {
+    0% {
+      transform: translateX(130px);
+    }
+    100% {
+      transform: translateX(100%);
+    }
+  }
+  

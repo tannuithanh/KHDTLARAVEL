@@ -105,7 +105,6 @@ class ProjecManagement extends Controller
     }   
 
     public function formEditProject($id){
-        project_department::where('project_id',$id)->delete();
         $project = Project::find($id);
         $date = Carbon::createFromFormat('Y-m-d', $project['start_date']);
         $date1 = Carbon::createFromFormat('Y-m-d', $project['end_date']);
@@ -138,11 +137,12 @@ class ProjecManagement extends Controller
         $newDate1 = $date1->format('Y-m-d');
         $project = Project::find($id);
         if($project){
-            $project->name_project = $request->categoryDaily;
+            $project->name_project = $request->name_project;
             $project->describe_project = $request->describe_project;
             $project->privacy = $request->privacy;
             $project->save();
         }
+        project_department::where('project_id',$id)->delete();
         $idProject = $project->id;
         foreach($request['departments'] as $value){
             project_department::create([
@@ -151,5 +151,20 @@ class ProjecManagement extends Controller
             ]);
         }
         return redirect()->route('listProjectManagerment')->with('edit', 'Sửa kế hoạch thành công');
+    }
+
+    public function ProjectConnectView($id){
+        $user = Auth::user();
+        $project = Project::find($id);
+
+        $project_manager = project_department::where('project_id', $project->id)->pluck('department_id')->toArray();
+        // dd(in_array($user['department_id'], $project_manager));
+        //----- Kiểm tra biến $user['department_id'] có nằm trong mảng không -----//
+        if (in_array($user['department_id'], $project_manager) || $user['name'] == $project->name_create) {    
+            return view('Project management.projectConnect',compact('user','project'));
+        }else{
+            return redirect()->route('listProjectManagerment')->with('failder','không thành công');
+        }
+        
     }
 }

@@ -27,8 +27,9 @@
     <link href="{{ asset('assets/css/lich.css') }}" id="app-style" rel="stylesheet" type="text/css" />
     <link href="{{ asset('assets/css/thongbao.css') }}" id="app-style" rel="stylesheet" type="text/css" />
     <link href="{{ asset('assets/css/xuongdong.css') }}" id="app-style" rel="stylesheet" type="text/css" />
+    <link href="{{ asset('assets/css/pageloading.css') }}" id="app-style" rel="stylesheet" type="text/css" />
 
-
+    
 
 
 
@@ -36,6 +37,15 @@
 </head>
 
 <body data-sidebar="dark">
+    <div id="loading">
+        <div class="car-container">
+          <div class="car"></div>
+        </div>
+        <div class="loading-text">
+            R&D Ô tô
+          </div>
+      </div>
+      
     <div class="right-bar">
         <div data-simplebar="init" class="h-100">
             <div class="simplebar-wrapper" style="margin: 0px;">

@@ -15,30 +15,8 @@
                 <h4 class="card-title">Danh sách công việc <a href="{{ route('creatProject.get') }}"
                         class="btn btn-danger btn-rounded waves-effect waves-light"><i class="mdi mdi-plus me-1"></i>Tạo
                         dự án</a></h4>
-
-                @if (Session::has('success'))
-                    <div class="alert alert-success alert-dismissible fade show" role="alert">
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                        <strong>Thông báo!</strong> Đã thêm thành công dự án.
-                    </div>
-                @elseif (Session::has('status'))
-                    <div class="alert alert-primary alert-dismissible fade show" role="alert">
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                        <strong>Thông báo!</strong> Cập nhật thành công.
-                    </div>
-                @elseif (Session::has('deleteSuccess'))
-                    <div class="alert alert-warning alert-dismissible fade show" role="alert">
-                        <button type="button" class="btn-close" data-bs-dismiss="alert"
-                            aria-label="Close"></button>
-                        <strong>Thông báo!</strong> Bạn đã xóa thành công.
-                    </div>
-                @elseif (Session::has('edit'))
-                    <div class="alert alert-info alert-dismissible fade show" role="alert">
-                        <button type="button" class="btn-close" data-bs-dismiss="alert"
-                            aria-label="Close"></button>
-                        <strong>Thông báo!</strong> Chỉnh sửa dự án thành công.
-                    </div>
-                @endif
+                    
+               
                 <form id="form_search" method="post" name="form_search">
                     @csrf
                     <div class="card-body" style="border: 1px solid; border-radius: 30px; ">
@@ -77,8 +55,39 @@
                         </div>
                     </div>
                 </form>
+       
                 <div class="table-responsive class scrollable-table-wrapper mt-3">
-                    <table class="table table-centered table-nowrap mb-0">
+                @if (Session::has('success'))
+                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        <strong>Thông báo!</strong> Đã thêm thành công dự án.
+                    </div>
+                @elseif (Session::has('status'))
+                    <div class="alert alert-primary alert-dismissible fade show" role="alert">
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        <strong>Thông báo!</strong> Cập nhật thành công.
+                    </div>
+                @elseif (Session::has('deleteSuccess'))
+                    <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"
+                            aria-label="Close"></button>
+                        <strong>Thông báo!</strong> Bạn đã xóa thành công.
+                    </div>
+                @elseif (Session::has('edit'))
+                    <div class="alert alert-info alert-dismissible fade show" role="alert">
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"
+                            aria-label="Close"></button>
+                        <strong>Thông báo!</strong> Chỉnh sửa dự án thành công.
+                    </div>
+                @elseif (Session::has('failder'))
+ 
+                    <div class="alert alert-danger alert-dismissible fade show " role="alert">
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"
+                            aria-label="Close"></button>
+                        <strong>Thông báo!</strong> Đây không phải dự án của bạn, bạn không được truy cập vào dự án này.
+                    </div>
+                @endif
+                    <table class="table table-centered table-nowrap mb-3">
                         <thead>
                             <tr>
                                 <th style="text-align:center ;" class="table-header">STT</th>
@@ -95,10 +104,11 @@
                         <tbody>
                             @php $stt = 1 @endphp
                             @foreach ($project as $value)
-                                @if ($user->name == $value->name_create)
+                            @php $department_ids = explode(',', $value->department_ids) @endphp
+                                @if ( $value->privacy == 0 )
                                     <tr>
                                         <td style="text-align:center ; vertical-align: middle;">{{ $stt++ }}</td>
-                                        <td style=" vertical-align: middle;">{{ $value->name_project }}</td>
+                                        <td style=" vertical-align: middle;"><a href="{{ route('projectConnect',$value->id) }}">{{ $value->name_project }}<a></td>
                                         <td style=" vertical-align: middle;">{{ $value->describe_project }}</td>
                                         <td style="text-align:center ;vertical-align: middle;">{{ $value->name_create }}
                                         </td>
@@ -143,7 +153,56 @@
                                             </form>
                                         </td>
                                     </tr>                              
-                                @endif
+                                @elseif ( $user['name'] == $value->name_create || in_array($user['department_id'], $department_ids))
+                                
+                                <tr>
+                                    <td style="text-align:center ; vertical-align: middle;">{{ $stt++ }}</td>
+                                    <td style=" vertical-align: middle;"><a href="{{ route('projectConnect',$value->id) }}">{{ $value->name_project }}<a></td>
+                                    <td style=" vertical-align: middle;">{{ $value->describe_project }}</td>
+                                    <td style="text-align:center ;vertical-align: middle;">{{ $value->name_create }}
+                                    </td>
+                                    <td style="text-align:center ;vertical-align: middle;">{{ date('d/m/Y', strtotime($value->start_date)) }}</td>
+                                    <td style="text-align:center ;vertical-align: middle;">{{ date('d/m/Y', strtotime($value->end_date)) }}</td>
+                                    <td>{!! nl2br($value->department_names) !!}</td>
+                                    @if ($today < $value->start_date && $value->status == 0)
+                                        <td style="width: 10px">
+                                            <i class="mdi mdi-checkbox-blank-circle anc me-1 "></i> Chưa đến hạng
+                                        </td>
+                                        @elseif($today <= $value->end_date && $value->status == 0)
+                                        <td style="width: 10px">
+                                            <i class="mdi mdi-checkbox-blank-circle text-warning me-1"></i> Đang thực hiện
+                                        </td>
+                                        @elseif ($today > $value->end_date && $value->status == 0)
+                                        <td style="width: 10px">
+                                            <i class="mdi mdi-checkbox-blank-circle text-danger me-1"></i> Trễ kế hoạch
+                                        </td>
+                                        @elseif ($value->status == 1)
+                                        <td style="width: 10px">
+                                            <i class="mdi mdi-checkbox-blank-circle text-success me-1"></i> Hoàn thành
+                                        </td>
+                                        @elseif ($value->status == 2)
+                                        <td style="width: 10px">
+                                            <i class="mdi mdi-pause-circle-outline text-success me-1"></i> Tạm dừng
+                                        </td>
+                                        @elseif ($value->status == 3)
+                                        <td style="width: 10px">
+                                            <i class="mdi mdi-cancel text-danger me-1"></i> Hủy
+                                        </td>
+                                    @endif
+                                    <td style="text-align: center;"> 
+                                        <form id="delete-form-{{ $value->id }}"
+                                            action="{{ route('deleteProject', $value->id) }}"
+                                            method="POST" class="delete-form">
+                                            @csrf
+                                            @method('DELETE')
+                                        @if ($user->name == $value->name_create)
+                                        <button type="button" class="btn btn-outline-danger btn-sm delete ri-delete-bin-line" title="Xóa" data-dialog="dialog-{{ $value->id }}"></button>
+                                        <a href="{{route('edit.get',$value->id)}}"class="btn btn-outline-secondary btn-sm edit" title="Sửa"><i class="fas fa-pencil-alt"></i></a>
+                                        @endif
+                                        </form>
+                                    </td>
+                                </tr>                              
+                            @endif
                             @endforeach
                         </tbody>
                     </table>

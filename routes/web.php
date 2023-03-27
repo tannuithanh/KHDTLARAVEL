@@ -20,9 +20,13 @@ use App\Http\Controllers\setting\Departments;
 
 
 //------------------------------------------ ĐĂNG NHẬP --------------------------------------//
+
 route::get('/login',[Login::class,'loginGet'])->name('LoginGet')->middleware('checkUser');
 route::post('/login',[Login::class,'loginPost'])->name('LoginPost');
 
+//------------------------------------------ QUÊN MẬT KHẨU --------------------------------------//
+route::get('/Recover-PassWord',[Login::class,'Recover'])->name('recover')->middleware('checkUser');
+route::post('/Recover-PassWord',[Login::class,'RecoverPost'])->name('recoverPost')->middleware('checkUser');
 
 //------------------------------------------ Đăng xuất --------------------------------------//
 route::get('/logout', [Logout::class, 'logout'])->name('Logout');
@@ -207,3 +211,8 @@ route::get('/dashboard',[Dashboard::class,'dashboardGet'])->name('DashBoard')->m
         route::get('Edit-Projec-Form/{id}',[ProjecManagement::class,'formEditProject'])->name('edit.get');
         route::post('Edit-Projec-Form/{id}',[ProjecManagement::class,'updateEditProject'])->name('edit.post');
     });
+
+     //-------------------------------------- DỰ ÁN TRỌNG TÂM  --------------------------------------------//
+     route::middleware('checkLogin')->prefix('/Project')->group(function () {
+        route::get('Project-Connect/{id}',[ProjecManagement::class,'ProjectConnectView'])->name('projectConnect');
+     });
