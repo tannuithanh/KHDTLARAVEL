@@ -13,5 +13,8 @@ class project_department extends Model
         'id',
         'project_id',
         'department_id',
+        'startdate',
+        'enddate',
+        'name',
     ];
 }

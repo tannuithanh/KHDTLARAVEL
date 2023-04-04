@@ -19,19 +19,97 @@ class ReportPlan extends Controller
 {
     //------ DANH SÁCH BÁO CÁO ------//
     public function listReportWeekly(){
-        $allUser = User::get();
-        $user = Auth::user();
-        $departments = Department::get();
+        $user = User::select('users.*', 'departments.name as department_name', 'teams.name as team_name')
+        ->join('departments', 'departments.id', '=', 'users.department_id')
+        ->leftjoin('teams', 'teams.id', '=', 'users.team_id')
+        ->where('users.id', Auth::user()->id)
+        ->first();
+        if ($user['position_id'] == 1 || $user['position_id'] == 2) {
+            $teams = Team::get();
+        } elseif ($user['position_id'] == 3) {
+            $teams = Team::join('departments', 'teams.department_id', '=', 'departments.id')->join('trademark', 'departments.trademark_id', '=', 'trademark.id')->where('departments.trademark_id', 1)->select('teams.*')->get();
+        } elseif ($user['position_id'] == 4) {
+            $teams = Team::join('departments', 'teams.department_id', '=', 'departments.id')->join('trademark', 'departments.trademark_id', '=', 'trademark.id')->where('departments.trademark_id', 2)->select('teams.*')->get();
+        } else {
+            $teams = Team::where('department_id', $user['department_id'])->get();
+        }
+
+
+        if ($user['position_id'] == 1 || $user['position_id'] == 2) {
+            $excludedIds = [1, 2, 3, 4, 5];
+            $userById = User::whereNotIn('id', $excludedIds)->get();
+        } elseif ($user['position_id'] == 3) {
+            $userById = User::join('departments', 'users.department_id', '=', 'departments.id')->join('trademark', 'departments.trademark_id', '=', 'trademark.id')->where('departments.trademark_id', 1)->select('users.*')->get();
+        } elseif ($user['position_id'] == 4) {
+            $userById = User::join('departments', 'users.department_id', '=', 'departments.id')->join('trademark', 'departments.trademark_id', '=', 'trademark.id')->where('departments.trademark_id', 2)->select('users.*')->get();
+        } else {
+            $userById = User::where('department_id', $user['department_id'])->get();
+        }
+
+        $mydate = date('Y-m-d');
         $date = Carbon::parse();
         $weekNumber = $date->weekOfMonth;
+        $month = now()->format('m');
         // dd($weekNumber);
         $start = $date->startOfWeek()->toDateString();
         $end = $date->endOfWeek()->toDateString();
         $formattedDateStart = date_create_from_format('Y-m-d', $start)->format('d/m/Y');
         $formattedDateEnd = date_create_from_format('Y-m-d', $end)->format('d/m/Y');
-        $user = Auth::user();
-        $workWeek = Workweek::select('workweek.fileupload','workweek.result','workweek.id','workweek.inadequacy','workweek.propose', 'workweek.categoryWeek', 'workweek.describeWeek', 'workweek.responsibility', 'users.name', 'workweek.startdate', 'workweek.enddate', 'workweek.note', 'workweek.status')->join('users', 'users.id', '=', 'workweek.support')->where([['startdate', '>=', $start]])->get();
-       return view('report.reportWeekly',compact('user','workWeek'))->with(compact('allUser'))->with(compact('departments'))->with(compact('weekNumber'))->with(compact('formattedDateStart'))->with(compact('formattedDateEnd'));
+        
+        //------------ Lấy chuối ngày từ ngày bắt đầu đến ngày kết thúc ------------//
+            $startDate = Carbon::parse()->startOfWeek();
+            $endDate = Carbon::parse()->endOfWeek();
+            $dates = array();
+            for ($date = $startDate; $date->lte($endDate); $date->addDay()) {
+                $dates[] = $date->format('Y-m-d');
+            }
+            // dd($dates);
+        //------------ Lấy dữ liệu công việc theo chức vụ ------------//    
+        if ($user['position_id'] == 1 || $user['position_id'] == 2) {
+        $workWeek = Workweek::select('workweek.*')
+       
+        ->where('startdate', '>=', $start)
+        ->get();
+        }elseif ($user['position_id'] == 3) {
+            $workWeek = Workweek::select('workweek.*')
+           
+            ->join('departments', 'workweek.department_id', '=', 'departments.id')
+            ->join('trademark', 'departments.trademark_id', '=', 'trademark.id')
+            ->where(function($query) use ($start) {
+                $query->where('startdate', '>=', $start)
+                      ->orWhere('workweek.responsibility', 'Tô Tấn Sơn');
+            })
+            ->where('trademark.id', '=', 1)
+            ->get();
+            // dd($workWeek->toArray());
+        }elseif ($user['position_id'] == 4) {
+            $workWeek = Workweek::select('workweek.*')
+           
+            ->join('departments', 'workweek.department_id', '=', 'departments.id')
+            ->join('trademark', 'departments.trademark_id', '=', 'trademark.id')
+            ->where('startdate', '>=', $start)
+            ->where('trademark.id', '=', 2)
+            ->get();    
+        }else{
+            $workWeek = Workweek::select('workweek.*')
+           
+            ->join('departments', 'workweek.department_id', '=', 'departments.id')
+            ->where('startdate', '>=', $start)
+            ->where('workweek.department_id', '=', $user['department_id'])
+            ->get();    
+        }
+        if ($user['position_id'] == 1 || $user['position_id'] == 2) {
+            $departments = Department::get();
+        } elseif ($user['position_id'] == 3) {
+            $departments = Department::where('trademark_id', 1)->get();
+        } elseif ($user['position_id'] == 4) {
+            $departments = Department::where('trademark_id', 2)->get();
+        } else {
+           
+            return view('report.reportWeekly', compact('userById', 'user', 'workWeek', 'start', 'end', 'weekNumber', 'formattedDateStart', 'formattedDateEnd', 'mydate', 'teams','month','dates'));
+        }
+
+        return view('report.reportWeekly', compact('userById', 'user', 'workWeek', 'start', 'end', 'weekNumber', 'formattedDateStart', 'formattedDateEnd', 'mydate', 'teams', 'departments','month','dates'));
     }
 
     //------ FORM BÁO CÁO------//
@@ -491,10 +569,10 @@ class ReportPlan extends Controller
         } elseif ($user['position_id'] == 4) {
             $departments = Department::where('trademark_id', 2)->get();
         } else {
-            return view('report.reportDaily', compact('userById', 'user', 'workWeek', 'start', 'end', 'weekNumber', 'formattedDateStart', 'formattedDateEnd', 'mydate', 'teams','month','dates'));
+            return view('report.reportWeekly', compact('userById', 'user', 'workWeek', 'start', 'end', 'weekNumber', 'formattedDateStart', 'formattedDateEnd', 'mydate', 'teams','month','dates'));
         }
         
-        return view('report.reportDaily', compact('user', 'mydate', 'teams', 'userById','month','dates'))->with(compact('start'))->with(compact('workWeek'))->with(compact('end'))->with(compact('weekNumber'))->with(compact('departments'))->with(compact('formattedDateStart'))->with(compact('formattedDateEnd'));
+        return view('report.reportWeekly', compact('user', 'mydate', 'teams', 'userById','month','dates'))->with(compact('start'))->with(compact('workWeek'))->with(compact('end'))->with(compact('weekNumber'))->with(compact('departments'))->with(compact('formattedDateStart'))->with(compact('formattedDateEnd'));
     }
 
     public function sendmail(Request $request){

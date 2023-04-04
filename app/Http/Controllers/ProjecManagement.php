@@ -57,12 +57,13 @@ class ProjecManagement extends Controller
     }
 
     public function insertCreatProject(request $request){
-        $end_date = DateTime::createFromFormat('d/m/Y', $request['end_date']); // Chuyển chuỗi thành đối tượng ngày
+
+        $end_date = DateTime::createFromFormat('d/m/Y', $request['enddate']); // Chuyển chuỗi thành đối tượng ngày
         // dd($today,$request['end_date']);
         $user = Auth::user();
 
         $today = DateTime::createFromFormat('d/m/Y', date('d/m/Y'));
-        $end_date = DateTime::createFromFormat('d/m/Y', $request['end_date']);
+        $end_date = DateTime::createFromFormat('d/m/Y', $request['enddate']);
 
         if ($end_date < $today) {
             return back()->with('no', '...');
@@ -71,8 +72,8 @@ class ProjecManagement extends Controller
             return back()->with('nono','...');
         }
      
-        $date = Carbon::createFromFormat('d/m/Y', $request['start_date']);
-        $date1 = Carbon::createFromFormat('d/m/Y', $request['end_date']);
+        $date = Carbon::createFromFormat('d/m/Y', $request['startdate']);
+        $date1 = Carbon::createFromFormat('d/m/Y', $request['enddate']);
         $newDate = $date->format('Y-m-d');
         $newDate1 = $date1->format('Y-m-d');
         
@@ -86,12 +87,18 @@ class ProjecManagement extends Controller
         ]);
 
         $idProject = $project->id;
-        foreach($request['departments'] as $value){
+        $count = count($request['departments']);
+
+        for ($i = 0; $i < $count; $i++) {
             project_department::create([
                 'project_id' => $idProject,
-                'department_id' => $value,
+                'department_id' => $request['departments'][$i],
+                'startdate' => $request['start_date'][$i],
+                'enddate' => $request['end_date'][$i],
+                'name' => $request['task_name'][$i],
             ]);
         }
+        
         
         return redirect()->route('listProjectManagerment')->with('success','Tạo dự án Thành công');
         
@@ -156,15 +163,56 @@ class ProjecManagement extends Controller
     public function ProjectConnectView($id){
         $user = Auth::user();
         $project = Project::find($id);
-
         $project_manager = project_department::where('project_id', $project->id)->pluck('department_id')->toArray();
+        $project_department = project_department::select('project_department.*','project.name_project as tenduan','departments.name as tenphongban')
+        ->join('project','project.id','=','project_department.project_id')
+        ->join('departments','departments.id','=','project_department.department_id')
+        ->where('project_id',$id)->get();
+        // dd($project->toArray());
         // dd(in_array($user['department_id'], $project_manager));
         //----- Kiểm tra biến $user['department_id'] có nằm trong mảng không -----//
-        if (in_array($user['department_id'], $project_manager) || $user['name'] == $project->name_create) {    
-            return view('Project management.projectConnect',compact('user','project'));
+        if (in_array($user['department_id'], $project_manager) || $user['name'] == $project->name_create || (in_array($user['position_id'], [1, 2]))) {    
+            return view('Project management.projectConnect',compact('user','project','project_department'));
         }else{
             return redirect()->route('listProjectManagerment')->with('failder','không thành công');
         }
         
+    }
+
+    public function ProjectUpdateView($id){
+        $project = Project::find($id);
+        $user = Auth::user();
+        $start_date = Carbon::createFromFormat('Y-m-d', $project->start_date)->format('Y-m-d');
+        $end_date = Carbon::createFromFormat('Y-m-d', $project->end_date)->format('Y-m-d');
+        $project_manager = project_department::select('project_department.*','project.name_project as tenduan','departments.name as tenphongban')
+        ->join('project','project.id','=','project_department.project_id')
+        ->join('departments','departments.id','=','project_department.department_id')
+        ->where('project_id',$id)->get();
+        // dd($project_manager->toArray());
+        return view('Project management.Creat Project.project_Department_Update', compact('user','project_manager','start_date','end_date'));
+    }
+    public function ProjectUpdate($id,request $request){
+
+        foreach( $request['works'] as $value ){
+            $PD =  project_department::find($value['id']);
+            $PD->name = $value['name'];
+            $PD->startdate = $value['startdate'];
+            $PD->enddate = $value['enddate'];
+            $PD->update();
+            
+        }
+        return redirect()->route('projectConnect',$id)->with('success','cập nhật thành công');
+    }
+
+    public function updateStatus(Request $request, $id){
+        $project = Project::find($id);
+        if (!$project) {
+            return response()->json(['error' => 'Dự án không tồn tại'], 404);
+        }
+    
+        $project->status = $request->input('status');
+        $project->save();
+    
+        return response()->json(['success' => 'Trạng thái dự án đã được cập nhật'], 200);
     }
 }

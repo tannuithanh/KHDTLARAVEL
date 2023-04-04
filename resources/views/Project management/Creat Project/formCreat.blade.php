@@ -36,31 +36,14 @@
                     <label class="form-label">Ngày/Tháng/Năm</label>
                     <div class="input-daterange input-group" id="datepicker6" data-date-format="dd/mm/yyyy"
                         data-date-autoclose="true" data-provide="datepicker" data-date-container='#datepicker6'>
-                        <input type="text" class="form-control" name="start_date" placeholder="Ngày bắt đầu" />
-                        <input type="text" class="form-control" name="end_date" placeholder="Ngày kết thúc" />
+                        <input type="text" class="form-control" name="startdate" id="project_start_date" placeholder="Ngày bắt đầu" />
+                        <input type="text" class="form-control" name="enddate" id="project_end_date" placeholder="Ngày kết thúc" />                        
                     </div>
                 </div>
                 <div class="mb-3" id="department-select">
                     <label class="form-label">Phòng ban tham gia</label>
-                    <select class="select2 form-control select2-multiple" name="departments[]" multiple
-                        data-placeholder="Phòng ban tham gia">
-                        <option value=""></option> <!-- Option trống -->
-                        @foreach ($departments as $value)
-                            <option value="{{ $value->name }}">{{ $value->name }}</option>
-                        @endforeach
-                    </select>
-
-                </div>
-                <div class="mb-3" id="specific-date-field" style="display: none;">
-                    <label class="form-label">Ngày làm việc cụ thể</label>
-                    <div>
-                        <label id="department-label">...</label>
-                        <div class="mb-3">
-                            <input type="date" placeholder="Ngày bắt đầu" class="form-control" required="">
-                        </div>
-                        <div class="mb-2">
-                            <input type="date" placeholder="Ngày kết thúc" class="form-control" required="">
-                        </div>
+                    <div id="departments-wrapper">
+                        <button type="button" id="add-department" class="btn btn-primary">+</button>
                     </div>
                 </div>
                 <div class="mb-3">
@@ -167,18 +150,69 @@
             }
         });
     });
-    $('#department-select select').on('change', function() {
-    var selectedDepartments = $(this).val();
-    if (selectedDepartments) {
-        var label = '';
-        $.each(selectedDepartments, function(index, value) {
-            label += $('#department-select option[value="' + value + '"]').text() + ', ';
+
+
+
+    $(document).ready(function () {
+        var departments = [
+            // Sử dụng dữ liệu từ danh sách phòng ban của bạn
+            @foreach ($departments as $value)
+                { id: "{{ $value->id }}", name: "{{ $value->name }}" },
+            @endforeach
+        ];
+
+        $("#project_start_date, #project_end_date").on("change", function () {
+        var projectStartDate = $("#project_start_date").val();
+        var projectEndDate = $("#project_end_date").val();
+        if (projectStartDate && projectEndDate) {
+            $("#departments-wrapper .department-row").each(function () {
+                $(this).find("input[name='start_date[]']").attr("min", projectStartDate).attr("max", projectEndDate);
+                $(this).find("input[name='end_date[]']").attr("min", projectStartDate).attr("max", projectEndDate);
+            });
+        }
+    });
+        function createDepartmentRow() {
+            var $row = $("<div>").addClass("department-row");
+            
+            $row.append('<label class="form-label">Phòng ban:</label>');
+            var $select = $("<select>").addClass("form-control").attr("name", "departments[]");
+            departments.forEach(function (dept) {
+                $select.append($("<option>").attr("value", dept.id).text(dept.name));
+            });
+            
+            $row.append($select);
+            
+            var projectStartDate = $("#project_start_date").val();
+            var projectEndDate = $("#project_end_date").val();
+            $row.append('<label class="form-label">Ngày bắt đầu:</label>');
+            $row.append('<input type="date" class="form-control" name="start_date[]" placeholder="Ngày bắt đầu" min="' + projectStartDate + '" max="' + projectEndDate + '" required="">');
+
+            $row.append('<label class="form-label">Ngày kết thúc:</label>');
+            $row.append('<input type="date" class="form-control" name="end_date[]" placeholder="Ngày kết thúc" min="' + projectStartDate + '" max="' + projectEndDate + '" required="">');
+
+            $row.append('<label class="form-label">Tên công việc:</label>');
+            $row.append('<input type="text" class="form-control" name="task_name[]" placeholder="Tên công việc" required="">');
+
+            $row.append('<button type="button" style="margin-top: 10px;" class="btn btn-danger remove-department">Xóa</button>');
+            return $row;
+        }
+
+        $("#add-department").on("click", function () {
+            var $row = createDepartmentRow();
+            if ($("#departments-wrapper .department-row").length > 0) {
+                var $hr = $('<hr>').css({'height': '5px', 'background-color': '#0000007d'});
+                $("#departments-wrapper").append($hr);
+            }
+            $("#departments-wrapper").append($row);
         });
-        label = label.substring(0, label.length - 2);
-        $('#department-label').text(label);
-        $('#specific-date-field').show();
-    } else {
-        $('#specific-date-field').hide();
-    }
-});
+
+        $("#departments-wrapper").on("click", ".remove-department", function () {
+            if ($(this).closest(".department-row").prev().is("hr")) {
+                $(this).closest(".department-row").prev().remove();
+            }
+            $(this).closest(".department-row").remove();
+        });
+    });
 </script>
+
+

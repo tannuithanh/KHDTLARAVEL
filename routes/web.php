@@ -28,6 +28,11 @@ route::post('/login',[Login::class,'loginPost'])->name('LoginPost');
 route::get('/Recover-PassWord',[Login::class,'Recover'])->name('recover')->middleware('checkUser');
 route::post('/Recover-PassWord',[Login::class,'RecoverPost'])->name('recoverPost')->middleware('checkUser');
 
+//------------------------------------------ THAY ĐỔI MẬT KHẨU --------------------------------------//
+route::get('/reset-PassWord',[Login::class,'Reset'])->name('Reset')->middleware('checkUser');
+route::post('/reset-PassWord',[Login::class,'ResetPost'])->name('ResetPost')->middleware('checkUser');
+
+
 //------------------------------------------ Đăng xuất --------------------------------------//
 route::get('/logout', [Logout::class, 'logout'])->name('Logout');
 
@@ -206,6 +211,8 @@ route::get('/dashboard',[Dashboard::class,'dashboardGet'])->name('DashBoard')->m
     }); 
     //-------------------------------------- XÓA DỰ ÁN  --------------------------------------------//   
     route::Delete('/Delete-projec/{id}',[ProjecManagement::class,'deleteProject'])->name('deleteProject'); 
+    //-------------------------------------- Cập nhật dự án  --------------------------------------------//   
+    Route::post('/updateProjectStatus/{id}',[ProjecManagement::class, 'updateStatus'])->name('update.status');
     //-------------------------------------- SỬA DỰ ÁN  --------------------------------------------//
     route::middleware('checkLogin')->prefix('/Edit')->group(function () {
         route::get('Edit-Projec-Form/{id}',[ProjecManagement::class,'formEditProject'])->name('edit.get');
@@ -216,3 +223,10 @@ route::get('/dashboard',[Dashboard::class,'dashboardGet'])->name('DashBoard')->m
      route::middleware('checkLogin')->prefix('/Project')->group(function () {
         route::get('Project-Connect/{id}',[ProjecManagement::class,'ProjectConnectView'])->name('projectConnect');
      });
+
+      //-------------------------------------- DỰ ÁN TRỌNG TÂM  --------------------------------------------//
+      route::middleware('checkLogin')->prefix('/UpdateProject')->group(function () {
+        route::get('Project-Update/{id}',[ProjecManagement::class,'ProjectUpdateView'])->name('projectUpdate');
+        route::post('Project-Update/{id}',[ProjecManagement::class,'ProjectUpdate'])->name('projectUpdate.post');
+     });
+     

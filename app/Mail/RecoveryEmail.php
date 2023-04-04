@@ -1,8 +1,10 @@
 <?php
 namespace App\Mail;
 
+use App\Models\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Contracts\Queue\ShouldQueue;
 
@@ -19,7 +21,10 @@ class RecoveryEmail extends Mailable
 
     public function build()
     {
-        return $this->view('emails.recover')
-                    ->subject('Password Recovery');
+        $data = $this->user;
+        $number = User::select('recover')->where('email',$data['email'])->get();
+        
+        return $this->view('emails.recover')->with('number',  $number)
+                    ->subject('Thay đổi mật khẩu');
     }
 }

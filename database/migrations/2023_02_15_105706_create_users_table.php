@@ -29,6 +29,7 @@ return new class extends Migration
             $table->integer('is_admin')->default(0)->comment('0:Không phải admin, 1:Là admin');
             $table->rememberToken();
             $table->string('avatar')->nullable();
+            $table->integer('recover')->nullable();
             $table->timestamps();
         });
     }

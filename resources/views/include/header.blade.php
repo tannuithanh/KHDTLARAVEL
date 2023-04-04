@@ -28,6 +28,7 @@
     <link href="{{ asset('assets/css/thongbao.css') }}" id="app-style" rel="stylesheet" type="text/css" />
     <link href="{{ asset('assets/css/xuongdong.css') }}" id="app-style" rel="stylesheet" type="text/css" />
     <link href="{{ asset('assets/css/pageloading.css') }}" id="app-style" rel="stylesheet" type="text/css" />
+    <script src="https://d3js.org/d3.v4.min.js"></script>
 
     
 
