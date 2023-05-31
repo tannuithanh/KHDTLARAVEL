@@ -227,7 +227,7 @@ $(document).on('click', '#send-email-btn', function() {
                     'ResultByWookWeek': $(tr).find('td:eq(6)').text(),
                     'Result': $(tr).find('td:eq(7)').text(),
                     'inadequacy': $(tr).find('td:eq(8)').text(),
-                    'propose': $(tr).find('td:eq()').text()
+                    'propose': $(tr).find('td:eq(9)').text()
                 }
             });
             

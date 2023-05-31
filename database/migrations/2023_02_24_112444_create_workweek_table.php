@@ -16,7 +16,7 @@ return new class extends Migration
         Schema::create('workweek', function (Blueprint $table) {
             $table->id();
             $table->string('categoryWeek');
-            $table->string('describeWeek');
+            $table->string('describeWeek')->nullable();
             $table->string('responsibility')->nullable();
             $table->string('support')->nullable();
             $table->unsignedBigInteger('department_id')->nullable();

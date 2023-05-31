@@ -19,8 +19,7 @@ class WorkPlanWeek extends Controller
     //--------------- TÌm kiếm công việc ----------------------///
 
 
-    public function searchListWork(request $request)
-    {
+    public function searchListWork(request $request){
         // dd($request->toArray());
         $mydate = date('Y-m-d');
         $departments = Department::get();
@@ -571,6 +570,68 @@ class WorkPlanWeek extends Controller
         $workWeek->saturday = $request->input('workDescription_sat');
         $workWeek->sunday = $request->input('workDescription_sun');
         $workWeek->updated_at = $mytime;
+        $workWeek->update();
+        return redirect()->route('listWorkWeek')->with('status', 'Cập nhật thành công')->with('hack', $id);
+    }
+    //-------------Cập nhật công việc từ dự án---------------------//
+    public function updateWorkWeekGet($id){
+        $allUser = User::get();
+        $user = Auth::user();
+
+        $workWeekById = Workweek::find($id);
+
+        $weekStartDate = Carbon::parse($workWeekById->startdate)->startOfWeek();
+        $weekEndDate = Carbon::parse($workWeekById->startdate)->endOfWeek();
+        $weekNumber = Carbon::parse($workWeekById->startdate)->weekOfMonth;
+
+        $month = Carbon::parse($workWeekById->startdate)->month;
+
+        $weekdays = [];
+
+        for ($day = $weekStartDate; $day->lte($weekEndDate); $day->addDay()) {
+            $weekdays[] = $day->format('Y-m-d');
+        }
+
+        return view('plan.creat.updateWorkWeek', compact('workWeekById'))->with(compact('user'))->with(compact('allUser'))->with(compact('weekdays'))->with(compact('weekNumber'))->with(compact('month'));
+    }
+    public function updateWorkWeekPost(Request $request, $id){
+        if (!isset($request['workDescription_mon'])) {
+            $request['workDescription_mon'] = null;
+        }
+        if (!isset($request['workDescription_tue'])) {
+            $request['workDescription_tue'] = null;
+        }
+        if (!isset($request['workDescription_wed'])) {
+            $request['workDescription_wed'] = null;
+        }
+        if (!isset($request['workDescription_thu'])) {
+            $request['workDescription_thu'] = null;
+        }
+        if (!isset($request['workDescription_fri'])) {
+            $request['workDescription_fri'] = null;
+        }
+        if (!isset($request['workDescription_sat'])) {
+            $request['workDescription_sat'] = null;
+        }
+        if (!isset($request['workDescription_sun'])) {
+            $request['workDescription_sun'] = null;
+        }
+        $mytime = date('Y-m-d H:i:s');
+        $workWeek = Workweek::find($id);
+        $workWeek->categoryWeek = $request->input('categoryWeek');
+        $workWeek->describeWeek = $request->input('describeWeek');
+        $workWeek->startdate = $request->input('startdate');
+        $workWeek->enddate = $request->input('enddate');
+        $workWeek->support = $request->input('support');
+        $workWeek->monday = $request->input('workDescription_mon');
+        $workWeek->tuesday = $request->input('workDescription_tue');
+        $workWeek->wednesday = $request->input('workDescription_wed');
+        $workWeek->thursday = $request->input('workDescription_thu');
+        $workWeek->friday = $request->input('workDescription_fri');
+        $workWeek->saturday = $request->input('workDescription_sat');
+        $workWeek->sunday = $request->input('workDescription_sun');
+        $workWeek->updated_at = $mytime;
+        $workWeek->status = 0;
         $workWeek->update();
         return redirect()->route('listWorkWeek')->with('status', 'Cập nhật thành công')->with('hack', $id);
     }

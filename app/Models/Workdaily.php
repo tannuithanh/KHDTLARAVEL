@@ -13,14 +13,19 @@ class Workdaily extends Model
     protected $fillable = [
         'id',
         'workweek_id',
-        'categoryWeek',
-        'describeWeek',
+        'categoryDaily',
+        'describeDaily',
         'responsibility',
         'support',
         'department_id',
         'team_id',
         'date',
         'time',
+        'status',
         'note',
+        'inadequacy',
+        'propose',
+        'Result',
+        'ResultByWookWeek',
     ];
 }

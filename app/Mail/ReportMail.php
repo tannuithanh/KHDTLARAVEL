@@ -28,7 +28,7 @@ class ReportMail extends Mailable
         $myDate = date('Y-m-d');
         $today = date('d/m/Y', strtotime($myDate));
         $user = Auth::user();
-        // dd($this->tableData);
+        dd($this->tableData);
         return $this->markdown('emails.report')->with('tableData', $this->tableData)->with('user',$user)->with('today',$today);
     }
 

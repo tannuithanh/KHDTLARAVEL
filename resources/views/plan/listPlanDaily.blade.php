@@ -1,4 +1,6 @@
+@php $title = "Quản lý kế hoạch ngày"; @endphp
 @include('include.header')
+
 <meta name="csrf-token" content="{{ csrf_token() }}">
 <style>
      td, th {
@@ -22,7 +24,12 @@
     <div class="col-lg-12">
         <div class="card">
             <div class="card-body">
-                <h4 class="card-title">Danh sách công việc <a href="{{ route('creatWorkDaily.get') }}" class="btn btn-danger btn-rounded waves-effect waves-light"><i class="mdi mdi-plus me-1"></i>Tạo công việc ngày</a><a style="margin-left: 6px;" href="{{ route('assignCreatWorkDaily.get') }}" class="btn btn-warning btn-rounded waves-effect waves-light"><i class="mdi mdi-plus me-1"></i> Giao việc</a></h4>
+                <h4 class="card-title">
+                    Danh sách công việc <a href="{{ route('creatWorkDaily.get') }}" class="btn btn-danger btn-rounded waves-effect waves-light"><i class="mdi mdi-plus me-1"></i>Tạo công việc ngày</a>
+                    {{-- @if (in_array($user['position_id'], [5,6]) ) --}}
+                    <a style="margin-left: 6px;" href="{{ route('assignCreatWorkDaily.get') }}" class="btn btn-warning btn-rounded waves-effect waves-light"><i class="mdi mdi-plus me-1"></i> Giao việc</a>
+                    {{-- @endif --}}
+                </h4>
                 <form id="form_search" method="post" name="form_search">
                     @csrf
                     <div class="card-body" style="border: 1px solid; border-radius: 30px; ">
@@ -191,7 +198,7 @@
                                                     method="POST" class="delete-form">
                                                     @csrf
                                                     @method('DELETE')
-                                            @if ($value->status == -1)
+                                            @if ($value->status == -1 && $user['name']==$value->responsibility)
                                                 <a href="{{ route('updateWorkDaily.get', $value->id) }}" class="btn btn-outline-primary waves-light btn-sm update" title="Cập nhật công việc"><i class=" fas fa-cloud-upload-alt"></i></a>   
                                             @else
                                                 @if($user['name']==$value->responsibility && $today==$value->date && $value->workweek_id == Null && $value->status != 9)
@@ -216,7 +223,7 @@
                             @endforeach
                         @else
                             <tr>
-                                <td style="text-align: center;" colspan="10"> Không có dữ liệu</td>
+                                <td style="text-align: center;" colspan="11"> Không có dữ liệu</td>
                             </tr>
                         @endif
                     </tbody>

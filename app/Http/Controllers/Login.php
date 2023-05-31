@@ -62,4 +62,7 @@ class Login extends Controller
             return back()->with('khongduoc','khong duoc');
         }
     }
+    public function back(){
+        return redirect()->back();
+    }
 }

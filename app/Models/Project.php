@@ -12,11 +12,32 @@ class Project extends Model
     protected $fillable = [
         'id',
         'name_project',
-        'describe_project',
         'name_create',
         'start_date',
         'end_date',
         'status',
-        'privacy',
+        'lock',
+        'car_brands_id',
+        'car_brands_child_id',
+        'completion',
     ];
+    
+    public function projectDepartments()
+    {
+        return $this->hasMany(ProjectDepartment::class, 'project_id');
+    }
+    public function isDelayed(){
+    foreach ($this->projectDepartments as $projectDepartment) {
+        if ($projectDepartment->isDelayed()) {
+            return true;
+        }
+    }
+    return false;
+    }
+    public function updateCompletion()
+{
+    $this->completion = round($this->projectDepartments->average('completion'));
+
+    $this->save();
+}
 }

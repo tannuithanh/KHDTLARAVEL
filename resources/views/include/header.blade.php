@@ -1,9 +1,9 @@
 <!doctype html>
 <html lang="en">
-
+    <title>{{ $title ?? 'Trang chủ' }}</title>
 <head>
     <meta charset="utf-8" />
-    <title>Trang Chủ | THACO</title>
+    
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- <meta content="Premium Multipurpose Admin & Dashboard Template" name="description" /> -->
     <meta content="Themesdesign" name="author" />
@@ -28,25 +28,69 @@
     <link href="{{ asset('assets/css/thongbao.css') }}" id="app-style" rel="stylesheet" type="text/css" />
     <link href="{{ asset('assets/css/xuongdong.css') }}" id="app-style" rel="stylesheet" type="text/css" />
     <link href="{{ asset('assets/css/pageloading.css') }}" id="app-style" rel="stylesheet" type="text/css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js"></script>
     <script src="https://d3js.org/d3.v4.min.js"></script>
 
     
 
+<style>
+    #preloader {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ffffff;
+  z-index: 1001;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 
+.spinner {
+  width: 150px;
+  height: 150px;
+  position: relative;
+  margin: 100px auto;
+}
+
+.double-bounce1, .double-bounce2 {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background-color: #333;
+  opacity: 0.6;
+  position: absolute;
+  top: 0;
+  left: 0;
+  animation: sk-bounce 2.0s infinite ease-in-out;
+}
+
+.double-bounce2 {
+  animation-delay: -1.0s;
+}
+
+@keyframes sk-bounce {
+  0%, 100% { 
+    transform: scale(0.0);
+  } 50% { 
+    transform: scale(1.0);
+  }
+}
+
+</style>
 
 
 </head>
 
 <body data-sidebar="dark">
-    <div id="loading">
-        <div class="car-container">
-          <div class="car"></div>
+    <div id="preloader">
+        <div class="spinner">
+            <div class="double-bounce1"></div>
+            <div class="double-bounce2"></div>
         </div>
-        <div class="loading-text">
-            R&D Ô tô
-          </div>
-      </div>
-      
+    </div>
+    
     <div class="right-bar">
         <div data-simplebar="init" class="h-100">
             <div class="simplebar-wrapper" style="margin: 0px;">
@@ -140,6 +184,44 @@
                     </button>
                 </div>
                 <div class="d-flex">
+                    <div class="d-flex">
+                        <div class="dropdown d-none d-lg-inline-block ms-1">
+                            <button type="button" class="btn header-item noti-icon waves-effect" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <i class="ri-apps-2-line"></i>
+                            </button>
+                            <div class="dropdown-menu dropdown-menu-lg dropdown-menu-end" style="">
+                                <div class="px-lg-2">
+                                    <div class="row g-0">
+                                        <div class="col">
+                                            <a class="dropdown-icon-item" href="http://113.161.6.179:8089/RD/">
+                                        
+                                                <span>CHỮ KÝ ĐIỆN TỬ</span>
+                                            </a>
+                                        </div>
+                                        <div class="col">
+                                            <a class="dropdown-icon-item" href="http://113.161.6.179:8089/mahoatenduan/">
+                                               
+                                                <span>MÃ HÓA TÊN DỰ ÁN</span>
+                                            </a>
+                                        </div>
+                                        <div class="col">
+                                            <a class="dropdown-icon-item" href="http://113.161.6.179:8089/QLTB/">
+                                      
+                                                <span>QUẢN LÝ THIẾT BỊ</span>
+                                            </a>
+                                        </div>
+                                        <div class="col">
+                                            <a class="dropdown-icon-item" href="https://eoffice.thacochulai.vn/">
+                                      
+                                                <span>THACO EOFFICE</span>
+                                            </a>
+                                        </div>
+                                    </div>
+    
+                                 
+                                </div>
+                            </div>
+                        </div>
                     <div class="dropdown d-inline-block d-lg-none ms-2">
                         <button type="button" class="btn header-item noti-icon waves-effect" id="page-header-search-dropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             <i class="ri-search-line"></i>
@@ -182,7 +264,7 @@
                                 <div class="dropdown-divider"></div>
                                 <a class="dropdown-item" href="{{ route('listTeam.view') }}"><i class="ri-team-line" style="margin-right:4%;"></i>Quản lý nhóm</a>
                                 <div class="dropdown-divider"></div>
-                                <a class="dropdown-item text-danger" href="{{ route('Logout') }}"><i class="ri-shut-down-line align-middle me-1 text-danger"></i>Đăng xuất</a>
+                                <a class="dropdown-item text-danger"  id="logout-btn"  href="{{ route('Logout') }}"><i class="ri-shut-down-line align-middle me-1 text-danger"></i>Đăng xuất</a>
                             </div>
                         </div>
                         <div class="dropdown d-inline-block">
@@ -200,12 +282,12 @@
 
                         <li>
                             <a href="{{ route('DashBoard') }}" class="waves-effect">
-                                <i class="mdi mdi-home-variant-outline"></i><span class="badge rounded-pill bg-primary float-end">3</span>
+                                <i class="mdi mdi-home-variant-outline"></i>
                                 <span>Trang chủ</span>
                             </a>
                         </li>
                         <li>
-                            <a href="{{ route('listProjectManagerment')}} " class="waves-effect">
+                            <a href="{{ route('listCarBrands')}} " class="waves-effect">
                                 <i class="fas fa-project-diagram"></i>
                                 <span>Quản lý dự án</span>
                             </a>

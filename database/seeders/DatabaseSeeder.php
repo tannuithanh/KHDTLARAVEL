@@ -23,7 +23,8 @@ class DatabaseSeeder extends Seeder
             DepartmentsDatabase::class,
             PositionsDatabase::class,
             UsersDatabase::class,
-           
+            CarBrandsDatabase::class,
+            CarBrandsChild::class,
         ]);
     }
 }

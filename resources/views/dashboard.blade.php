@@ -19,95 +19,205 @@
     <link href="{{ asset('assets/css/icons.min.css') }}" rel="stylesheet" type="text/css" />
     <!-- App Css-->
     <link href="{{ asset('assets/css/app.min.css') }}" id="app-style" rel="stylesheet" type="text/css" />
-    <link href="{{ asset('assets/css/table.css') }}" id="app-style" rel="stylesheet" type="text/css" />
+    {{-- <link href="{{ asset('assets/css/table.css') }}" id="app-style" rel="stylesheet" type="text/css" /> --}}
     <link href="{{ asset('assets/css/chunhapnhay.css') }}" id="app-style" rel="stylesheet" type="text/css" />
-    <link href="{{ asset('assets/css/lich.css') }}" id="app-style" rel="stylesheet" type="text/css" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        .table-wrapper {
+            display: inline-block;
+        }
+            .fullscreen-modal .modal-dialog {
+            width: 90%; /* Tăng độ rộng của modal */
+            max-width: 70%; /* Loại bỏ giới hạn độ rộng tối đa */
+            height: auto;
+            margin: 5% auto; /* Giảm lề trên và dưới để modal canh giữa */
+        }
+
+        .fullscreen-modal .modal-content {
+            height: 100%;
+            border-radius: 0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .fullscreen-modal .modal-body {
+            flex-grow: 1;
+            overflow-y: auto;
+        
+        }
 
 
+        .custom-card {
+            border-radius: 8px;
+            overflow: hidden;
+            position: relative;
+            background-color: tomato;
+        }
 
+        .custom-card .card-body {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 2rem;
+        }
+
+        .greeting-container {
+            color: white;
+        }
+
+        .greeting-text {
+            margin: 0;
+            font-size: 1.5rem;
+        }
+
+        .greeting-user-name {
+            margin: 0;
+            font-size: 2.5rem;
+            font-weight: bold;
+        }
+
+        .greeting-progress {
+            font-size: 1.25rem;
+        }
+
+        .greeting-progress-percentage {
+            color: #13fd01;
+        }
+
+        .greeting-image-container {
+            width: 30%;
+            position: relative;
+        }
+
+        .greeting-image {
+            max-width: 100%;
+            position: relative;
+            top: -1.5rem;
+        }
+
+        /* Đoạn mã CSS đã đưa ra trong câu trả lời trước đây */
+
+        #calendar {
+            font-family: Arial, sans-serif;
+            width: 100%;
+            background-color: white;
+        }
+
+        .month {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            background-color: #3a3a3a;
+            color: white;
+            font-size: 1.2rem;
+        }
+
+        .month-nav {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1.5rem;
+            outline: none;
+            color: white;
+        }
+
+        .weekdays {
+            display: flex;
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+            background-color: #ddd;
+            color: black;
+        }
+
+        .days {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .weekdays li,
+        .days li {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            height: 50px;
+            font-size: 1.1rem;
+        }
+
+        .days li {
+            border: 1px solid #ddd;
+            background-color: white;
+            cursor: pointer;
+        }
+
+        .days li:hover {
+            background-color: #eee;
+        }
+
+        .current-date {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 10px;
+        }
+
+        .current-date img {
+            width: 100px;
+            height: auto;
+            margin-left: 10px;
+        }
+
+        .day-today {
+            background-color: tomato !important;
+            color: white;
+        }
+
+        ul {
+            padding-left: 20px;
+            list-style-type: disc;
+        }
+
+        li {
+            margin-bottom: 5px;
+        }
+
+        .task-table {
+            width: 100%;
+            border-collapse: collapse;
+            border: none !important;
+        }
+
+        .task-table td {
+            vertical-align: top;
+            border: none !important;
+        }
+
+        .task-table .task-colon {
+            width: 1%;
+            white-space: nowrap;
+        }
+        .custom-table th {
+            background-color: #007bff; /* Màu nền của thẻ <th> */
+            color: #ffffff; /* Màu chữ của thẻ <th> */
+            font-weight: bold; /* Chữ in đậm */
+        }
+
+    </style>
 
 
 
 </head>
 
 <body data-sidebar="dark">
-    <div class="right-bar">
-        <div data-simplebar="init" class="h-100">
-            <div class="simplebar-wrapper" style="margin: 0px;">
-                <div class="simplebar-height-auto-observer-wrapper">
-                    <div class="simplebar-height-auto-observer"></div>
-                </div>
-                <div class="simplebar-mask">
-                    <div class="simplebar-offset" style="right: -16.6667px; bottom: 0px;">
-                        <div class="simplebar-content-wrapper" style="height: 100%; overflow: hidden scroll;">
-                            <div class="simplebar-content" style="padding: 0px;">
-                                <div class="rightbar-title d-flex align-items-center px-3 py-4">
-
-                                    <h5 class="m-0 me-2">Chế độ</h5>
-
-                                    <a href="javascript:void(0);" class="right-bar-toggle ms-auto">
-                                        <i class="mdi mdi-close noti-icon"></i>
-                                    </a>
-                                </div>
-                                <!-- Settings -->
-                                <hr class="mt-0">
-                                <h6 class="text-center mb-0">Chọn bố cục</h6>
-
-                                <div class="p-4">
-                                    <div class="mb-2">
-                                        <img src="assets/images/layouts/layout-1.png" class="img-thumbnail"
-                                            alt="layout-1">
-                                    </div>
-
-                                    <div class="form-check form-switch mb-3">
-                                        <input class="form-check-input theme-choice" type="checkbox"
-                                            id="light-mode-switch" checked="">
-                                        <label class="form-check-label" for="light-mode-switch">Chế độ sáng</label>
-                                    </div>
-
-                                    <div class="mb-2">
-                                        <img src="assets/images/layouts/layout-2.png" class="img-thumbnail"
-                                            alt="layout-2">
-                                    </div>
-                                    <div class="form-check form-switch mb-3">
-                                        <input class="form-check-input theme-choice" type="checkbox"
-                                            id="dark-mode-switch" data-bsstyle="assets/css/bootstrap-dark.min.css"
-                                            data-appstyle="assets/css/app-dark.min.css">
-                                        <label class="form-check-label" for="dark-mode-switch">Chế độ tối</label>
-                                    </div>
-
-                                    <div class="mb-2">
-                                        <img src="assets/images/layouts/layout-3.png" class="img-thumbnail"
-                                            alt="layout-3">
-                                    </div>
-                                    <div class="form-check form-switch mb-5">
-                                        <input class="form-check-input theme-choice" type="checkbox"
-                                            id="rtl-mode-switch" data-appstyle="assets/css/app-rtl.min.css">
-                                        <label class="form-check-label" for="rtl-mode-switch">Chế độ RTL</label>
-                                    </div>
-
-
-                                </div>
-
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="simplebar-placeholder" style="width: auto; height: 850px;"></div>
-            </div>
-            <div class="simplebar-track simplebar-horizontal" style="visibility: hidden;">
-                <div class="simplebar-scrollbar" style="transform: translate3d(0px, 0px, 0px); display: none;"></div>
-            </div>
-            <div class="simplebar-track simplebar-vertical" style="visibility: visible;">
-                <div class="simplebar-scrollbar"
-                    style="transform: translate3d(0px, 0px, 0px); display: block; height: 118px;"></div>
-            </div>
-        </div>
-    </div>
     <div id="layout-wrapper">
         <header id="page-topbar">
             <div class="navbar-header">
-
                 <div class="d-flex">
                     <div class="navbar-brand-box text-center">
                         <a href="{{ route('DashBoard') }}" class="logo logo-dark">
@@ -136,6 +246,44 @@
                     </button>
                 </div>
                 <div class="d-flex">
+                    <div class="dropdown d-none d-lg-inline-block ms-1">
+                        <button type="button" class="btn header-item noti-icon waves-effect" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <i class="ri-apps-2-line"></i>
+                        </button>
+                        <div class="dropdown-menu dropdown-menu-lg dropdown-menu-end" style="">
+                            <div class="px-lg-2">
+                                <div class="row g-0">
+                                    <div class="col">
+                                        <a class="dropdown-icon-item" href="http://113.161.6.179:8089/RD/" target="_blank">
+                                    
+                                            <span>CHỮ KÝ ĐIỆN TỬ</span>
+                                        </a>
+                                    </div>
+                                    <div class="col">
+                                        <a class="dropdown-icon-item" href="http://113.161.6.179:8089/mahoatenduan/" target="_blank">
+                                           
+                                            <span>MÃ HÓA TÊN DỰ ÁN</span>
+                                        </a>
+                                    </div>
+                                    <div class="col">
+                                        <a class="dropdown-icon-item" href="http://113.161.6.179:8089/QLTB/" target="_blank">
+                                  
+                                            <span>QUẢN LÝ THIẾT BỊ</span>
+                                        </a>
+                                    </div>
+                                    <div class="col">
+                                        <a class="dropdown-icon-item" href="https://eoffice.thacochulai.vn/" target="_blank">
+                                  
+                                            <span>THACO EOFFICE</span>
+                                        </a>
+                                    </div>
+                                </div>
+
+                             
+                            </div>
+                        </div>
+                    </div>
+                    {{--------------------------}}
                     <div class="dropdown d-inline-block d-lg-none ms-2">
                         <button type="button" class="btn header-item noti-icon waves-effect"
                             id="page-header-search-dropdown" data-bs-toggle="dropdown" aria-haspopup="true"
@@ -170,7 +318,8 @@
                                 aria-expanded="false">
                                 <img class="rounded-circle header-profile-user"
                                     src="{{ asset('assets/images/users/avatar-2.jpg') }}" alt="Header Avatar">
-                                <span style="margin-top:2%" class="d-none d-xl-inline-block ms-1"> {{ $user->name }}  <br></span>
+                                <span style="margin-top:2%" class="d-none d-xl-inline-block ms-1">
+                                    {{ $user->name }} <br></span>
                                 <i class="mdi mdi-chevron-down d-none d-xl-inline-block"></i>
 
                             </button>
@@ -182,10 +331,10 @@
                                 <div class="dropdown-divider"></div>
                                 <a class="dropdown-item" href="{{ route('departments.view') }}"><i
                                         class="ri-layout-masonry-line" style="margin-right:4%;"></i>Thông tin phòng
-                                        ban</a>
+                                    ban</a>
                                 <div class="dropdown-divider"></div>
-                                <a class="dropdown-item" href="{{ route('listUser.view') }}"><i class="ri-file-list-line"
-                                        style="margin-right:4%;"></i>Quản lý nhân sự</a>
+                                <a class="dropdown-item" href="{{ route('listUser.view') }}"><i
+                                        class="ri-file-list-line" style="margin-right:4%;"></i>Quản lý nhân sự</a>
                                 <div class="dropdown-divider"></div>
                                 <a class="dropdown-item" href="{{ route('listTeam.view') }}"><i class="ri-team-line"
                                         style="margin-right:4%;"></i>Quản lý nhóm</a>
@@ -208,27 +357,27 @@
                         <li class="menu-title">Mục lục</li>
 
                         <li>
-                                <a href="{{ route('DashBoard') }}" class="waves-effect">
-                                    <i class="mdi mdi-home-variant-outline"></i><span class="badge rounded-pill bg-primary float-end">3</span>
-                                    <span>Trang chủ</span>
-                                </a>
+                            <a href="{{ route('DashBoard') }}" class="waves-effect">
+                                <i class="mdi mdi-home-variant-outline"></i>
+                                <span>Trang chủ</span>
+                            </a>
                         </li>
                         <li>
-                            <a href="{{ route('listProjectManagerment') }}" class="waves-effect">
+                            <a href="{{ route('listCarBrands') }}" class="waves-effect">
                                 <i class="fas fa-project-diagram"></i>
                                 <span>Quản lý dự án</span>
                             </a>
                         </li>
                         <li>
-                                <a href="javascript: void(0);" class="has-arrow waves-effect">
-                                    <i class="ri-book-read-fill"></i>
-                                    <span>Kế hoạch công việc</span>
-                                </a>
-                                <ul class="sub-menu" aria-expanded="false">
-                                    <li><a href="{{ route('listWorkWeek') }}">Kế hoạch tuần</a></li>
-                                    <li><a href="{{ route('listWorkDaily')}}">Kế hoạch ngày</a></li>
-                                </ul>
-                            </li>
+                            <a href="javascript: void(0);" class="has-arrow waves-effect">
+                                <i class="ri-book-read-fill"></i>
+                                <span>Kế hoạch công việc</span>
+                            </a>
+                            <ul class="sub-menu" aria-expanded="false">
+                                <li><a href="{{ route('listWorkWeek') }}">Kế hoạch tuần</a></li>
+                                <li><a href="{{ route('listWorkDaily') }}">Kế hoạch ngày</a></li>
+                            </ul>
+                        </li>
 
                         <li>
                             <a href="javascript: void(0);" class="has-arrow waves-effect">
@@ -253,313 +402,252 @@
 
                         </div>
                     </div>
-<div class="col-12">
-    <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-        <h4 class="mb-sm-0">Trang chủ</h4>
-    </div>
-</div>
-<div class="row">
-    <div class="col-xl-6 col-sm-6">
-        <div class="card">
-            <div class="card-body" style="text-align: center;padding: unset;background-color: tomato;border-radius: 8px;">
-                    <img style="position: absolute;left: 0;top: 0; width: 25%;" src="{{{ asset('assets/images/decore-left.png') }}}" alt="">
-                    <img style="position: absolute;right: 0;top: 0;width: 25%;" src="{{{ asset('assets/images/decore-right.png') }}}" alt="">
-                    <img style="margin-top: -25px;width: 30%;" src="{{{ asset('assets/images/zyro-image.png') }}}" alt="">
-
-                <div>
-                    <h3 style="color: white;">Xin chào</h3>
-                    <h1 style="color: white;"><strong>{{ $user->name }}</strong></h1>
-                    <h4 style="color: white;">Bạn đã hoàn tất <span style="color: green">100%</span> công việc trong ngày hôm nay</h4>
-                </div>
-            </div>
-        </div>
-    </div> <!-- end col -->
-
-    <div class="col-xl-3 col-sm-6">
-        <div class="card">
-            <div class="card-body">
-
-                <div class="d-flex text-muted">
-                    <div class="flex-shrink-0 me-3 align-self-center">
-                        <div class="avatar-sm">
-
-                            <div class="avatar-title bg-light rounded-circle text-primary font-size-20"
-                                style="color: rgb(64, 0, 255)!important">
-                                <i class="ri-bar-chart-grouped-line"></i>
-                            </div>
+                    <div class="col-12">
+                        <div class="page-title-box d-sm-flex align-items-center justify-content-between">
+                            <h4 class="mb-sm-0">Trang chủ</h4>
                         </div>
                     </div>
-                    <div class="flex-grow-1 overflow-hidden">
-                        <p class="mb-1" style="font-size: 17px;">Công việc tuần này</p>
-                        <h5 class="mb-3" style="font-size:35px">600</h5>
-                    </div>
-                </div>
-            </div>
-            <!-- end card-body -->
-        </div>
-        <div class="card">
-            <div class="card-body">
-                <div class="d-flex text-muted">
-                    <div class="flex-shrink-0  me-3 align-self-center">
-                        <div class="avatar-sm">
-
-                            <div class="avatar-title bg-light rounded-circle text-primary font-size-20">
-                                <i class="fas fa-book"></i>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="flex-grow-1 overflow-hidden">
-                        <p class="mb-1" style="font-size: 17px;">Công việc hoàn thành</p>
-                        <h5 class="mb-3" style="font-size:35px">550/650</h5>
-
-                    </div>
-                </div>
-            </div>
-            <!-- end card-body -->
-        </div>
-        <!-- end card -->
-    </div>
-    <!-- end col -->
-
-    <div class="col-xl-3 col-sm-6">
-        <div class="card">
-            <div class="card-body">
-                <div class="d-flex">
-                    <div class="flex-shrink-0 me-1 align-self-center">
-                        <div class="avatar-sm">
-
-                            <div class="avatar-title bg-light rounded-circle text-primary font-size-20"
-                                style="color: orange!important">
-                                <i class=" ri-line-chart-line"></i>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="flex-grow-1 overflow-hidden">
-                        <p class="mb-1" style="font-size: 17px;">Công việc phát sinh</p>
-                        <h5 class="mb-3" style="font-size:35px">50</h5>
-                    </div>
-                </div>
-            </div>
-            <!-- end card-body -->
-        </div>
-        <div class="card">
-            <div class="card-body">
-                <div class="d-flex text-muted">
-                    <div class="flex-shrink-0  me-3 align-self-center">
-                        <div class="avatar-sm">
-                            <div class="avatar-title bg-light rounded-circle text-primary font-size-20"
-                                style="color: red!important">
-                                <i class=" far fa-bookmark"></i>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="flex-grow-1 overflow-hidden">
-                        <p class="mb-1" style="font-size: 17px;">Công việc trễ</p>
-                        <h5 class="mb-3" style="font-size:35px">100/650</h5>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-    </div>
-    <!-- end col -->
-</div>
-
-
-<div class="row">
-    <div class="col-xl-7">
-        <div class="card">
-            <div class="card-body">
-                <h5 class="card-title" style="font-size: 20px">Biểu đồ thống kê công việc tháng 1</h5>
-                <div>
-                    <ul class="list-unstyled">
-                        <li class="py-3">
-                            <div class="d-flex">
-                                <div class="avatar-xs align-self-center me-3" style="height: 4rem;width:4rem;">
-                                    <div class="avatar-title rounded-circle bg-light text-primary font-size-18" style="font-size:30px!important;">
-                                        <i class="ri-checkbox-circle-line"></i>
-                                    </div>
-                                </div>
-                                <div class="flex-grow-1">
-                                    <p class="text-muted mb-2" style="font-size: 20px;">Công việc hoàn thành</p>
-                                    <div class="progress progress-sm animated-progess" style="height: 12px;">
-                                        <div class="progress-bar bg-success" role="progressbar" style="width: 70%"
-                                            aria-valuenow="70" aria-valuemin="0" aria-valuemax="100"></div>
-                                    </div>
-                                </div>
-                            </div>
-                        </li>
-                        <li class="py-3">
-                            <div class="d-flex">
-                                <div class="avatar-xs align-self-center me-3" style="height: 4rem;width:4rem;">
-                                    <div class="avatar-title rounded-circle bg-light text-primary font-size-18" style="font-size:30px!important;">
-                                        <i class="ri-calendar-2-line"></i>
-                                    </div>
-                                </div>
-                                <div class="flex-grow-1">
-                                    <p class="text-muted mb-2" style="font-size: 20px;">Đang thực hiện</p>
-                                    <div class="progress progress-sm animated-progess" style="height: 12px;">
-                                        <div class="progress-bar bg-warning" role="progressbar" style="width: 45%"
-                                            aria-valuenow="45" aria-valuemin="0" aria-valuemax="100"></div>
-                                    </div>
-                                </div>
-                            </div>
-                        </li>
-                        <li class="py-3">
-                            <div class="d-flex">
-                                <div class="avatar-xs align-self-center me-3" style="height: 4rem;width:4rem;">
-                                    <div class="avatar-title rounded-circle bg-light text-primary font-size-18" style="font-size:30px!important;">
-                                        <i class="ri-close-circle-line"></i>
-                                    </div>
-                                </div>
-                                <div class="flex-grow-1">
-                                    <p class="text-muted mb-2" style="font-size: 20px;">Công việc trễ</p>
-                                    <div class="progress progress-sm animated-progess" style="height: 12px;">
-                                        <div class="progress-bar bg-danger" role="progressbar" style="width: 19%"
-                                            aria-valuenow="19" aria-valuemin="0" aria-valuemax="100"></div>
-                                    </div>
-                                </div>
-                            </div>
-                        </li>
-                    </ul>
-                </div>
-
-                <hr>
-
-                <div class="text-center">
                     <div class="row">
-                        <div class="col-4">
-                            <div class="mt-2" style="font-size: 16px;">
-                                <p class="text-muted mb-2">Công việc hoàn thành</p>
-                                <h5 class="font-size-16 mb-0" style="color: green;font-size: 30px!important;">70</h5>
+                        <div class="col-xl-6">
+                            <div class="card custom-card">
+                                <div class="card-body">
+                                    <div class="greeting-container">
+                                        <h3 class="greeting-text">Xin chào</h3>
+                                        <h1 class="greeting-user-name">{{ $user->name }}</h1>
+                                        <h4 class="greeting-progress">Hãy làm việc ngay thôi nào</h4>
+                                    </div>
+                                </div>
                             </div>
-                        </div>
-                        <div class="col-4">
-                            <div class="mt-2" style="font-size: 16px;">
-                                <p class="text-muted mb-2">Đang thực hiện</p>
-                                <h5 class="font-size-16 mb-0" style="color: orange;font-size: 30px!important;">45</h5>
+                            <div class="col-xl-12">.
+                                <div class="card">
+                                    <div class="card-body" style="height: 520px">
+                                    <canvas id="myChart"></canvas>
+                                    </div>
+                                </div>
                             </div>
-                        </div>
-                        <div class="col-4">
-                            <div class="mt-2" style="font-size: 16px;">
-                                <p class="text-muted mb-2">Công việc đã trễ</p>
-                                <h5 class="font-size-16 mb-0" style="color: red;font-size: 30px!important;">19</h5>
+                        </div> <!-- end col -->
+
+                        <div class="col-xl-6">
+                            <div class="card calendar-card">
+                                <div class="card-body">
+                                    <div id="carouselExampleSlidesOnly" class="carousel slide"
+                                        data-bs-ride="carousel" data-interval="3000">
+                                        <div class="carousel-inner" role="listbox">
+                                            <div class="carousel-item">
+                                                <img style="width: 100%; height: 19.5rem;" class="d-block img-fluid"
+                                                    src="{{ asset('assets/images/background.JPG') }}"
+                                                    alt="First slide">
+                                            </div>
+                                            <div class="carousel-item active">
+                                                <img style="width: 100%;height: 19.5rem;" class="d-block img-fluid"
+                                                    src="{{ asset('assets/images/MAN HINH THACO_13.1-16x9_Mau1.jpg') }}"
+                                                    alt="Second slide">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div id="calendar">
+
+                                        <div class="month">
+                                            <button class="month-nav prev">&#10094;</button>
+                                            <div class="month-name" id="month-name">Tháng 4</div>
+                                            <button class="month-nav next">&#10095;</button>
+                                        </div>
+                                        <ul class="weekdays">
+                                            <li>T2</li>
+                                            <li>T3</li>
+                                            <li>T4</li>
+                                            <li>T5</li>
+                                            <li>T6</li>
+                                            <li>T7</li>
+                                            <li>CN</li>
+                                        </ul>
+                                        <ul class="days" id="days">
+                                            <!-- Các ngày của tháng sẽ được thêm vào đây bằng JavaScript -->
+                                        </ul>
+
+                                    </div>
+
+                                </div>
                             </div>
-                        </div>
+                        </div> <!-- end col -->
                     </div>
-                </div>
+
+
+
+
+                    @include('include.footer')
+</body>
+<div class="modal fade fullscreen-modal" id="todayTasksModal" tabindex="-1" role="dialog" style="font-size: 30px"
+    aria-labelledby="todayTasksModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header" style="background-color: #F8F8F8;">
+                <h5 style="font-size: 30px;font-weight: bold;font-family: 'remixicon';" class="modal-title" id="todayTasksModalLabel">THÔNG BÁO</h5>    
             </div>
-            <!-- end card-body -->
-        </div>
-        <!-- end card -->
-    </div>
-    <!-- end col -->
-    <!-- end col -->
-
-
-    <div class="col-lg-5">
+            <div class="modal-body" style="background-color: #F8F8F8;">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="table-wrapper">
+                <h3>I. Công việc ngày ({{ date('d/m/Y', strtotime($mydate)) }})</h3>
+                <table class="table table-dark mb-0">
+                    <thead>
+                        <tr>
+                            <th style="text-align: left; " scope="col">STT</th>
+                            <th style="text-align: left; " scope="col">Tên công việc</th>
+                            <th style="text-align: left; " scope="col">Trạng thái</th>
+                        </tr>
+                    </thead>                    
+                    <tbody>
+                        @foreach ($workDaily as $key => $task)
+                            <tr>
+                                <td  style="text-align: center;font-weight: bold;">{{ $key + 1 }}</td>
+                                <td>{{ $task->categoryDaily }}</td>
+                                @if ($task->status == -1 )
+                                    <td style="text-align: center; color: rgb(248, 16, 16);"> Cần cập nhật </td>
+                                @elseif($task->status == 0)
+                                    <td style="text-align: center; color: rgb(251, 147, 2) "> Cần thực hiện </td> 
+                                @else
+                                    <td style="text-align: center; color: rgb(0, 255, 17) "> Đã hoàn thành </td> 
+                                @endif
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+         
         <div class="card">
-            <div class="card-body">
 
-                <div id='fullDiv' style="text-align: center">
-                    <img style="    height: 93px; width: 260px;" src="{{ asset('assets/images/logo.png') }}"
-                        alt="">
-                </div>
-                <div id='fullDiv'>
-                    <ul class="lichne">
-                        <li class="lichne1">SUN</li>
-                        <li class="lichne1">MON</li>
-                        <li class="lichne1">TUE</li>
-                        <li class="lichne1">WED</li>
-                        <li class="lichne1">THUR</li>
-                        <li class="lichne1">FRI</li>
-                        <li class="lichne1">SAT</li>
-                        <li class="lichne1">1</li>
-                        <li class="lichne1">2</li>
-                        <li class="lichne1">3</li>
-                        <li class="lichne1">4</li>
-                        <li class="lichne1">5</li>
-                        <li class="lichne1">6</li>
-                        <li class="lichne1">7</li>
-                        <li class="lichne1">8</li>
-                        <li class="lichne1">9</li>
-                        <li class="lichne1">10</li>
-                        <li class="lichne1">11</li>
-                        <li class="lichne1">12</li>
-                        <li class="lichne1">13</li>
-                        <li class="lichne1">14</li>
-                        <li class="lichne1">15</li>
-                        <li class="lichne1">16</li>
-                        <li class="lichne1">17</li>
-                        <li class="lichne1">18</li>
-                        <li class="lichne1">19</li>
-                        <li class="lichne1">20</li>
-                        <li class="lichne1">21</li>
-                        <li class="lichne1">22</li>
-                        <li class="lichne1">23</li>
-                        <li class="lichne1">24</li>
-                        <li class="lichne1">25</li>
-                        <li class="lichne1">26</li>
-                        <li class="lichne1">27</li>
-                        <li class="lichne1">28</li>
-                        <li class="lichne1">29</li>
-                        <li class="lichne1">30</li>
-                        <li class="lichne1">31</li>
-                        <li class="lichne1">1</li>
-                        <li class="lichne1">2</li>
-                        <li class="lichne1">3</li>
-                        <li class="lichne1">4</li>
-                    </ul>
-                </div>
+                <h3>II. Công việc tuần {{$currentWeekInMonth}} tháng {{$currentMonth}}</h3>
+                <table class="table table-dark mb-0">
 
+                    <thead>
+                        <tr>
+                            <th style="text-align: left;" scope="col">STT</th>
+                            <th style="text-align: left;" scope="col">Tên công việc</th>
+                            <th style="text-align: left;" scope="col">Ngày bắt đầu</th>
+                            <th style="text-align: left;" scope="col">Ngày kết thúc</th>
+                            <th style="text-align: left;" scope="col">Trạng thái</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach ($tasksThisWeek as $key => $task)
+                            <tr>
+                                <td  style="text-align: center;font-weight: bold;">{{ $key + 1 }}</td>
+                                <td>{{ $task->categoryWeek }}</td>
+                                <td>{{ date('d/m/Y', strtotime($task->startdate)) }}</td>
+                                <td>{{ date('d/m/Y', strtotime($task->enddate)) }}</td>
+                                @if ($task->status == -1 )
+                                    <td style="text-align: center; color: rgb(248, 16, 16); "> Cần cập nhật </td>
+                                @elseif($task->status == 0)
+                                    <td style="text-align: center; color: rgb(251, 147, 2) "> Đang thực hiện </td> 
+                                @else
+                                    <td style="text-align: center; color: rgb(0, 255, 17) "> Đã hoàn thành </td> 
+                                @endif
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+                <!-- Thêm các hạng mục khác ở đây -->
             </div>
-            <hr>
-            <div class="card">
-                <div class="card-body">
-                    <h4 class="card-title">Hôm nay</h4>
-
-                    <div class="pe-3" data-simplebar style="max-height: 287px;">
-                        <a href="#" class="text-body d-block">
-                            <div class="d-flex py-3">
-                                <div class="flex-shrink-0 me-3 align-self-center">
-                                </div>
-
-                                <div class="flex-grow-1 overflow-hidden">
-                                    <h5 class="font-size-14 mb-1">Công việc mới:</h5>
-                                </div>
-                            </div>
-                        </a>
-                        <a href="#" class="text-body d-block">
-                            <div class="d-flex py-3">
-                                <div class="flex-shrink-0 me-3 align-self-center">
-                                </div>
-
-                                <div class="flex-grow-1 overflow-hidden">
-                                    <h5 class="font-size-14 mb-1">Công việc đến hạng:</h5>
-                                </div>
-                            </div>
-                        </a>
-                        <a href="#" class="text-body d-block">
-                            <div class="d-flex py-3">
-                                <div class="flex-shrink-0 me-3 align-self-center">
-                                </div>
-
-                                <div class="flex-grow-1 overflow-hidden">
-                                    <h5 class="font-size-14 mb-1">Công việc được giao:</h5>
-                                </div>
-                            </div>
-                        </a>
-
-                    </div>
-                    <!-- end card-body -->
-                </div>
-                <!-- end card -->
             </div>
-            <!-- end col -->
-
-
         </div>
-@include('include.footer')
-        </body>
+    </div>
+            <div class="modal-footer" style="background-color: #F8F8F8;">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+            </div>
+        </div>
+    </div>
+</div>
 
-        </html>
+</html>
+<script>
+    let currentDate = new Date();
+
+    function updateCalendar() {
+        const monthNames = [
+            "Tháng 1",
+            "Tháng 2",
+            "Tháng 3",
+            "Tháng 4",
+            "Tháng 5",
+            "Tháng 6",
+            "Tháng 7",
+            "Tháng 8",
+            "Tháng 9",
+            "Tháng 10",
+            "Tháng 11",
+            "Tháng 12",
+        ];
+
+        const monthName = document.getElementById("month-name");
+        monthName.textContent = `${monthNames[currentDate.getMonth()]} ${currentDate.getFullYear()}`;
+
+        const daysInMonth = new Date(
+            currentDate.getFullYear(),
+            currentDate.getMonth() + 1,
+            0
+        ).getDate();
+        const days = document.getElementById("days");
+        days.innerHTML = "";
+
+        for (let i = 1; i <= daysInMonth; i++) {
+            const day = document.createElement("li");
+            day.textContent = i;
+
+            if (
+                i === new Date().getDate() &&
+                currentDate.getMonth() === new Date().getMonth() &&
+                currentDate.getFullYear() === new Date().getFullYear()
+            ) {
+                day.classList.add("day-today");
+            }
+
+            days.appendChild(day);
+        }
+    }
+
+    function changeMonth(step) {
+        currentDate.setMonth(currentDate.getMonth() + step);
+        updateCalendar();
+    }
+
+    document.querySelector(".prev").addEventListener("click", () => changeMonth(-1));
+    document.querySelector(".next").addEventListener("click", () => changeMonth(1));
+
+    updateCalendar();
+</script>
+<script>
+    $(document).ready(function() {
+        // Hiển thị hộp thoại (modal) khi có công việc trong ngày
+        if ({{ count($workDaily) }} > 0) {
+            $('#todayTasksModal').modal('show');
+        }
+    });
+</script>
+<script>
+    // Lấy tham chiếu đến thẻ canvas
+var ctx = document.getElementById('myChart').getContext('2d');
+
+// Tạo biểu đồ cột
+var myChart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+        labels: ['Tháng 1', 'Tháng 2', 'Tháng 3', 'Tháng 4', 'Tháng 5', 'Tháng 6', 'Tháng 7', 'Tháng 8', 'Tháng 9', 'Tháng 10', 'Tháng 11', 'Tháng 12'],
+        datasets: [{
+            label: 'Số liệu ví dụ',
+            data: [12, 19, 3, 5, 2, 3, 7, 8, 12, 14, 16, 20], // Thay đổi dữ liệu này thành dữ liệu của bạn
+            backgroundColor: 'rgba(75, 192, 192, 0.2)', // Màu nền của các cột
+            borderColor: 'rgba(75, 192, 192, 1)', // Màu đường viền của các cột
+            borderWidth: 1 // Độ rộng đường viền của các cột
+        }]
+    },
+    options: {
+        scales: {
+            y: {
+                beginAtZero: true
+            }
+        }
+    }
+});
+
+</script>

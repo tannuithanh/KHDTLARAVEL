@@ -13,7 +13,7 @@ class Workweek extends Model
         'id',
         'categoryWeek',
         'describeWeek',
-        'describeWeek',
+        'responsibility',
         'support',
         'department_id',
         'team_id',

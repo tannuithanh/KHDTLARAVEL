@@ -21,9 +21,11 @@ return new class extends Migration
             $table->string('msnv');
             $table->string('password');
             $table->unsignedBigInteger('department_id');
+            $table->unsignedBigInteger('department_id1')->nullable();
             $table->unsignedBigInteger('team_id')->nullable();
             $table->unsignedBigInteger('position_id');
             $table->foreign('department_id')->references('id')->on('departments')->onDelete('cascade');
+            $table->foreign('department_id1')->references('id')->on('departments')->onDelete('cascade');
             $table->foreign('team_id')->references('id')->on('teams')->onDelete('cascade');
             $table->foreign('position_id')->references('id')->on('positions')->onDelete('cascade');
             $table->integer('is_admin')->default(0)->comment('0:Không phải admin, 1:Là admin');

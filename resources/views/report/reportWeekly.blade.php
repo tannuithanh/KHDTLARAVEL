@@ -1,4 +1,9 @@
 @include('include.header')
+<style>
+    .th, td{
+        font-size: 20px
+    }
+</style>
 <div class="col-12">
     <div class="page-title-box d-sm-flex align-items-center justify-content-between">
         <h4 class="mb-sm-0">Báo cáo tuần</h4>
@@ -100,10 +105,10 @@
                                             <td style=""> {{ $value->categoryWeek }} </td>
                                             <td style=""> {!! nl2br($value->describeWeek) !!}</td>
                                             <td style="text-align: center;"> {{ $value->responsibility }}</td>
-                                            <td style="text-align: center;"> {{ $value->name }}</td>
+                                            <td style="text-align: left;"> {!! nl2br($value->support) !!}</td>
                                             <td > {!! nl2br($value->inadequacy) !!}</td>
                                             <td > {!! nl2br($value->propose) !!} </td>
-                                            <td style="text-align: center; color: #000000;font-size: 20px;width: 0;background-color: #11d3ff"> {{ $value->result }}%</td>
+                                            <td style="text-align: center; color: #000000;font-size: 20px;width: 0;background-color: #11d3ff"> {{ $value->Result }}%</td>
                                             <td style="text-align: center; width: 0;font-size:20px"> @if($value->fileupload)<a href="{{ route('reportWeekly.download',$value->fileupload) }}" >Tải file</a> @else Không có file @endif</td>
                                         </tr>
                                     @endif

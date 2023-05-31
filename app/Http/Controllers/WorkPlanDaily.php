@@ -188,6 +188,7 @@ class WorkPlanDaily extends Controller
     }
 
     public function updateWorkDailyPost($id, request $request){
+        // dd($request->toArray());
         if(isset($request['support'])){
             $supportJson = json_encode($request['support'], true);
             $supportArray =  json_decode($supportJson, true);
@@ -205,8 +206,11 @@ class WorkPlanDaily extends Controller
         ->first();
         if($countWorkWeek_id->total<100){
         $workDaily = Workdaily::find($id);
+        // dd($workDaily->toArray());
         $workDaily->support = $supportString;
         $workDaily->inadequacy = $request->inadequacy;
+        $workDaily->describeDaily = $request->describeDaily;
+        $workDaily->time = $request->time;
         $workDaily->propose = $request->propose;
         $workDaily->Result = $request->Result;
         $workDaily->ResultByWookWeek = $request->ResultByWookWeek;
@@ -457,5 +461,7 @@ class WorkPlanDaily extends Controller
             ],);
             return redirect()->route('listWorkDaily')->with('successfully', 'Giao việc thành công');  
     }
+
+   
 }
 

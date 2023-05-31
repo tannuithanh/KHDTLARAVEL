@@ -3,10 +3,11 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Events\UserChanged;
+use Laravel\Sanctum\HasApiTokens;
+use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Notifications\Notifiable;
-use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
 {
@@ -53,4 +54,18 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+    protected static function booted()
+{
+    static::created(function ($user) {
+        event(new UserChanged($user));
+    });
+
+    static::updated(function ($user) {
+        event(new UserChanged($user));
+    });
+
+    static::deleted(function ($user) {
+        event(new UserChanged($user));
+    });
+}
 }

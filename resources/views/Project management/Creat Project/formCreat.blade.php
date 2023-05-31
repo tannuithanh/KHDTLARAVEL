@@ -26,13 +26,6 @@
                     </div>
                 </div>
                 <div class="mb-3">
-                    <label class="form-label">Mô tả dự án</label>
-                    <div>
-                        <textarea id="validationCustom04" type="text" name="describe_project" class="form-control" required=""
-                            placeholder="Mô tả dự án"></textarea>
-                    </div>
-                </div>
-                <div class="mb-3">
                     <label class="form-label">Ngày/Tháng/Năm</label>
                     <div class="input-daterange input-group" id="datepicker6" data-date-format="dd/mm/yyyy"
                         data-date-autoclose="true" data-provide="datepicker" data-date-container='#datepicker6'>
@@ -46,32 +39,12 @@
                         <button type="button" id="add-department" class="btn btn-primary">+</button>
                     </div>
                 </div>
-                <div class="mb-3">
-                    <label class="form-label">Chế độ</label>
-                    <div class="form-check mb-2">
-                        <input class="form-check-input " type="radio" name="privacy" id="exampleRadios1" value="0"
-                            checked="">
-                        <label class="form-check-label" for="exampleRadios1">
-                            Công khai
-                        </label>
-                    </div>
-                    <div class="form-check">
-                        <input class="form-check-input" type="radio" name="privacy" id="exampleRadios2"
-                            value="1">
-                        <label class="form-check-label" for="exampleRadios2">
-                            Riêng tư
-                        </label>
-                    </div>
-                    <label class="form-check-label" for="exampleRadios2" style="color:red">
-                        Ghi chú: Chế độ riêng tư sẽ ẩn đối với những phòng ban không có trong danh sách dự án
-                    </label>
-                </div>
                 <div>
                     <div>
                         <button type="submit" class="btn btn-primary waves-effect waves-light me-2">
                             Tạo
                         </button>
-                        <a href="{{ route('listProjectManagerment') }}" class="btn btn-secondary waves-effect">
+                        <a class="btn btn-secondary waves-effect">
                             Trở về
                         </a>
                     </div>
@@ -171,6 +144,11 @@
             });
         }
     });
+        function convertToISODate(dateString) {
+            var parts = dateString.split("/");
+            var dateObject = new Date(parts[2], parts[1] - 1, parts[0]);
+            return dateObject.toISOString().slice(0, 10);
+        }
         function createDepartmentRow() {
             var $row = $("<div>").addClass("department-row");
             
@@ -184,11 +162,13 @@
             
             var projectStartDate = $("#project_start_date").val();
             var projectEndDate = $("#project_end_date").val();
+            var isoProjectStartDate = convertToISODate(projectStartDate);
+            var isoProjectEndDate = convertToISODate(projectEndDate);
             $row.append('<label class="form-label">Ngày bắt đầu:</label>');
-            $row.append('<input type="date" class="form-control" name="start_date[]" placeholder="Ngày bắt đầu" min="' + projectStartDate + '" max="' + projectEndDate + '" required="">');
+            $row.append('<input type="date" class="form-control" name="start_date[]" placeholder="Ngày bắt đầu" min="' + isoProjectStartDate + '" max="' + isoProjectEndDate + '" required="">');
 
             $row.append('<label class="form-label">Ngày kết thúc:</label>');
-            $row.append('<input type="date" class="form-control" name="end_date[]" placeholder="Ngày kết thúc" min="' + projectStartDate + '" max="' + projectEndDate + '" required="">');
+            $row.append('<input type="date" class="form-control" name="end_date[]" placeholder="Ngày kết thúc" min="' + isoProjectStartDate + '" max="' + isoProjectEndDate + '" required="">');
 
             $row.append('<label class="form-label">Tên công việc:</label>');
             $row.append('<input type="text" class="form-control" name="task_name[]" placeholder="Tên công việc" required="">');

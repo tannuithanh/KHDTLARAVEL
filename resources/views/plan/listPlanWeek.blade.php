@@ -1,4 +1,5 @@
 @include('include.header')
+<title>Quản lý kế hoạch tuần</title>
 <head>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/11.1.4/sweetalert2.min.css" integrity="sha512-gIGX9wkL4l4+e4im+rM8WZ7VccvY2uUR7V+xdh8Waj7T0y0UsD94jKpCZU6oz+U6/CJn6e7UQLpWO1xGOn11/Q==" crossorigin="anonymous" referrerpolicy="no-referrer" />
   </head>
@@ -302,8 +303,10 @@
                                                         <td style="text-align: center; background-color: rgb(14, 232, 170);"><b style="font-size: 15px">{{$value->sunday}}</b></td>
                                                         @else
                                                             <td style="text-align: center;"></td>
-                                                        @endif            
-                                                @if ($mydate < $value->startdate && $value->status == 0)
+                                                        @endif    
+                                                @if ($value->status == -1)
+                                                    <td style="color:white;text-align: center;background-color:rgb(81, 82, 82); border: 1px solid black!important">Chưa cập nhật</td>              
+                                                @elseif ($mydate < $value->startdate && $value->status == 0)
                                                     <td class="hidden-column col6"
                                                         style="color:#ffffff;text-align: center; background-color:rgb(133, 58, 219)">
                                                         Chưa đến hạng </td>
@@ -322,44 +325,46 @@
                                                 <td style="text-align: left; "class="hidden-column xuongdong col7"> {{ $value->note }}</td>
                                             @endif
                                             <td class="hidden-column" style="text-align:center">
-                                                <form id="delete-form-{{ $value->id }}"
-                                                    action="{{ route('deleteWorkWeek', $value->id) }}"
-                                                    method="POST" class="delete-form">
-                                                    @csrf
-                                                    @method('DELETE')
+                                                @if ($value->status != -1 )
+                                                    <form id="delete-form-{{ $value->id }}"
+                                                        action="{{ route('deleteWorkWeek', $value->id) }}"
+                                                        method="POST" class="delete-form">
+                                                        @csrf
+                                                        @method('DELETE')
 
 
-                                                    @if ($mydate <= $value->enddate && $mydate >= $value->startdate && $value->status == 0)
-                                                         @if ($value->responsibility==$user->name)
-                                                            <a href="{{ route('editWorkWeek', $value->id) }}"
-                                                                class="btn btn-outline-secondary btn-sm edit"
-                                                                title="Sửa"><i class="fas fa-pencil-alt"></i></a>
-                                                                <button type="button" class="btn btn-outline-danger btn-sm delete ri-delete-bin-line" title="Xóa" data-dialog="dialog-{{ $value->id }}"></button>
-                                                            <a href="{{ route('formReportWeekly', $value->id) }}"
-                                                                class="btn btn-outline-primary waves-light btn-sm "
-                                                                title="Báo cáo"><i class="ri-book-mark-line"></i></a>
-                                                        @endif
-                                                    @elseif($mydate > $value->enddate && $value->status == 0)
-                                                        @if($value->idreason==0 && $value->responsibility==$user->name) 
-                                                        <button type="button" class="btn btn-outline-secondary waves-effect waves-light lyDoBtn" data-item-id="{{ $value->id }}">Lý do</button>
-                                                        @elseif($value->idreason==1  && ($user['position_id']==3 || $user['position_id']==4 || $user['position_id']==5 || $user['position_id']==6))
-                                                        <button type="button" class="btn btn-outline-secondary waves-effect waves-light reason" data-reason-id="{{ $value->id }}" data-reason-type="{{ $value->idreason }}" data-reason-text="{{ $value->reason }}">Lý do</button>
-                                                        @elseif($value->idreason==2 && $value->responsibility==$user->name || ($user['position_id']==3 || $user['position_id']==4 || $user['position_id']==5 || $user['position_id']==6) )
-                                                        <button type="button" class="btn btn-outline-success btn-sm reasontext" data-reason-id="{{ $value->id }}"  data-reason-text="{{ $value->reason }}">Lý do</button>
+                                                        @if ($mydate <= $value->enddate && $mydate >= $value->startdate && $value->status == 0)
                                                             @if ($value->responsibility==$user->name)
-                                                              <a href="{{ route('formReportWeekly', $value->id) }}"
-                                                                class="btn btn-outline-primary waves-light btn-sm "
-                                                                title="Báo cáo"><i class="ri-book-mark-line"></i></a>
+                                                                <a href="{{ route('editWorkWeek', $value->id) }}"
+                                                                    class="btn btn-outline-secondary btn-sm edit"
+                                                                    title="Sửa"><i class="fas fa-pencil-alt"></i></a>
+                                                                    <button type="button" class="btn btn-outline-danger btn-sm delete ri-delete-bin-line" title="Xóa" data-dialog="dialog-{{ $value->id }}"></button>
+                                                                <a href="{{ route('formReportWeekly', $value->id) }}"
+                                                                    class="btn btn-outline-primary waves-light btn-sm "
+                                                                    title="Báo cáo"><i class="ri-book-mark-line"></i></a>
                                                             @endif
-                                                    @endif
-                                                        
-                                                    @elseif($mydate < $value->startdate && $value->status == 0)
-                                                        <a href="{{ route('editWorkWeek', $value->id) }}"
-                                                            class="btn btn-outline-secondary btn-sm edit"
-                                                            title="Sửa"><i class="fas fa-pencil-alt"></i></a>
-                                                            <button type="button" class="btn btn-outline-danger btn-sm delete ri-delete-bin-line" title="Xóa" data-dialog="dialog-{{ $value->id }}">
-                                                    @endif
-                                                </form>
+                                                        @elseif($mydate > $value->enddate && $value->status == 0)
+                                                            @if($value->idreason==0 && $value->responsibility==$user->name) 
+                                                            <button type="button" class="btn btn-outline-secondary waves-effect waves-light lyDoBtn" data-item-id="{{ $value->id }}">Lý do</button>
+                                                            @elseif($value->idreason==1  && ($user['position_id']==3 || $user['position_id']==4 || $user['position_id']==5 || $user['position_id']==6))
+                                                            <button type="button" class="btn btn-outline-secondary waves-effect waves-light reason" data-reason-id="{{ $value->id }}" data-reason-type="{{ $value->idreason }}" data-reason-text="{{ $value->reason }}">Lý do</button>
+                                                            @elseif($value->idreason==2 && $value->responsibility==$user->name || ($user['position_id']==3 || $user['position_id']==4 || $user['position_id']==5 || $user['position_id']==6) )
+                                                            <button type="button" class="btn btn-outline-success btn-sm reasontext" data-reason-id="{{ $value->id }}"  data-reason-text="{{ $value->reason }}">Lý do</button>
+                                                                @if ($value->responsibility==$user->name)
+                                                                <a href="{{ route('formReportWeekly', $value->id) }}"
+                                                                    class="btn btn-outline-primary waves-light btn-sm "
+                                                                    title="Báo cáo"><i class="ri-book-mark-line"></i></a>
+                                                                @endif
+                                                        @endif
+                                                            
+                                                        @elseif($mydate < $value->startdate && $value->status == 0)
+                                                            <a href="{{ route('editWorkWeek', $value->id) }}" class="btn btn-outline-secondary btn-sm edit" title="Sửa"><i class="fas fa-pencil-alt"></i></a>
+                                                                <button type="button" class="btn btn-outline-danger btn-sm delete ri-delete-bin-line" title="Xóa" data-dialog="dialog-{{ $value->id }}"></button>
+                                                        @endif
+                                                    </form>                                                    
+                                                @elseif($value->status == -1 && $value->responsibility==$user->name)
+                                                    <a href="{{route('updateWorkWeek',$value->id)}}" class="btn btn-outline-primary waves-light btn-sm update" title="Cập nhật công việc"><i class=" fas fa-cloud-upload-alt"></i></a>
+                                                @endif
                                             </td>
                                         </tr>
                                     @endif
