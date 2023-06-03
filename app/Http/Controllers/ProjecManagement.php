@@ -236,10 +236,10 @@ class ProjecManagement extends Controller
             // dd($projectLv1Departments->toArray());
 
         // Lấy danh sách department_id từ $projectLv1Departments
-        $departmentIds = $projectLv1Departments->pluck('department_id');
+        $departmentIds = $projectLv1Departments->pluck('department_id')->unique();
         
         $departmentNames = Department::whereIn('id', $departmentIds)->pluck('name', 'id');
-        
+        // dd($departmentNames->toarray());
         // Lấy danh sách người dùng thuộc các phòng ban trong $departmentIds
         $userAll = User::whereIn('department_id', $departmentIds)->get();
         $userAllByDepartment = [];
@@ -288,13 +288,19 @@ class ProjecManagement extends Controller
         $projectlv2 = ProjectDepartment::find($projectLv3->project_department_id);
         $projectlv1 = Project::find($projectlv2->project_id);
         
-        // dd($projectlv1);
+        $responsibleUser = User::where('name', $projectLv3->responsibility)->first();
+        $responsibleDepartmentId = $responsibleUser->department_id;
+
+        $usersInResponsibleDepartment = User::where('department_id', $responsibleDepartmentId)->get();
+
+        // dd($usersInResponsibleDepartment->toarray());
         
         // Lấy danh sách các phòng ban tham gia vào projectlv2 từ projectlv1
         $projectLv1Departments = ProjectDepartment::where('project_id', $projectlv1->id)->get();
 
         // Lấy danh sách department_id từ $projectLv1Departments
         $departmentIds = $projectLv1Departments->pluck('department_id');
+
         $departmentNames = Department::whereIn('id', $departmentIds)->pluck('name', 'id');
 
         // Lấy danh sách người dùng thuộc các phòng ban trong $departmentIds
@@ -309,7 +315,7 @@ class ProjecManagement extends Controller
         ->where('work_by_project_department_id', $id)
         ->paginate(10);
 
-        return view('Project management.projectCon', compact('user', 'projectLv4', 'id', 'car_brands', 'projectLv3', 'projectlv2', 'today', 'projectlv1', 'userAll', 'departmentNames','userAllByDepartment'));
+        return view('Project management.projectCon', compact('usersInResponsibleDepartment','user', 'projectLv4', 'id', 'car_brands', 'projectLv3', 'projectlv2', 'today', 'projectlv1', 'userAll', 'departmentNames','userAllByDepartment'));
     }
 
 //----------------- IMPORT DỰ ÁN THỦ CÔNG CHO DỰ ÁN CON -----------------------//
@@ -336,6 +342,13 @@ class ProjecManagement extends Controller
 //----------------- IMPORT DỰ ÁN THỦ CÔNG CHO DỰ ÁN CON LV4 -----------------------//
         public function importHandmadeLv4(Request $request){
             
+            $users = Cache::remember('users', 60, function () {
+                return User::all();
+            });
+            $user = $users->first(function ($user) use ($request) {
+                return $user->name === $request['responsibility'];
+            });
+            // dd($user->toArray());
             $check = work_lv4_project::create([
                 'name_work' => $request['task_name'],
                 'responsibility' => $request['responsibility'],
@@ -343,10 +356,8 @@ class ProjecManagement extends Controller
                 'startdate' => $request['start_date'],
                 'enddate' => $request['end_date'],
             ]);
-
+           
             if($check){
-                // Get the user
-                $user = Auth::user(); // Replace this with your actual method of getting the logged in user
                 
                 $start_date = Carbon::parse($request['start_date']);
                 $end_date = Carbon::parse($request['end_date']);
@@ -426,27 +437,27 @@ class ProjecManagement extends Controller
         $projectlv2 = ProjectDepartment::find($request->id);
         $projectlv1 = Project::find($projectlv2->project_id);
         $projectLv1Departments = ProjectDepartment::where('project_id', $projectlv1->id)->get();
-
+       
         // Lấy danh sách department_id từ $projectLv1Departments
         $departmentIds = $projectLv1Departments->pluck('department_id');
         // dd($departmentIds->toarray());
         $file = $request->file('file');
-
-        $file = $request->file('file');
+   
 
         if ($file) {
             $reader = IOFactory::createReaderForFile($file->getPathName());
             $spreadsheet = $reader->load($file->getPathName());
             $worksheet = $spreadsheet->getActiveSheet();
             $isHeader = true;
-
+            
             // Lấy danh sách tên người dùng từ cache hoặc truy vấn cơ sở dữ liệu nếu chưa có
             $user_names = Cache::remember('user_names', 60, function () {
                 return User::select('name')->get()->pluck('name')->toArray();
             });
-            // dd($user_names);
-
+ 
+            // dd($worksheet->toArray());
             foreach ($worksheet->toArray() as $row) {
+                // dd($row);
                 if ($isHeader) {
                     $isHeader = false;
                     continue;
@@ -455,8 +466,8 @@ class ProjecManagement extends Controller
                 if (empty($row[1]) || empty($row[2]) || empty($row[3]) || empty($row[4])) {
                     continue;
                 }
-                $user = User::where('name', $row[2])->whereIn('department_id', $departmentIds)->first();
-                // dd($user->toarray());
+                $user = User::where('name', $row[2])->whereIn('department_id', $departmentIds)->orWhereIn('department_id1', $departmentIds)->first();
+                
                 if (!$user) {
                     return redirect()->back()->with('error', 'Nhân sự không thuộc phòng ban này.');
                 }
@@ -512,7 +523,7 @@ class ProjecManagement extends Controller
                     if (empty($row[1]) || empty($row[2]) || empty($row[3]) || empty($row[4])) {
                         continue;
                     }
-                    $user = User::where('name', $row[2])->whereIn('department_id', $departmentIds)->first();
+                    $user = User::where('name', $row[2])->whereIn('department_id', $departmentIds)->orWhereIn('department_id1', $departmentIds)->first();
                     // dd($user);
                     if (!$user) {
                         return redirect()->back()->with('error', 'Nhân sự không thuộc phòng ban này.');
@@ -821,4 +832,16 @@ class ProjecManagement extends Controller
         return response()->json(['message' => 'Xóa thành công']);
     }
     
+    public function saveNoteProject(Request $request){
+        $note = $request->input('note');
+        $dataId = $request->input('data_id');
+
+        // Lưu ghi chú vào cơ sở dữ liệu
+        // Giả sử bạn có một model tên là YourModel liên kết với bảng cần lưu ghi chú
+        $record = ProjectDepartment::find($dataId);
+        $record->note = $note;
+        $record->save();
+
+        return response()->json(['message' => 'Ghi chú đã được lưu thành công']);
+    }
 }

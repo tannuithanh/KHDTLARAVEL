@@ -14,6 +14,7 @@ class ProjectDepartment extends Model
         'id',
         'project_id',
         'department_id',
+        'department_id1',
         'startdate',
         'enddate',
         'name',

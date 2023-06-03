@@ -4,6 +4,23 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.css" />
 <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.js"></script>
 <style>
+
+    tbody, thead{
+        border-color: black !important;
+    }
+    th {
+     background-color:#16c745a2 !important ;
+     text-align: center;
+     vertical-align: middle;
+     color: #000000c9;
+     font-size: 20px;
+    }
+        td, th {
+            border-color: black !important;
+            border: 1px solid black;
+            font-size: 20px;
+            font-family: 'Times New Roman', Times, serif;
+            }
     .table-nowrap td, .table-nowrap th{
         white-space: inherit;
 
@@ -201,15 +218,15 @@
       
         <div class="card">
             <div class="card-body mb-3 mt-2" style="border: 1px solid;border-radius: 10px;">
-                <h4 class="card-title" style="font-size:20px">Thương hiệu xe: <span
+                <h4 class="card-title" style="font-size:20px; font-family: 'Times New Roman', Times, serif !important;">Thương hiệu xe: <span
                         style="color: red">{{ $car_brands->name }}</span></h4>
-                <h4 class="card-title" style="font-size:20px">Tên dự án: <span
+                <h4 class="card-title" style="font-size:20px; font-family: 'Times New Roman', Times, serif !important;">Tên dự án: <span
                         style="color: red">{{ $project->name_project }}</span></h4>
-                <h4 class="card-title" style="font-size:20px">Thời gian: <span style="color: red">
+                <h4 class="card-title" style="font-size:20px; font-family: 'Times New Roman', Times, serif !important;">Thời gian: <span style="color: red">
                         {{ date('d/m/Y', strtotime($project->start_date)) }} -
                         {{ date('d/m/Y', strtotime($project->end_date)) }}</span></h4>
                         @if ($user['name']==$project->name_create)
-                        <button type="button" class="btn btn-warning btn-sm add " title="Thêm" style="font-size: 20px" data-dialog="dialog-{{ $project->id }}" ><i class="mdi mdi-database-import"></i></button>    
+                        <button type="button" class="btn btn-warning btn-sm add " title="Thêm" style="font-size: 20px; font-family: 'Times New Roman', Times, serif !important;" data-dialog="dialog-{{ $project->id }}" ><i class="mdi mdi-database-import"></i></button>    
                         @endif
                          
             </div>
@@ -225,7 +242,7 @@
                 <div id="timeline" class="timeline" style="margin-top:10px"></div>
                                                      
                
-                <table class="table table-centered table-nowrap mb-3 mt-5">
+                <table class="table table-bordered border-primary mb-2 mt-5">
                     <thead>
                         <tr>
                             <th style="text-align:center ;" class="table-header">STT</th>
@@ -319,6 +336,9 @@
                                         @endif
                                         @if ($value->completion != 100 && $user['department_id'] == $value['department_id'] && in_array($user['position_id'], [5, 6, 1, 2]))
                                         <a data-id="{{ $value->id }}"  class="btn btn-outline-success addtask btn-sm"><i class="mdi mdi-application-import"></i></a>
+                                        <a data-id="{{ $value->id }}" class="btn btn btn-outline-info btn-sm note2"
+                                            title="update"><i class="mdi mdi-microsoft-onenote"></i></a>
+    
                                         @endif
                                         @if ($user['name'] == $project->name_create)
                                         <button type="button" class="btn btn-outline-secondary btn-sm sua ri-edit-box-fill" title="Sửa" data-dialog="dialog-{{ $value->id }}"></button>
@@ -409,7 +429,7 @@
                                                         title="Cập nhật"><i class="ri-file-text-line"></i></a>
                                                     <a data-id1="{{ $work->id }}" class="btn btn btn-outline-info btn-sm note"
                                                         title="update"><i class="mdi mdi-microsoft-onenote"></i></a>
-                                                @endif
+                                                @endif`
                                             @endif
                                         </td>
                                     </tr>
@@ -1012,17 +1032,12 @@
         const response = await fetch(showUrl);
         const projectDepartment = await response.json();
         let departmentOptions = '';
-            $.each(userAllByDepartment, function(departmentId, usersInDepartment) {
-                const departmentName = departmentNames[departmentId];
-                const optgroup = $('<optgroup label="' + departmentName + '">');
-
-                usersInDepartment.forEach(function(user) {
-                    const option = new Option(user.name, user.name, false, false);
-                    optgroup.append(option);
-                });
-
-                departmentOptions += optgroup.prop('outerHTML');
+            $.each(departmentNames, function(departmentId, departmentName) {
+                const option = new Option(departmentName, departmentId, false, false);
+                departmentOptions += $(option).prop('outerHTML');
             });
+
+
 
         // Hiển thị hộp thoại SweetAlert2 với thông tin đã lấy được
         const { value: formValues } = await Swal.fire({
@@ -1281,6 +1296,66 @@
         }
         });
     });
+    });
+//--------------------------------------- GHI CHÚ PROJECT -------------------------------------//
+    $(document).ready(function() {
+        $('.note2').on('click', function() {
+            const dataId = $(this).data('id');
+
+            Swal.fire({
+                title: 'Nhập ghi chú của bạn',
+                    input: 'textarea',
+                    inputLabel: 'Ghi chú',
+                    inputPlaceholder: '- Nhập ghi chú của bạn ở đây...',
+                    inputAttributes: {
+                        'aria-label': 'Nhập ghi chú của bạn ở đây'
+                    },
+                    inputAutoTrim: false,
+                    onOpen: (swal) => {
+                        const inputElement = swal.getInput();
+                        if (inputElement) {
+                            addBulletPointListener(inputElement);
+                        }
+                    },
+                    showCancelButton: true,
+                    confirmButtonText: 'Lưu',
+                    cancelButtonText: 'Hủy',
+                    preConfirm: (noteText) => {
+                    return new Promise((resolve, reject) => {
+                        $.ajax({
+                            url: "{!! route('saveNoteProject') !!}",
+                            method: 'POST',
+                            data: {
+                                note: noteText,
+                                data_id: dataId,
+                                _token: "{{ csrf_token() }}",
+                            },
+                            success: function(response) {
+                                Swal.fire('Thành công',
+                                    'Ghi chú đã được lưu thành công',
+                                    'success');
+
+                                // Tìm ô Ghi chú tương ứng và cập nhật giá trị
+                                var formattedNoteText = noteText
+                                    .replace(/\n/g, '<br>');
+
+                                // Tìm ô Ghi chú tương ứng và cập nhật giá trị
+                                $('.note-cell2[data-id="' + dataId +
+                                    '"]').html(formattedNoteText);
+
+                                resolve();
+                            },
+                            error: function(xhr, textStatus, errorThrown) {
+                                Swal.fire('Lỗi',
+                                    'Có lỗi xảy ra khi lưu ghi chú',
+                                    'error');
+                                reject();
+                            }
+                        });
+                    });
+                }
+            });
+        });
     });
 
 </script>

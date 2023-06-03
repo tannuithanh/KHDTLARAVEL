@@ -24,6 +24,9 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <style>
+        body{
+            font-family: 'Times New Roman', Times, serif !important;
+        }
         .table-wrapper {
             display: inline-block;
         }
@@ -210,7 +213,12 @@
 
     </style>
 
-
+<style>
+    .toggle-work-list {
+        cursor: pointer;
+    }
+    </style>
+    
 
 </head>
 
@@ -412,16 +420,49 @@
                             <div class="card custom-card">
                                 <div class="card-body">
                                     <div class="greeting-container">
-                                        <h3 class="greeting-text">Xin chào</h3>
-                                        <h1 class="greeting-user-name">{{ $user->name }}</h1>
-                                        <h4 class="greeting-progress">Hãy làm việc ngay thôi nào</h4>
+                                        <h3 class="greeting-text" style="font-family: 'Times New Roman', Times, serif !important;font-weight: bold">Xin chào</h3>
+                                        <h1 class="greeting-user-name"  style="font-family: 'Times New Roman', Times, serif !important;font-weight: bold">{{ $user->name }}</h1>
+                                        <h4 class="greeting-progress"  style="font-family: 'Times New Roman', Times, serif !important;font-weight: bold">Hãy làm việc ngay thôi nào</h4>
                                     </div>
                                 </div>
                             </div>
                             <div class="col-xl-12">.
                                 <div class="card">
                                     <div class="card-body" style="height: 520px">
-                                    <canvas id="myChart"></canvas>
+                                        <div class="container my-4">
+                                            <h2 class="mb-3" style="font-family: 'Times New Roman', Times, serif !important;font-weight: bold">Dự án bạn đang tham gia ({{ count($projects) }})</h2>
+                                        
+                                            @foreach ($projects as $project)
+                                                <div class="mb-4" style="font-family: 'Times New Roman', Times, serif !important;font-weight: bold">
+                                                    <h3 style="font-family: 'Times New Roman', Times, serif !important;font-weight: bold">Tên dự án: {{ $project->name_project }}</h3>
+                                                    
+                                                    @foreach ($project->projectDepartments as $projectDepartment)
+                                                        @php
+                                                            $userWorksInDepartment = $projectDepartment->works->filter(function ($work) use ($user) {
+                                                                return $work->responsibility == $user->name;
+                                                            });
+                                                        @endphp
+                                        
+                                                        @if (count($userWorksInDepartment))
+                                                            <h4 style="font-family: 'Times New Roman', Times, serif !important;font-weight: bold" class="toggle-work-list">[+] Công việc của bạn trong dự án: {{ $projectDepartment->name }}</h4>
+                                                            <ul class="work-list" style="display: none;">
+                                                                @foreach ($userWorksInDepartment as $work)
+                                                                    @if($work->completion < 100)
+                                                                        <li style="font-size:20px">
+                                                                            <a href="{{ route('ProjectCon', ['id' => $work->id]) }}">
+                                                                                {{ $work->name_work }}
+                                                                            </a>
+                                                                        </li>
+                                                                    @endif
+                                                                @endforeach
+                                                            </ul>
+                                                        @endif
+                                                    @endforeach
+                                                    <hr>
+                                                </div>
+                                            @endforeach
+                                        </div>
+                                        
                                     </div>
                                 </div>
                             </div>
@@ -625,29 +666,16 @@
     });
 </script>
 <script>
-    // Lấy tham chiếu đến thẻ canvas
-var ctx = document.getElementById('myChart').getContext('2d');
-
-// Tạo biểu đồ cột
-var myChart = new Chart(ctx, {
-    type: 'bar',
-    data: {
-        labels: ['Tháng 1', 'Tháng 2', 'Tháng 3', 'Tháng 4', 'Tháng 5', 'Tháng 6', 'Tháng 7', 'Tháng 8', 'Tháng 9', 'Tháng 10', 'Tháng 11', 'Tháng 12'],
-        datasets: [{
-            label: 'Số liệu ví dụ',
-            data: [12, 19, 3, 5, 2, 3, 7, 8, 12, 14, 16, 20], // Thay đổi dữ liệu này thành dữ liệu của bạn
-            backgroundColor: 'rgba(75, 192, 192, 0.2)', // Màu nền của các cột
-            borderColor: 'rgba(75, 192, 192, 1)', // Màu đường viền của các cột
-            borderWidth: 1 // Độ rộng đường viền của các cột
-        }]
-    },
-    options: {
-        scales: {
-            y: {
-                beginAtZero: true
-            }
+$(document).ready(function() {
+    $(".toggle-work-list").click(function() {
+        var workList = $(this).next(".work-list");
+        if (workList.css("display") == "none") {
+            workList.show();
+            $(this).text($(this).text().replace('[+]', '[-]'));
+        } else {
+            workList.hide();
+            $(this).text($(this).text().replace('[-]', '[+]'));
         }
-    }
+    });
 });
-
 </script>

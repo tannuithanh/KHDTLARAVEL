@@ -82,7 +82,7 @@
                     @endif
                     <span style="font-size: 19px;"><strong>KẾ HOẠCH TUẦN:</strong> {{ $weekNumber }}
                         &emsp;&emsp;</span> <span style="font-size: 19px;"><strong> Từ:</strong> <span style="color: green;">{{ $formattedDateStart }}</span> <strong> Đến:</strong> <span style="color: green;">{{ $formattedDateEnd }}</span></span>
-                    <table class="table table-editable table-nowrap align-middle table-edits ">
+                    <table class="table table-sm m-0">
                         <thead>
                             <tr>
                                 <th style="text-align:center ;" class="table-header">STT</th>

@@ -17,7 +17,9 @@
                 size: A4;
         
             }
-            
+            td, th {
+        font-family: 'Times New Roman', Times, serif;
+    }
             table.print-table th {
                 -webkit-print-color-adjust: exact;
             color-adjust: exact;
@@ -177,14 +179,14 @@
                         </div>
                     @endif
                     <span style="font-size: 19px;"><strong>KẾ HOẠCH TUẦN:</strong> <span style="color: green;">{{ $weekNumber }} </span>&emsp;&emsp;</span><span style="font-size: 19px;"><strong>THÁNG:</strong> <span style="color: green;">{{ $month }}</span> <strong>&emsp; TỪ:</strong> <span style="color: green;">{{ $formattedDateStart }}</span> <strong> Đến:</strong> <span style="color: green;">{{ $formattedDateEnd }}</span></span>
-                    <table id="my-table"  class="table table-editable table-nowrap align-middle table-edits ">
+                    <table id="my-table"  class="table table-bordered border-primary mb-0">
                         <thead>
                             <tr>
                                 <th rowspan="2"  style="text-align:center ; vertical-align: middle;" class="table-header col1">STT</th>
                                 <th rowspan="2" style="text-align:center ; vertical-align: middle;" class="table-header col2">Hạng mục công việc</th>
                                 <th rowspan="2" style="text-align:center ; vertical-align: middle;" class="table-header col3">Mô tả công việc</th>
                                 <th rowspan="2" style="text-align:center ; vertical-align: middle;" class="table-header col4">Trách nhiệm</th>
-                                <th rowspan="2" style="text-align:center ; vertical-align: middle;" class="table-header col5">Hỗ trợ</th>
+                                <th rowspan="2" style="text-align:center ; vertical-align: middle;" class="table-header hidden-column col5">Hỗ trợ</th>
                                 <th colspan="7" style="text-align:center ; vertical-align: middle;" class="table-header">Kế Hoạch</th>
                                 <th rowspan="2" style="text-align:center ; vertical-align: middle;" class="table-header col6 hidden-column">Trạng thái</th>
                                 <th rowspan="2" style="text-align:center ; vertical-align: middle;" class="table-header col1 hidden-column">Ghi chú</th>
@@ -218,37 +220,37 @@
                                                 <td class="col4" style="text-align: center; background-color: #00802c3b">{{ $value->responsibility }}</td>
                                                 <td class="col5" style="text-align: left; background-color: #00802c3b" >{!! nl2br($value->support) !!}</td>
                                                         @if ($dates[0] >= $value->startdate && $dates[0] <= $value->enddate)
-                                                            <td style="text-align: center; background-color: rgb(14, 232, 170);"><b style="font-size: 15px">{{$value->monday}}</b></td>
+                                                            <td style="text-align: center; background-color: #85b7de;"><b style="font-size: 15px">{{$value->monday}}</b></td>
                                                         @else
                                                             <td style="text-align: center;"></td>
                                                         @endif 
                                                          @if ($dates[1] >= $value->startdate && $dates[1] <= $value->enddate)
-                                                            <td style="text-align: center; background-color: rgb(14, 232, 170);"><b style="font-size: 15px">{{$value->tuesday}}</b></td>
+                                                            <td style="text-align: center; background-color: #85b7de;"><b style="font-size: 15px">{{$value->tuesday}}</b></td>
                                                         @else
                                                             <td style="text-align: center;"></td>
                                                         @endif
                                                         @if ($dates[2] >= $value->startdate && $dates[2] <= $value->enddate)
-                                                        <td style="text-align: center; background-color: rgb(14, 232, 170);"><b style="font-size: 15px">{{$value->wednesday}}</b></td>
+                                                        <td style="text-align: center; background-color: #85b7de;"><b style="font-size: 15px">{{$value->wednesday}}</b></td>
                                                         @else
                                                             <td style="text-align: center;"></td>
                                                         @endif 
                                                         @if ($dates[3] >= $value->startdate && $dates[3] <= $value->enddate)
-                                                            <td style="text-align: center; background-color: rgb(14, 232, 170);"><b style="font-size: 15px">{{$value->thursday}}</b></td>
+                                                            <td style="text-align: center; background-color: #85b7de;"><b style="font-size: 15px">{{$value->thursday}}</b></td>
                                                         @else
                                                             <td style="text-align: center;"></td>
                                                         @endif   
                                                         @if ($dates[4] >= $value->startdate && $dates[4] <= $value->enddate)
-                                                        <td style="text-align: center; background-color: rgb(14, 232, 170);"><b style="font-size: 15px">{{$value->friday}}</b></td>
+                                                        <td style="text-align: center; background-color: #85b7de;"><b style="font-size: 15px">{{$value->friday}}</b></td>
                                                         @else
                                                             <td style="text-align: center;"></td>
                                                         @endif 
                                                         @if ($dates[5] >= $value->startdate && $dates[5] <= $value->enddate)
-                                                            <td style="text-align: center; background-color: rgb(14, 232, 170);"><b style="font-size: 15px">{{$value->saturday}}</b></td>
+                                                            <td style="text-align: center; background-color: #85b7de;"><b style="font-size: 15px">{{$value->saturday}}</b></td>
                                                         @else
                                                             <td style="text-align: center;"></td>
                                                         @endif  
                                                         @if ($dates[6] >= $value->startdate && $dates[6] <= $value->enddate)
-                                                        <td style="text-align: center; background-color: rgb(14, 232, 170);"><b style="font-size: 15px">{{$value->sunday}}</b></td>
+                                                        <td style="text-align: center; background-color: #85b7de;"><b style="font-size: 15px">{{$value->sunday}}</b></td>
                                                         @else
                                                             <td style="text-align: center;"></td>
                                                         @endif            
@@ -267,45 +269,45 @@
                                                 <td   class="left-align col2"> {{ $value->categoryWeek }} </td>
                                                 <td style="white-space: normal"  class="left-align  col3"> {!! nl2br($value->describeWeek) !!}</td>
                                                 <td class="col4" style="text-align: center;"> {{ $value->responsibility }}</td>
-                                                <td class="col5" style="text-align: left;" > {!! nl2br($value->support) !!}</td>
+                                                <td class="col5 hidden-column" style="text-align: left;" > {!! nl2br($value->support) !!}</td>
                                                 {{-- <td style="text-align: center;"> {{ $dates[0] }}</td> --}}
                                                         @if ($dates[0] >= $value->startdate && $dates[0] <= $value->enddate)
-                                                            <td style="text-align: center; background-color: rgb(14, 232, 170);"><b style="font-size: 15px">{{$value->monday}}</b></td>
+                                                            <td style="text-align: center; background-color: #85b7de;"><b style="font-size: 15px">{{$value->monday}}</b></td>
                                                         @else
                                                             <td style="text-align: center;"></td>
                                                         @endif 
                                                          @if ($dates[1] >= $value->startdate && $dates[1] <= $value->enddate)
-                                                            <td style="text-align: center; background-color: rgb(14, 232, 170);"><b style="font-size: 15px">{{$value->tuesday}}</b></td>
+                                                            <td style="text-align: center; background-color: #85b7de;"><b style="font-size: 15px">{{$value->tuesday}}</b></td>
                                                         @else
                                                             <td style="text-align: center;"></td>
                                                         @endif
                                                         @if ($dates[2] >= $value->startdate && $dates[2] <= $value->enddate)
-                                                        <td style="text-align: center; background-color: rgb(14, 232, 170);"><b style="font-size: 15px">{{$value->wednesday}}</b></td>
+                                                        <td style="text-align: center; background-color: #85b7de;"><b style="font-size: 15px">{{$value->wednesday}}</b></td>
                                                         @else
                                                             <td style="text-align: center;"></td>
                                                         @endif 
                                                         @if ($dates[3] >= $value->startdate && $dates[3] <= $value->enddate)
-                                                            <td style="text-align: center; background-color: rgb(14, 232, 170);"><b style="font-size: 15px">{{$value->thursday}}</b></td>
+                                                            <td style="text-align: center; background-color: #85b7de;"><b style="font-size: 15px">{{$value->thursday}}</b></td>
                                                         @else
                                                             <td style="text-align: center;"></td>
                                                         @endif   
                                                         @if ($dates[4] >= $value->startdate && $dates[4] <= $value->enddate)
-                                                        <td style="text-align: center; background-color: rgb(14, 232, 170);"><b style="font-size: 15px">{{$value->friday}}</b></td>
+                                                        <td style="text-align: center; background-color: #85b7de;"><b style="font-size: 15px">{{$value->friday}}</b></td>
                                                         @else
                                                             <td style="text-align: center;"></td>
                                                         @endif 
                                                         @if ($dates[5] >= $value->startdate && $dates[5] <= $value->enddate)
-                                                            <td style="text-align: center; background-color: rgb(14, 232, 170);"><b style="font-size: 15px">{{$value->saturday}}</b></td>
+                                                            <td style="text-align: center; background-color: #85b7de;"><b style="font-size: 15px">{{$value->saturday}}</b></td>
                                                         @else
                                                             <td style="text-align: center;"></td>
                                                         @endif  
                                                         @if ($dates[6] >= $value->startdate && $dates[6] <= $value->enddate)
-                                                        <td style="text-align: center; background-color: rgb(14, 232, 170);"><b style="font-size: 15px">{{$value->sunday}}</b></td>
+                                                        <td style="text-align: center; background-color: #85b7de;"><b style="font-size: 15px">{{$value->sunday}}</b></td>
                                                         @else
                                                             <td style="text-align: center;"></td>
                                                         @endif    
                                                 @if ($value->status == -1)
-                                                    <td style="color:white;text-align: center;background-color:rgb(81, 82, 82); border: 1px solid black!important">Chưa cập nhật</td>              
+                                                    <td class= " hidden-column" style="color:white;text-align: center;background-color:rgb(81, 82, 82); ">Chưa cập nhật</td>              
                                                 @elseif ($mydate < $value->startdate && $value->status == 0)
                                                     <td class="hidden-column col6"
                                                         style="color:#ffffff;text-align: center; background-color:rgb(133, 58, 219)">
@@ -376,8 +378,8 @@
                             @endif
                         </tbody>
                     </table>
-                    <button id="preview-btn" type="button" class="btn btn-outline-info waves-effect mdi mdi-printer"> In công việc</button>
                 </div>
+                <button style="margin-top:3px" id="preview-btn" type="button" class="btn btn-outline-info waves-effect mdi mdi-printer"> In công việc</button>
             </div>
         </div>
     </div>
@@ -629,6 +631,7 @@
         const formattedDateEnd = "{{ $formattedDateEnd}}";
         const departmentName = "{{ $user->department_name }}";
         const weeknumber = "{{ $weekNumber }}"; // đưa biến weeknumber từ PHP vào JavaScript
+        var logoImage = "{{ asset('assets/images/KIA.png') }}";
     // $(document).ready(function() {
 
     // });
@@ -652,30 +655,34 @@
         });
         $table.find('.col3').css({
         'white-space': 'wrap',
-        'max-width': '200px',
-        'min-width': '200px',
+        'max-width': '180px',
+        'min-width': '180px',
         });
         $table.find('.col2').css({
         'white-space': 'normal',
-        'max-width': '200px',
-        'min-width': '200px',
+        'max-width': '180px',
+        'min-width': '180px',
         });
         $table.find('td').css({
         'color': 'black',
         });
         $table.css('font-size', '12px');
+
         let headerHtml = `<div style="font-size: 20px; margin-top:40px;  text-align: center;"><b>KẾ HOẠCH CÔNG VIỆC TUẦN:</b> ${weeknumber}</div>`;
         headerHtml += `<div style="font-size: 20px;   text-align: center;"><b>TỪ NGÀY:</b> ${formattedDateStart} - <b>ĐẾN NGÀY:</b> ${formattedDateEnd} </div>`;
         headerHtml += `<div style="font-size: 20px;   text-align: center;"><b>PHÒNG:</b> ${departmentName}</div>`;
         headerHtml += `<div style="font-size: 20px;   text-align: center;"><b>Nhóm:</b> ${team}</div>`;
-        headerHtml += `<img src="{{ asset('assets/images/KIA.png') }}/" alt="KIA" style="width: 221px;height: 48px;position: absolute;top:0;left: 40px; margin-top:40px;  " id="logo-img">`;
+        headerHtml += `<img src="${logoImage}" alt="KIA" style="width: 221px;height: 48px;position: absolute;top:0;left: 40px; margin-top:40px;  " id="logo-img">`;
         let tannuithanh = `<div style="display:flex; align-items:center;margin-top: 40px;margin-left: 50px;">`
             let temp = 'font-size: 12px; font-family: "Times New Roman", Times, serif; white-space: nowrap; width: max-content;'
-        tannuithanh += `<h1 style="text-align: right;margin-left: 30px;${temp}">Phê duyệt</h1>`;
-        tannuithanh += `<h1 style="text-align: center;margin-left: 607px;${temp}">Trưởng phòng</h1>`;
-        tannuithanh += `<h1 style="text-align: right;margin-left: 600px;${temp}">Người lập</h1>`;
+        tannuithanh += `<h1 style="text-align: right;${temp}">Phê duyệt</h1>`;
+        tannuithanh += `<h1 style="text-align: center;margin-left:400px;${temp}">Trưởng phòng</h1>`;
+        tannuithanh += `<h1 style="text-align: right;;margin-left:400px;${temp}">Người lập</h1>`;
         tannuithanh   += '</div>';
+        $table.css({'margin-left': 'auto', 'margin-right': 'auto', 'display': 'table'});
+
         const printContents = headerHtml + $table[0].outerHTML + tannuithanh;
+        
         Swal.fire({
         html: printContents,
         width: "auto",

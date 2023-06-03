@@ -17,8 +17,10 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('project_id');
             $table->unsignedBigInteger('department_id');
+            $table->unsignedBigInteger('department_id1');
             $table->foreign('project_id')->references('id')->on('project')->onDelete('cascade');
             $table->foreign('department_id')->references('id')->on('departments')->onDelete('cascade');
+            $table->foreign('department_id1')->references('id')->on('departments')->onDelete('cascade');
             $table->string('name')->nullable();
             $table->date('startdate')->nullable();
             $table->date('enddate')->nullable();

@@ -22,7 +22,7 @@
     <link href="{{ asset('assets/css/icons.min.css') }}" rel="stylesheet" type="text/css" />
     <!-- App Css-->
     <link href="{{ asset('assets/css/app.min.css') }}" id="app-style" rel="stylesheet" type="text/css" />
-    <link href="{{ asset('assets/css/table.css') }}" id="app-style" rel="stylesheet" type="text/css" />
+    
     <link href="{{ asset('assets/css/chunhapnhay.css') }}" id="app-style" rel="stylesheet" type="text/css" />
     <link href="{{ asset('assets/css/lich.css') }}" id="app-style" rel="stylesheet" type="text/css" />
     <link href="{{ asset('assets/css/thongbao.css') }}" id="app-style" rel="stylesheet" type="text/css" />
@@ -34,6 +34,9 @@
     
 
 <style>
+        body {
+        font-family: 'Times New Roman', Times, serif !important;
+}
     #preloader {
   position: fixed;
   top: 0;

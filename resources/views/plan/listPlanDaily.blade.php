@@ -3,6 +3,14 @@
 
 <meta name="csrf-token" content="{{ csrf_token() }}">
 <style>
+    th {
+     
+    text-align: center;
+    vertical-align: middle;
+}
+td {
+    vertical-align: middle;
+}
      td, th {
         font-size: 20px;
         font-family: 'Times New Roman', Times, serif;
@@ -90,11 +98,11 @@
                     <strong>Thông báo!</strong> Cập nhật thành công.
                 </div>
                 @endif
-                <table id="" class="table table-editable table-nowrap align-middle table-edits ">
+                <table id="" class="table table-bordered border-primary mb-0">
                     <thead>
                         <tr>
                             <th style="text-align:center ;" class="table-header">STT</th>
-                            <th style="text-align:center ;" class="table-header">Hạng mục công việc</th>
+                            <th style="width: 20%;" style="text-align:center ;" class="table-header">Hạng mục công việc</th>
                             <th style="text-align:center ;" class="table-header">Nội dung công việc</th>
                             <th style="text-align:center ;" class="table-header">Giờ thực hiện</th>
                             <th style="text-align:center ;" class="table-header">Ngày\tháng\năm</th>
@@ -118,24 +126,24 @@
                                         @if(is_numeric($value->time))
                                             <td style="text-align: center; background-color: #00802c3b"> {{ $value->time }} giờ </td>
                                         @else
-                                            <td style="text-align: center;background-color: #00802c3b;color:red;border: 1px solid black!important"> {{ $value->time }} </td>
+                                            <td style="text-align: center;background-color: #00802c3b;color:red;"> {{ $value->time }} </td>
                                         @endif
                                         <td style="text-align: center;background-color: #00802c3b" > {{ date('d/m/Y', strtotime($value->date)) }}</td>
                                         <td style="text-align: center;background-color: #00802c3b"> {{ $value->responsibility }}</td>
                                         <td style="text-align: center;background-color: #00802c3b"> {!! nl2br($value->support) !!}</td>
                                         <td style="text-align: center;background-color: #00802c3b" > {{ $value->ResultByWookWeek }}%</td>
                                         @if ($value->status == 0 && $today==$value->date) 
-                                        <td style="color:rgb(8, 6, 6);text-align: center;background-color:rgb(255 206 0); border: 1px solid black!important">Đang thực Hiện</td>
+                                        <td style="color:rgb(8, 6, 6);text-align: center;background-color:rgb(255 206 0); ">Đang thực Hiện</td>
                                         @elseif ($value->status == -1 && $today==$value->date)
-                                        <td style="color:white;text-align: center;background-color:rgb(81, 82, 82); border: 1px solid black!important">Chưa cập nhật</td>
+                                        <td style="color:white;text-align: center;background-color:rgb(81, 82, 82); ">Chưa cập nhật</td>
                                         @elseif ($value->status == 9 && $today==$value->date)
-                                        <td style="color:rgb(3, 3, 3);text-align: center;background-color:rgba(129, 243, 97, 0.627); border: 1px solid black!important">Đã báo cáo</td>
+                                        <td style="color:rgb(3, 3, 3);text-align: center;background-color:rgba(129, 243, 97, 0.627); ">Đã báo cáo</td>
                                         @elseif ($value->status == 0 && $today!=$value->date) 
-                                        <td style="color:rgb(8, 6, 6);text-align: center;background-color:rgb(255 206 0); border: 1px solid black!important">Đang thực Hiện</td>
+                                        <td style="color:rgb(8, 6, 6);text-align: center;background-color:rgb(255 206 0); ">Đang thực Hiện</td>
                                         @elseif ($value->status == -1 && $today!=$value->date)
-                                        <td style="color:white;text-align: center;background-color:rgb(81, 82, 82); border: 1px solid black!important">Chưa cập nhật</td>
+                                        <td style="color:white;text-align: center;background-color:rgb(81, 82, 82); ">Chưa cập nhật</td>
                                         @elseif ($value->status == 9 && $today!=$value->date)
-                                        <td style="color:rgb(3, 3, 3);text-align: center;background-color:rgba(129, 243, 97, 0.627); border: 1px solid black!important">Đã báo cáo</td>
+                                        <td style="color:rgb(3, 3, 3);text-align: center;background-color:rgba(129, 243, 97, 0.627); ">Đã báo cáo</td>
                                         @endif
                                         <td style="text-align: center;background-color: #00802c3b" > {{ $value->note }}</td>
                                         
@@ -172,24 +180,24 @@
                                         @if(is_numeric($value->time))
                                             <td style="text-align: center;"> {{ $value->time }} giờ </td>
                                         @else
-                                            <td style="text-align: center;color:red;border: 1px solid black!important"> {{ $value->time }} </td>
+                                            <td style="text-align: center;color:red;"> {{ $value->time }} </td>
                                         @endif
                                         <td style="text-align: center;" > {{ date('d/m/Y', strtotime($value->date)) }}</td>
                                         <td style="text-align: center;"> {{ $value->responsibility }}</td>
                                         <td style="text-align: center;"> {!! nl2br($value->support) !!}</td>
                                         <td style="text-align: center;"> {{ $value->ResultByWookWeek }}%</td>
                                         @if ($value->status == 0 && $today==$value->date) 
-                                        <td style="color:rgb(8, 6, 6);text-align: center;background-color:rgb(255 206 0); border: 1px solid black!important">Đang thực Hiện</td>
+                                        <td style="color:rgb(8, 6, 6);text-align: center;background-color:rgb(255 206 0); ">Đang thực Hiện</td>
                                         @elseif ($value->status == -1 && $today==$value->date)
-                                        <td style="color:white;text-align: center;background-color:rgb(81, 82, 82); border: 1px solid black!important">Chưa cập nhật</td>
+                                        <td style="color:white;text-align: center;background-color:rgb(81, 82, 82); ">Chưa cập nhật</td>
                                         @elseif ($value->status == 9 && $today==$value->date)
-                                        <td style="color:rgb(3, 3, 3);text-align: center;background-color:rgba(129, 243, 97, 0.627); border: 1px solid black!important">Đã báo cáo</td>
+                                        <td style="color:rgb(3, 3, 3);text-align: center;background-color:rgba(129, 243, 97, 0.627); ">Đã báo cáo</td>
                                         @elseif ($value->status == 0 && $today!=$value->date) 
-                                        <td style="color:rgb(8, 6, 6);text-align: center;background-color:rgb(255 206 0); border: 1px solid black!important">Đang thực Hiện</td>
+                                        <td style="color:rgb(8, 6, 6);text-align: center;background-color:rgb(255 206 0); ">Đang thực Hiện</td>
                                         @elseif ($value->status == -1 && $today!=$value->date)
-                                        <td style="color:white;text-align: center;background-color:rgb(81, 82, 82); border: 1px solid black!important">Chưa cập nhật</td>
+                                        <td style="color:white;text-align: center;background-color:rgb(81, 82, 82); ">Chưa cập nhật</td>
                                         @elseif ($value->status == 9 && $today!=$value->date)
-                                        <td style="color:rgb(3, 3, 3);text-align: center;background-color:rgba(129, 243, 97, 0.627); border: 1px solid black!important">Đã báo cáo</td>
+                                        <td style="color:rgb(3, 3, 3);text-align: center;background-color:rgba(129, 243, 97, 0.627); ">Đã báo cáo</td>
                                         @endif
                                         <td style="text-align: center;"> {{ $value->note }}</td>
                                         <td style="text-align: center;"> 

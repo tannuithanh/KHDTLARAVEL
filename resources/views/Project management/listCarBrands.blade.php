@@ -20,19 +20,19 @@
     <div class="page-title-box d-sm-flex align-items-center justify-content-between">
         <h4 class="mb-sm-0" style="font-size:20px">Quản lý dự án</h4>
     </div>
-
+    
     <div class="col-lg-8">
         <div class="card">
             <div class="card-body">
-                <h4 class="card-title" style="font-size:30px;">KẾ HOẠCH PHÁT TRIỂN SẢN PHẨM NĂM 2023 R&D Ô TÔ</h4>
-                <h4 class="card-title" style="font-size:30px; ">TỔNG SỐ DỰ ÁN ĐANG PHÁT TRIỂN: <span style="color: red">{{$totalProjects}}</span></h4>
-                <a href="{{route('exportExcel')}}" class="btn btn-outline-success waves-effect waves-light" style="font-size:20px; position: absolute; right:20px ; top:10px"><icar_bands_con class="mdi mdi-microsoft-excel"></i></a>
+                <h4 class="card-title" style="font-size:30px;font-family: 'Times New Roman', Times, serif !important;font-weight: bold">KẾ HOẠCH PHÁT TRIỂN SẢN PHẨM NĂM 2023 R&D Ô TÔ</h4>
+                <h4 class="card-title" style="font-size:30px;font-family: 'Times New Roman', Times, serif !important;font-weight: bold ">TỔNG SỐ DỰ ÁN ĐANG PHÁT TRIỂN: <span style="color: red">{{$totalProjects}}</span></h4>
+                <a href="{{route('exportExcel')}}" class="btn btn-outline-success waves-effect waves-light" style="font-size:20px; position: absolute; right:20px ; top:10px"><i class="mdi mdi-microsoft-excel"></i></a>
                 <div class="table-responsive class scrollable-table-wrapper mt-3">
-                    <table class="table table-centered table-nowrap mb-3">
+                    <table class="table table-sm m-0">
                         <thead>
                             <tr>
                                 <th style="text-align:center ;" class="table-header">STT</th>
-                                <th style="text-align:center ;" class="table-header">Thương hiệu</th>
+                                <th style="" class="table-header">Thương hiệu</th>
                                 <th style="text-align:center ;" class="table-header">Số lượng</th>
                                 <th style="text-align:center ;width: 20%" class="table-header">Đang thực hiện</th>
                                 <th style="text-align:center ;width: 20%" class="table-header">Hoàn thành</th>

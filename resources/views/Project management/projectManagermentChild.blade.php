@@ -33,7 +33,7 @@
                             <i class="mdi mdi-plus me-1"></i>Tạo dự án
                         </a>
 
-                <div class="table-responsive class scrollable-table-wrapper mt-3">
+          
                     @if (Session::has('success'))
                         <div class="alert alert-success alert-dismissible fade show" role="alert">
                             <button type="button" class="btn-close" data-bs-dismiss="alert"
@@ -55,17 +55,17 @@
                         </div>
                     @endif
 
-                    <table class="table table-centered table-nowrap mb-3">
+                    <table class="table mb-0">
                         <thead>
                             <tr>
                                 <th style="text-align:center ;" class="table-header">STT</th>
-                                <th style="text-align:center ;" class="table-header">Tên dự án</th>
-                                <th style="text-align:center ;" class="table-header">Trưởng dự án</th>
-                                <th style="text-align:center ;" class="table-header">Ngày bắt đầu</th>
-                                <th style="text-align:center ;" class="table-header">Ngày Kết thúc</th>
-                                <th style="text-align:center ;" class="table-header">Kết quả</th>
-                                <th style="text-align:center ;" class="table-header">Trạng thái</th>
-                                <th style="text-align:center ;" class="table-header">Thao tác</th>
+                                <th class="table-header">Tên dự án</th>
+                                <th  class="table-header">Trưởng dự án</th>
+                                <th  class="table-header">Ngày bắt đầu</th>
+                                <th  class="table-header">Ngày Kết thúc</th>
+                                <th  class="table-header">Kết quả</th>
+                                <th  class="table-header">Trạng thái</th>
+                                <th  class="table-header">Thao tác</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -96,27 +96,27 @@
                                     @endforeach
                                     <tr >
                                         <td style="text-align:center ;">{{ $stt++ }}</td>
-                                        <td style="text-align:center ;"><a class="texta"
+                                        <td><a class="texta"
                                                 href="{{ route('projectConnect', $value->id) }}">{{ $value->name_project }}</a>
                                         </td>
-                                        <td style="text-align:center ;">{{ $value->name_create }}</td>
-                                        <td style="text-align:center ;">{{ $value->start_date }}</td>
-                                        <td style="text-align:center ;">{{ $value->end_date }}</td>
+                                        <td>{{ $value->name_create }}</td>
+                                        <td>{{ $value->start_date }}</td>
+                                        <td>{{ $value->end_date }}</td>
                                         
                                         @if ($value->status == 0 && $value->start_date <= $today && $today <= $value->end_date && $value->completion <= 100)
                                             <td class="completion"
                                                 style="text-align:center ;background-color: yellow; color: black">
                                                 {{ $value->completion }}%</td>
                                             <td class="status"
-                                                style="text-align:center ; background-color: yellow; color: black">
+                                                style=" background-color: yellow; color: black">
                                                 Đang thực hiện
                                             </td>
                                         @elseif ($value->status == 1 && $value->completion == 100)
                                             <td class="completion"
-                                                style="text-align:center ;background-color: green; color: black">
+                                                style="background-color: green; color: black">
                                                 {{ $value->completion }}%</td>
                                             <td class="status"
-                                                style="text-align:center ; background-color: green; color: black">
+                                                style=" background-color: green; color: black">
                                                 Hoàn thành
                                             </td>
                                         @elseif ($value->end_date < $today)
@@ -124,11 +124,11 @@
                                                 style="text-align:center; background-color: red; color: black">
                                                 {{ $value->completion }}%</td>
                                             <td class="status"
-                                                style="text-align:center ; background-color: red; color: black">
+                                                style=" background-color: red; color: black">
                                                 Trễ Kế hoạch
                                             </td>
                                         @endif
-                                        <td style="text-align:center ;">
+                                        <td>
                                             @if ($user['name']==$value->name_create || $user['department_id'] == 10)
                                             <button type="button"
                                             class="btn btn-outline-danger btn-sm delete ri-delete-bin-line"

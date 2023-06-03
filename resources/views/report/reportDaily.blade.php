@@ -73,7 +73,7 @@
                         <strong>Thông báo!</strong> Chỉnh sửa công việc thành công.
                     </div>
                     @endif
-                    <table id="table-report" class="table table-editable table-nowrap align-middle table-edits ">
+                    <table id="table-report" class="table table-sm m-0">
                         <thead>
                             <tr>
                                 <th style="text-align:center ;" class="table-header">STT</th>

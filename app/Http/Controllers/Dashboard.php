@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Project;
+use App\Models\Work_By_Project_Department;
+use App\Models\work_lv4_project;
 use Carbon\Carbon;
 use App\Models\Workdaily;
 use App\Models\Workweek;
@@ -26,8 +29,6 @@ class Dashboard extends Controller
             ->get();
             $totalTasks = count($workDaily);
            
-            
-           
             $currentMonth = Carbon::now()->month;
 
             $currentWeekInMonth = Carbon::now()->weekOfMonth;
@@ -40,6 +41,15 @@ class Dashboard extends Controller
                 ->whereBetween('startdate', [$startOfWeek, $endOfWeek])
                 ->whereBetween('enddate', [$startOfWeek, $endOfWeek])
                 ->get();
-        return view('DashBoard', compact('user', 'isLoggedIn', 'workDaily','upcomingDueTasks','tasksThisWeek','mydate','currentWeekInMonth','startOfWeek','endOfWeek','currentMonth'));
+                
+        // Truy vấn tất cả dự án mà người dùng này đang tham gia
+        $projects = Project::whereHas('projectDepartments.works', function ($query) use ($user) {
+            $query->where('responsibility', $user->name);
+        })->get();
+        
+        // Truy vấn tất cả công việc liên quan đến người dùng này
+        $tasks = work_lv4_project::where('responsibility', $user->name)->get();
+        // dd($tasks->toarray());
+        return view('DashBoard', compact('user', 'isLoggedIn', 'workDaily','upcomingDueTasks','tasksThisWeek','mydate','currentWeekInMonth','startOfWeek','endOfWeek','currentMonth', 'projects', 'tasks'));
     }
 }

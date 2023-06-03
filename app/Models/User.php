@@ -29,6 +29,7 @@ class User extends Authenticatable
         'password',
         'msnv',
         'department_id',
+        'department_id1',
         'team_id',
         'position_id',
         'is_admin',

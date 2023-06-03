@@ -242,6 +242,7 @@ route::post('update-result-project-con', [ProjecManagement::class, 'updateResult
 route::post('update-result-project-lv4', [ProjecManagement::class, 'updateResultLv4'])->name('updateResultLv4');
 
 // 6.----------------------------------------- GHI CHÚ ----------------------------------------------------------------//
+route::post('/save-note-Project', [ProjecManagement::class, 'saveNoteProject'])->name('saveNoteProject');
 route::post('/save-note', [ProjecManagement::class, 'saveNote'])->name('savenote');
 route::post('/save-note-Lv4', [ProjecManagement::class, 'saveNoteLv4'])->name('saveNoteLv4');
         

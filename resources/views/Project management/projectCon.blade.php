@@ -1,6 +1,22 @@
 @include('include.header')
 <meta name="csrf-token" content="{{ csrf_token() }}">
 <style>
+      tbody, thead{
+        border-color: black !important;
+    }
+    th {
+     background-color:#16c745a2 !important ;
+     text-align: center;
+     vertical-align: middle;
+     color: #000000c9;
+     font-size: 20px;
+    }
+        td, th {
+            border-color: black !important;
+            border: 1px solid black;
+            font-size: 15px;
+            font-family: 'Times New Roman', Times, serif;
+            }
      label {
         display: block;
         text-align: left;
@@ -56,15 +72,15 @@
     <div class="col-lg-12">
         <div class="card">
             <div class="card-body mb-3 mt-2" style="border: 1px solid;border-radius: 10px;">
-                <h4 class="card-title" style="font-size:20px">Thương hiệu xe: <span
-                        style="color: red">{{ $car_brands->name }}</span></h4>
-                <h4 class="card-title" style="font-size:20px">Tên dự án: <span
+                <h4 class="card-title" style="font-size:20px; font-family: 'Times New Roman', Times, serif !important;">Thương hiệu xe: <span
+                        style="color: red;">{{ $car_brands->name }}</span></h4>
+                <h4 class="card-title" style="font-size:20px; font-family: 'Times New Roman', Times, serif !important;">Tên dự án: <span
                         style="color: red">{{ $projectlv1->name_project }}</span></h4>
-                <h4 class="card-title" style="font-size:20px">Hạng mục công việc: <span
+                <h4 class="card-title" style="font-size:20px; font-family: 'Times New Roman', Times, serif !important;">Hạng mục công việc: <span
                         style="color: red">{{ $projectlv2->name }}</span></h4>
-                <h4 class="card-title" style="font-size:20px">Công việc chi tiết: <span
+                <h4 class="card-title" style="font-size:20px; font-family: 'Times New Roman', Times, serif !important;">Công việc chi tiết: <span
                         style="color: red">{{ $projectLv3->name_work }}</span></h4>
-                <h4 class="card-title" style="font-size:20px">Thời gian: <span style="color: red">
+                <h4 class="card-title" style="font-size:20px; font-family: 'Times New Roman', Times, serif !important;">Thời gian: <span style="color: red">
                         {{ date('d/m/Y', strtotime($projectLv3->startdate)) }} -
                         {{ date('d/m/Y', strtotime($projectLv3->enddate)) }}</span></h4>
             </div>
@@ -81,7 +97,7 @@
                     <button type="button" data-id="{{$projectLv3->id}}" class="btn btn-outline-primary waves-effect waves-light">Thêm công việc</button>
                     @endif
                 </div>                
-                <table class="table table-centered table-nowrap mb-3 mt-2">
+                <table class="table table-bordered border-primary mb-3 mt-2">
                     @if (Session::has('successful'))
                         <div class="alert alert-success alert-dismissible fade show" role="alert">
                             <button type="button" class="btn-close" data-bs-dismiss="alert"
@@ -207,349 +223,349 @@
 
 @include('include.footer')
 <script>
-     document.querySelectorAll('.edit').forEach(function(editButton) {
-        editButton.addEventListener('click', function() {
-            const id = this.getAttribute('data-id');
+    document.querySelectorAll('.edit').forEach(function(editButton) {
+       editButton.addEventListener('click', function() {
+           const id = this.getAttribute('data-id');
 
-            Swal.fire({
-                title: 'Cập nhật tiến độ',
-                input: 'number',
-                inputAttributes: {
-                    min: 1,
-                    max: 100,
-                    step: 1
-                },
-                showCancelButton: true,
-                confirmButtonText: 'Cập nhật',
-                cancelButtonText: 'Hủy',
-                inputValidator: value => {
-                    if (!value) {
-                        return 'Vui lòng nhập một số!';
-                    }
-                }
-            }).then(result => {
-                if (result.isConfirmed) {
-                    // Gửi giá trị nhập đến server sử dụng AJAX
-                    $.ajax({
-                        url: "{!! route('updateResultLv4') !!}", // Thay đổi thành URL của bạn để xử lý dữ liệu
-                        method: 'POST',
-                        data: {
-                            id: id,
-                            completion: result.value,
-                            _token: "{{ csrf_token() }}",
-                        },
-                        success: function(response) {
+           Swal.fire({
+               title: 'Cập nhật tiến độ',
+               input: 'number',
+               inputAttributes: {
+                   min: 1,
+                   max: 100,
+                   step: 1
+               },
+               showCancelButton: true,
+               confirmButtonText: 'Cập nhật',
+               cancelButtonText: 'Hủy',
+               inputValidator: value => {
+                   if (!value) {
+                       return 'Vui lòng nhập một số!';
+                   }
+               }
+           }).then(result => {
+               if (result.isConfirmed) {
+                   // Gửi giá trị nhập đến server sử dụng AJAX
+                   $.ajax({
+                       url: "{!! route('updateResultLv4') !!}", // Thay đổi thành URL của bạn để xử lý dữ liệu
+                       method: 'POST',
+                       data: {
+                           id: id,
+                           completion: result.value,
+                           _token: "{{ csrf_token() }}",
+                       },
+                       success: function(response) {
 
-                            // Xử lý kết quả trả về từ server
-                            if (response.status === 'success') {
-                                // Tìm đến phần tử HTML chứa thông tin Kết quả dựa trên ID
-                                const completionElement = $(
-                                    '.completion[data-id="' + id + '"]');
-                                const statusElement = $('.status[data-id="' + id +
-                                    '"]'); // Thêm dòng này
-                                const editElement = $('.edit[data-id="' + id +
-                                    '"]');
-                                // Cập nhật giá trị mới cho phần tử HTML này
-                                completionElement.text(response.new_completion +
-                                    '%');
+                           // Xử lý kết quả trả về từ server
+                           if (response.status === 'success') {
+                               // Tìm đến phần tử HTML chứa thông tin Kết quả dựa trên ID
+                               const completionElement = $(
+                                   '.completion[data-id="' + id + '"]');
+                               const statusElement = $('.status[data-id="' + id +
+                                   '"]'); // Thêm dòng này
+                               const editElement = $('.edit[data-id="' + id +
+                                   '"]');
+                               // Cập nhật giá trị mới cho phần tử HTML này
+                               completionElement.text(response.new_completion +
+                                   '%');
 
-                                // Lấy ngày hiện tại
-                                const today = new Date();
+                               // Lấy ngày hiện tại
+                               const today = new Date();
 
-                                // Lấy thông tin ngày bắt đầu và kết thúc từ server (Bạn cần trả về giá trị này từ server)
-                                const start_date = new Date(response.start_date);
-                                const end_date = new Date(response.end_date);
+                               // Lấy thông tin ngày bắt đầu và kết thúc từ server (Bạn cần trả về giá trị này từ server)
+                               const start_date = new Date(response.start_date);
+                               const end_date = new Date(response.end_date);
 
-                                // Thay đổi màu nền dựa trên giá trị completion và ngày hiện tại
-                                if (response.new_completion == 100) {
-                                    completionElement.css('background-color',
-                                        'green');
-                                    statusElement.text('Hoàn thành');
-                                    statusElement.css('background-color', 'green');
-                                    editElement.hide()
-                                } else if (start_date <= today && today <=
-                                    end_date) {
-                                    completionElement.css('background-color',
-                                        'yellow');
-                                    statusElement.text('Đang thực hiện');
-                                    statusElement.css('background-color', 'yellow');
-                                } else if (end_date < today) {
-                                    completionElement.css('background-color',
-                                        'red');
-                                    statusElement.text('Trễ kế hoạch');
-                                    statusElement.css('background-color', 'red');
-                                } else if (start_date > today) {
-                                    completionElement.css('background-color', '');
-                                    statusElement.text('Chưa đến hạng');
-                                    statusElement.css('background-color', '');
-                                }
+                               // Thay đổi màu nền dựa trên giá trị completion và ngày hiện tại
+                               if (response.new_completion == 100) {
+                                   completionElement.css('background-color',
+                                       'green');
+                                   statusElement.text('Hoàn thành');
+                                   statusElement.css('background-color', 'green');
+                                   editElement.hide()
+                               } else if (start_date <= today && today <=
+                                   end_date) {
+                                   completionElement.css('background-color',
+                                       'yellow');
+                                   statusElement.text('Đang thực hiện');
+                                   statusElement.css('background-color', 'yellow');
+                               } else if (end_date < today) {
+                                   completionElement.css('background-color',
+                                       'red');
+                                   statusElement.text('Trễ kế hoạch');
+                                   statusElement.css('background-color', 'red');
+                               } else if (start_date > today) {
+                                   completionElement.css('background-color', '');
+                                   statusElement.text('Chưa đến hạng');
+                                   statusElement.css('background-color', '');
+                               }
 
-                                Swal.fire('Thành công', response.message,
-                                    'success');
-                            } else {
-                                Swal.fire('Lỗi', 'Không thể cập nhật tiến độ',
-                                    'error');
-                            }
-                        },
-                        error: function(xhr, status, error) {
-                            // Xử lý lỗi từ server
-                            console.error(xhr, status, error);
-                            Swal.fire('Lỗi', 'Không thể cập nhật tiến độ', 'error');
-                        }
-                    });
-                }
-            });
-        });
-    });
-
-
-    function addBulletPointListener(inputElement) {
-        inputElement.addEventListener('keydown', function(event) {
-            if (event.key === 'Enter') {
-                event.preventDefault();
-                const cursorPosition = inputElement.selectionStart;
-                const value = inputElement.value;
-                inputElement.value = value.slice(0, cursorPosition) + "\n- " + value.slice(cursorPosition);
-                inputElement.selectionStart = cursorPosition + 3;
-                inputElement.selectionEnd = cursorPosition + 3;
-            }
-        });
-    }
-
-    $(document).ready(function() {
-        $('.note').on('click', function() {
-            const dataId = $(this).data('id1');
-
-            Swal.fire({
-                title: 'Nhập ghi chú của bạn',
-                input: 'textarea',
-                inputLabel: 'Ghi chú',
-                inputPlaceholder: '- Nhập ghi chú của bạn ở đây...',
-                inputAttributes: {
-                    'aria-label': 'Nhập ghi chú của bạn ở đây'
-                },
-                inputAutoTrim: false,
-                onOpen: (swal) => {
-                    const inputElement = swal.getInput();
-                    if (inputElement) {
-                        addBulletPointListener(inputElement);
-                    }
-                },
-                showCancelButton: true,
-                confirmButtonText: 'Lưu',
-                cancelButtonText: 'Hủy',
-                preConfirm: (noteText) => {
-                    return new Promise((resolve, reject) => {
-                        $.ajax({
-                            url: "{!! route('saveNoteLv4') !!}",
-                            method: 'POST',
-                            data: {
-                                note: noteText,
-                                data_id: dataId,
-                                _token: "{{ csrf_token() }}",
-                            },
-                            success: function(response) {
-                                Swal.fire('Thành công',
-                                    'Ghi chú đã được lưu thành công',
-                                    'success');
-
-                                // Tìm ô Ghi chú tương ứng và cập nhật giá trị
-                                var formattedNoteText = noteText
-                                    .replace(/\n/g, '<br>');
-
-                                // Tìm ô Ghi chú tương ứng và cập nhật giá trị
-                                $('.note-cell1[data-id1="' + dataId +
-                                    '"]').html(formattedNoteText);
-
-                                resolve();
-                            },
-                            error: function(xhr, textStatus, errorThrown) {
-                                Swal.fire('Lỗi',
-                                    'Có lỗi xảy ra khi lưu ghi chú',
-                                    'error');
-                                reject();
-                            }
-                        });
-                    });
-                }
-            });
-        });
-    });
+                               Swal.fire('Thành công', response.message,
+                                   'success');
+                           } else {
+                               Swal.fire('Lỗi', 'Không thể cập nhật tiến độ',
+                                   'error');
+                           }
+                       },
+                       error: function(xhr, status, error) {
+                           // Xử lý lỗi từ server
+                           console.error(xhr, status, error);
+                           Swal.fire('Lỗi', 'Không thể cập nhật tiến độ', 'error');
+                       }
+                   });
+               }
+           });
+       });
+   });
 
 
-    $(document).ready(function() {
-    $('.btn.btn-outline-primary').click(function() {
-        var work_by_project_department_id = $(this).data('id');
-        var userAll = {!! json_encode($userAll) !!};
-        var projectStartDate = {!! json_encode($projectLv3->startdate) !!};
-        var projectEndDate = {!! json_encode($projectLv3->enddate) !!};
-        var departmentNames = {!! json_encode($departmentNames) !!};
-        var userAllByDepartment = {!! json_encode($userAllByDepartment) !!};
-        Swal.fire({
-            title: 'Thêm công việc',
-            html: `
-            <form id="manual-input-form">
-                <input type="text" value="${work_by_project_department_id}" class="form-control" id="project_department_id" name="task_name" hidden>
-                <div class="form-group">
-                    <label for="task_name">Tên công việc:</label>
-                    <input type="text" class="form-control" id="task_name" name="task_name" required>
-                </div>
-                <div class="form-group">
-                    <label for="responsibility">Trách nhiệm:</label>
-                    <select class="form-control" id="responsibility" name="responsibility" required>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="start_date">Ngày bắt đầu:</label>
-                    <input type="date" class="form-control" id="start_date" name="start_date" required>
-                </div>
-                <div class="form-group">
-                    <label for="end_date">Ngày kết thúc:</label>
-                    <input type="date" class="form-control" id="end_date" name="end_date" required>
-                </div>
-            </form>
-            `,
-            confirmButtonText: 'Thêm',
-            focusConfirm: false,
-            preConfirm: () => {
-                var task_name = $('#task_name').val();
-                var responsibility = $('#responsibility').val();
-                var start_date = $('#start_date').val();
-                var end_date = $('#end_date').val();
-                
+   function addBulletPointListener(inputElement) {
+       inputElement.addEventListener('keydown', function(event) {
+           if (event.key === 'Enter') {
+               event.preventDefault();
+               const cursorPosition = inputElement.selectionStart;
+               const value = inputElement.value;
+               inputElement.value = value.slice(0, cursorPosition) + "\n- " + value.slice(cursorPosition);
+               inputElement.selectionStart = cursorPosition + 3;
+               inputElement.selectionEnd = cursorPosition + 3;
+           }
+       });
+   }
 
-                $.ajax({
-                    url: "{!!route('importHandmadeLv4')!!}",
-                    type: 'POST',
-                    data: {
-                        task_name: task_name,
-                        responsibility: responsibility,
-                        project_department_id: work_by_project_department_id, // dòng mới thêm vào
-                        start_date: start_date,
-                        end_date: end_date,
-                        _token: '{{ csrf_token() }}'
-                    },
-                    success: function(response) {
-                        Swal.fire('Success', 'Công việc đã được thêm thành công', 'success');
-                        location.reload();
-                    },
-                    error: function(xhr) {
-                        Swal.fire('Error', 'Có lỗi xảy ra khi thêm công việc', 'error');
-                    }
-                });
-            },
-            didOpen: () => {
-                $.each(userAllByDepartment, function(departmentId, usersInDepartment) {
-                        var departmentName = departmentNames[departmentId];
-                        var optgroup = $('<optgroup label="' + departmentName + '">');
-                        
-                        usersInDepartment.forEach(function(user) {
-                            var option = new Option(user.name, user.name, false, false);
-                            optgroup.append(option);
-                        });
+   $(document).ready(function() {
+       $('.note').on('click', function() {
+           const dataId = $(this).data('id1');
 
-                        $('#responsibility').append(optgroup).trigger('change');
-                    });
-                $('#start_date').attr('min', projectStartDate);
-                $('#start_date').attr('max', projectEndDate);
-                $('#end_date').attr('min', projectStartDate);
-            $('#end_date').attr('max', projectEndDate);
-        }
-    });
-    });
+           Swal.fire({
+               title: 'Nhập ghi chú của bạn',
+               input: 'textarea',
+               inputLabel: 'Ghi chú',
+               inputPlaceholder: '- Nhập ghi chú của bạn ở đây...',
+               inputAttributes: {
+                   'aria-label': 'Nhập ghi chú của bạn ở đây'
+               },
+               inputAutoTrim: false,
+               onOpen: (swal) => {
+                   const inputElement = swal.getInput();
+                   if (inputElement) {
+                       addBulletPointListener(inputElement);
+                   }
+               },
+               showCancelButton: true,
+               confirmButtonText: 'Lưu',
+               cancelButtonText: 'Hủy',
+               preConfirm: (noteText) => {
+                   return new Promise((resolve, reject) => {
+                       $.ajax({
+                           url: "{!! route('saveNoteLv4') !!}",
+                           method: 'POST',
+                           data: {
+                               note: noteText,
+                               data_id: dataId,
+                               _token: "{{ csrf_token() }}",
+                           },
+                           success: function(response) {
+                               Swal.fire('Thành công',
+                                   'Ghi chú đã được lưu thành công',
+                                   'success');
+
+                               // Tìm ô Ghi chú tương ứng và cập nhật giá trị
+                               var formattedNoteText = noteText
+                                   .replace(/\n/g, '<br>');
+
+                               // Tìm ô Ghi chú tương ứng và cập nhật giá trị
+                               $('.note-cell1[data-id1="' + dataId +
+                                   '"]').html(formattedNoteText);
+
+                               resolve();
+                           },
+                           error: function(xhr, textStatus, errorThrown) {
+                               Swal.fire('Lỗi',
+                                   'Có lỗi xảy ra khi lưu ghi chú',
+                                   'error');
+                               reject();
+                           }
+                       });
+                   });
+               }
+           });
+       });
+   });
+
+
+   $(document).ready(function() {
+   $('.btn.btn-outline-primary').click(function() {
+       var work_by_project_department_id = $(this).data('id');
+       var userAll = {!! json_encode($userAll) !!};
+       var projectStartDate = {!! json_encode($projectLv3->startdate) !!};
+       var projectEndDate = {!! json_encode($projectLv3->enddate) !!};
+       var departmentNames = {!! json_encode($departmentNames) !!};
+       var userAllByDepartment = {!! json_encode($userAllByDepartment) !!};
+       Swal.fire({
+           title: 'Thêm công việc',
+           html: `
+           <form id="manual-input-form">
+               <input type="text" value="${work_by_project_department_id}" class="form-control" id="project_department_id" name="task_name" hidden>
+               <div class="form-group">
+                   <label for="task_name">Tên công việc:</label>
+                   <input type="text" class="form-control" id="task_name" name="task_name" required>
+               </div>
+               <div class="form-group">
+                   <label for="responsibility">Trách nhiệm:</label>
+                   <select class="form-control" id="responsibility" name="responsibility" required>
+                   </select>
+               </div>
+               <div class="form-group">
+                   <label for="start_date">Ngày bắt đầu:</label>
+                   <input type="date" class="form-control" id="start_date" name="start_date" required>
+               </div>
+               <div class="form-group">
+                   <label for="end_date">Ngày kết thúc:</label>
+                   <input type="date" class="form-control" id="end_date" name="end_date" required>
+               </div>
+           </form>
+           `,
+           confirmButtonText: 'Thêm',
+           focusConfirm: false,
+           preConfirm: () => {
+               var task_name = $('#task_name').val();
+               var responsibility = $('#responsibility').val();
+               var start_date = $('#start_date').val();
+               var end_date = $('#end_date').val();
+               
+
+               $.ajax({
+                   url: "{!!route('importHandmadeLv4')!!}",
+                   type: 'POST',
+                   data: {
+                       task_name: task_name,
+                       responsibility: responsibility,
+                       project_department_id: work_by_project_department_id, // dòng mới thêm vào
+                       start_date: start_date,
+                       end_date: end_date,
+                       _token: '{{ csrf_token() }}'
+                   },
+                   success: function(response) {
+                       Swal.fire('Success', 'Công việc đã được thêm thành công', 'success');
+                       location.reload();
+                   },
+                   error: function(xhr) {
+                       Swal.fire('Error', 'Có lỗi xảy ra khi thêm công việc', 'error');
+                   }
+               });
+           },
+           didOpen: () => {
+               $.each(userAllByDepartment, function(departmentId, usersInDepartment) {
+                       var departmentName = departmentNames[departmentId];
+                       var optgroup = $('<optgroup label="' + departmentName + '">');
+                       
+                       usersInDepartment.forEach(function(user) {
+                           var option = new Option(user.name, user.name, false, false);
+                           optgroup.append(option);
+                       });
+
+                       $('#responsibility').append(optgroup).trigger('change');
+                   });
+               $('#start_date').attr('min', projectStartDate);
+               $('#start_date').attr('max', projectEndDate);
+               $('#end_date').attr('min', projectStartDate);
+           $('#end_date').attr('max', projectEndDate);
+       }
+   });
+   });
 });
 
-    document.addEventListener('DOMContentLoaded', () => {
-    const editWorkButtons = document.querySelectorAll('.sua');
-    const userAll = @json($userAll);
-    const userOptions = userAll.map(user => `<option value="${user.name}">${user.name}</option>`).join('');
-    
-    editWorkButtons.forEach((button) => {
-        button.addEventListener('click', async () => {
-        const id = button.dataset.dialog.split('-')[1];
+   document.addEventListener('DOMContentLoaded', () => {
+   const editWorkButtons = document.querySelectorAll('.sua');
+   const userAll = @json($userAll);
+   const userOptions = userAll.map(user => `<option value="${user.name}">${user.name}</option>`).join('');
+   
+   editWorkButtons.forEach((button) => {
+       button.addEventListener('click', async () => {
+       const id = button.dataset.dialog.split('-')[1];
 
-        // Lấy thông tin của Work_By_Project_Department theo id
-        const showWorkUrl = "{{ route('showLv4', ['id' => ':id']) }}".replace(':id', id);
-        const response = await fetch(showWorkUrl);
-        const work = await response.json();
-        const projectDepartmentStart = button.dataset.projectDepartmentStart;
-        const projectDepartmentEnd = button.dataset.projectDepartmentEnd;
+       // Lấy thông tin của Work_By_Project_Department theo id
+       const showWorkUrl = "{{ route('showLv4', ['id' => ':id']) }}".replace(':id', id);
+       const response = await fetch(showWorkUrl);
+       const work = await response.json();
+       const projectDepartmentStart = button.dataset.projectDepartmentStart;
+       const projectDepartmentEnd = button.dataset.projectDepartmentEnd;
 
-        // Hiển thị hộp thoại SweetAlert2 với thông tin đã lấy được
-        const { value: formValues } = await Swal.fire({
-            title: 'Chỉnh sửa thông tin công việc',
-            html:
-            '<label for="name_work">Tên công việc:</label>' +
-            `<input id="name_work" class="form-control" value="${work.name_work}">` +
-            '<label for="startdate">Ngày bắt đầu:</label>' +
-            `<input id="startdate" class="form-control" type="date" min="${projectDepartmentStart}" max="${projectDepartmentEnd}" value="${work.startdate}">` +
-            '<label for="enddate">Ngày kết thúc:</label>' +
-            `<input id="enddate" class="form-control" type="date" min="${projectDepartmentStart}" max="${projectDepartmentEnd}" value="${work.enddate}">` +
-            '<label for="responsibility">Trách nhiệm:</label>' +
-            `<select class="form-control" id="responsibility" name="responsibility">${userOptions}</select>`,
-            focusConfirm: false,
-            confirmButtonText: 'Chỉnh sửa',
-            preConfirm: () => {
-            return {
-                name_work: document.getElementById('name_work').value,
-                responsibility: document.getElementById('responsibility').value,
-                startdate: document.getElementById('startdate').value,
-                enddate: document.getElementById('enddate').value,
-            };
-            },
-        });
+       // Hiển thị hộp thoại SweetAlert2 với thông tin đã lấy được
+       const { value: formValues } = await Swal.fire({
+           title: 'Chỉnh sửa thông tin công việc',
+           html:
+           '<label for="name_work">Tên công việc:</label>' +
+           `<input id="name_work" class="form-control" value="${work.name_work}">` +
+           '<label for="startdate">Ngày bắt đầu:</label>' +
+           `<input id="startdate" class="form-control" type="date" min="${projectDepartmentStart}" max="${projectDepartmentEnd}" value="${work.startdate}">` +
+           '<label for="enddate">Ngày kết thúc:</label>' +
+           `<input id="enddate" class="form-control" type="date" min="${projectDepartmentStart}" max="${projectDepartmentEnd}" value="${work.enddate}">` +
+           '<label for="responsibility">Trách nhiệm:</label>' +
+           `<select class="form-control" id="responsibility" name="responsibility">${userOptions}</select>`,
+           focusConfirm: false,
+           confirmButtonText: 'Chỉnh sửa',
+           preConfirm: () => {
+           return {
+               name_work: document.getElementById('name_work').value,
+               responsibility: document.getElementById('responsibility').value,
+               startdate: document.getElementById('startdate').value,
+               enddate: document.getElementById('enddate').value,
+           };
+           },
+       });
 
-        if (formValues) {
-            // Cập nhật thông tin đã chỉnh sửa và gửi lại cho server
-            const updateWorkUrl = "{{ route('updateLv4', ['id' => ':id']) }}".replace(':id', id);
-            await fetch(updateWorkUrl, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
-            },
-            body: JSON.stringify(formValues),
-            });
+       if (formValues) {
+           // Cập nhật thông tin đã chỉnh sửa và gửi lại cho server
+           const updateWorkUrl = "{{ route('updateLv4', ['id' => ':id']) }}".replace(':id', id);
+           await fetch(updateWorkUrl, {
+           method: 'PUT',
+           headers: {
+               'Content-Type': 'application/json',
+               'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+           },
+           body: JSON.stringify(formValues),
+           });
 
-            Swal.fire('Cập nhật thành công!', '', 'success').then(function () {
-                                    location.reload();
-                                });
-        }
-        });
-    });
-    });
-    document.addEventListener('DOMContentLoaded', () => {
-        const deleteButtons = document.querySelectorAll('.delete');
-        deleteButtons.forEach((button) => {
-            button.addEventListener('click', async () => {
-            const id = button.dataset.dialog.split('-')[1];
+           Swal.fire('Cập nhật thành công!', '', 'success').then(function () {
+                                   location.reload();
+                               });
+       }
+       });
+   });
+   });
+   document.addEventListener('DOMContentLoaded', () => {
+       const deleteButtons = document.querySelectorAll('.delete');
+       deleteButtons.forEach((button) => {
+           button.addEventListener('click', async () => {
+           const id = button.dataset.dialog.split('-')[1];
 
-            const result = await Swal.fire({
-                title: 'Bạn có chắc chắn muốn xóa?',
-                text: "Bạn không thể hoàn tác hành động này!",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Xóa',
-                cancelButtonText: 'Hủy'
-            });
+           const result = await Swal.fire({
+               title: 'Bạn có chắc chắn muốn xóa?',
+               text: "Bạn không thể hoàn tác hành động này!",
+               icon: 'warning',
+               showCancelButton: true,
+               confirmButtonColor: '#3085d6',
+               cancelButtonColor: '#d33',
+               confirmButtonText: 'Xóa',
+               cancelButtonText: 'Hủy'
+           });
 
-            if (result.isConfirmed) {
-                const deleteUrl = "{{ route('deleteLv4', ['id' => ':id']) }}".replace(':id', id);
-                await fetch(deleteUrl, {
-                method: 'DELETE',
-                headers: {
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
-                },
-                });
+           if (result.isConfirmed) {
+               const deleteUrl = "{{ route('deleteLv4', ['id' => ':id']) }}".replace(':id', id);
+               await fetch(deleteUrl, {
+               method: 'DELETE',
+               headers: {
+                   'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+               },
+               });
 
-                Swal.fire('Đã xóa!', 'Dữ liệu đã được xóa thành công.', 'success').then(function () {
-                                    location.reload();
-                                });
-            }
-            });
-        });
-        });
+               Swal.fire('Đã xóa!', 'Dữ liệu đã được xóa thành công.', 'success').then(function () {
+                                   location.reload();
+                               });
+           }
+           });
+       });
+       });
 </script>
 
