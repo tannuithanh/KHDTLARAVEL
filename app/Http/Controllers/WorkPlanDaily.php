@@ -12,6 +12,21 @@ use Illuminate\Support\Facades\Auth;
 
 class WorkPlanDaily extends Controller
 {
+    // In your controller
+    public function checkTime(Request $request) {
+        $date = $request->input('date');
+        $responsibility = $request->input('responsibility', auth()->user()->name);
+    
+        $workweekTime = Workdaily::whereDate('date', $date)
+            ->where('responsibility', $responsibility)
+            ->where(DB::raw('(CAST(time as UNSIGNED) IS NOT NULL)'), true)
+            ->sum(DB::raw('CAST(time as UNSIGNED)'));
+    
+        return response()->json([
+            'timeOverload' => $workweekTime > 8,
+        ]);
+    }
+    
 
     public function viewListWorkDaily(){
       
@@ -94,7 +109,6 @@ class WorkPlanDaily extends Controller
         
     }
     public function insertWorkDaily(request $request){
-        // dd($request->toArray());
         $mytime = date('Y-m-d H:i:s');
         $user = Auth::user();
         $alldata = $request->all();   
@@ -102,10 +116,21 @@ class WorkPlanDaily extends Controller
             $supportJson = json_encode($alldata['support'], true);
             $supportArray =  json_decode($supportJson, true);
             $supportString = implode("\n", $supportArray);
-        }else{
+        } else {
             $supportString = null;
         }
-         Workdaily::insert(
+    
+        $status = 1; // default status
+    
+        if (empty($user['team_id']) || $user['position_id']==7) {
+            $status = 2; // set status to 2 if team_id is not set
+        }
+    
+        if (in_array($user['position_id'], [1, 2, 3, 4, 5, 6])) {
+            $status = 0; // set status to 0 if position is one of the specified values
+        }
+    
+        Workdaily::insert(
             [
                 'categoryDaily' => $alldata['categoryDaily'],
                 'describeDaily' => $alldata['describeDaily'],
@@ -117,11 +142,13 @@ class WorkPlanDaily extends Controller
                 'note' => $alldata['note'],
                 'department_id' => $user['department_id'],
                 'team_id' => $user['team_id'],
+                'status' => $status,
                 'created_at' => $mytime,
                 'updated_at' => $mytime
             ],);
-            return redirect()->route('listWorkDaily')->with('successful', 'Thêm kế hoạch thành công');  
+        return redirect()->route('viewApproveDaily')->with('successful', 'Thêm kế hoạch thành công');  
     }
+
 
     public function getDepartments(request $request){
         $user = Auth::user();
@@ -198,6 +225,15 @@ class WorkPlanDaily extends Controller
         }
         $workDaily = Workdaily::find($id);
         $user = Auth::user();
+        $status = 1; // default status
+    
+        if (empty($user['team_id']) || $user['position_id']==7) {
+            $status = 2; // set status to 2 if team_id is not set
+        }
+    
+        if (in_array($user['position_id'], [1, 2, 3, 4, 5, 6])) {
+            $status = 0; // set status to 0 if position is one of the specified values
+        }
         if($request->Result == null && $request->ResultByWookWeek == null){
             return back()->with('message', 'Bạn đã thực hiện thất bại!');
         }else{
@@ -214,7 +250,7 @@ class WorkPlanDaily extends Controller
         $workDaily->propose = $request->propose;
         $workDaily->Result = $request->Result;
         $workDaily->ResultByWookWeek = $request->ResultByWookWeek;
-        $workDaily->status = 0;
+        $workDaily->status = $status;
         $workDaily->update();
         $countWorkWeek_id = Workdaily::where('workweek_id', $workDaily->workweek_id)
         ->select(DB::raw('SUM(ResultByWookWeek) as total'))
@@ -242,6 +278,7 @@ class WorkPlanDaily extends Controller
     }
 
     public function editWorkDailyPost($id, request $request){
+        $user = Auth::user();
         if(isset($request['support']) && is_array($request['support'])){
             $supportJson = json_encode($request['support']);
             $supportArray = json_decode($supportJson, true);
@@ -249,25 +286,33 @@ class WorkPlanDaily extends Controller
         } else {
             $supportString = null;
         }
-        
+        $status = 1; // default status
+    
+        if (empty($user['team_id']) || $user['position_id']==7) {
+            $status = 2; // set status to 2 if team_id is not set
+        }
+    
+        if (in_array($user['position_id'], [1, 2, 3, 4, 5, 6])) {
+            $status = 0; // set status to 0 if position is one of the specified values
+        }
         $workDaily = Workdaily::find($id);
         if($workDaily){
             $workDaily->categoryDaily = $request->categoryDaily;
             $workDaily->describeDaily = $request->describeDaily;
             $workDaily->support = $supportString;
             $workDaily->time = $request->time;
-            $workDaily->date = $request->date;
-            $workDaily->support = $request->support;
+            $workDaily->date = $request->date;            
+            $workDaily->status = $status;
             $workDaily->note = $request->note;
             $workDaily->save();
         }
-        return redirect()->route('listWorkDaily')->with('edit', 'Sửa thành công')->with('hack', $id);
+        return redirect()->route('viewApproveDaily')->with('edit', 'Sửa thành công')->with('hack', $id);
     }
 
-    public function deleteWorkDaily($id){
-        $deleteWorkDaily = Workdaily::find($id);
+    public function deleteWorkDaily(request $request){
+        $deleteWorkDaily = Workdaily::find($request->id);
         $deleteWorkDaily->delete();
-        return redirect()->route('listWorkDaily')->with('deleteSuccess', 'Xóa kế hoạch thành công');
+            return response()->json(['message' => 'Cập nhật thành công!'], 200);
     }
 
     public function searchWorkDaily(request $request){

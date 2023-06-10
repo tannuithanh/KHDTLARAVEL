@@ -3,7 +3,7 @@
     <title>{{ $title ?? 'Trang chủ' }}</title>
 <head>
     <meta charset="utf-8" />
-    
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- <meta content="Premium Multipurpose Admin & Dashboard Template" name="description" /> -->
     <meta content="Themesdesign" name="author" />
@@ -296,24 +296,27 @@
                             </a>
                         </li>
                         <li>
-                                <a href="javascript: void(0);" class="has-arrow waves-effect">
-                                    <i class="ri-book-read-fill"></i>
-                                    <span>Kế hoạch công việc</span>
-                                </a>
-                                <ul class="sub-menu" aria-expanded="false">
-                                    <li><a href="{{route('listWorkWeek')}}">Kế hoạch tuần</a></li>
-                                    <li><a href="{{route('listWorkDaily')}}">Kế hoạch ngày</a></li>
-                                </ul>
-                            </li>
-
-                        <li>
                             <a href="javascript: void(0);" class="has-arrow waves-effect">
-                                <i class="ri-bookmark-3-line"></i>
-                                <span>Báo cáo công việc</span>
+                                <i class="ri-book-read-fill"></i>
+                                <span>Kế hoạch ngày</span>
                             </a>
                             <ul class="sub-menu" aria-expanded="false">
-                                <li><a href="{{ route('listReportWeekly') }}">Báo cáo tuần</a></li>
-                                <li><a href="{{ route('listReportDaily') }}">Báo cáo ngày </a></li>
+                                <li><a href="{{route('viewDenyDaily')}}">Từ chối</a></li>
+                                <li><a href="{{route('viewApproveDaily')}}">Duyệt & Kiểm tra</a></li>
+                                <li><a href="{{route('listWorkDaily')}}">Đang thực hiện</a></li>
+                                <li><a href="{{ route('listReportDaily') }}">Báo cáo</a></li>
+                            </ul>
+                        </li>
+                        <li>
+                            <a href="javascript: void(0);" class="has-arrow waves-effect">
+                                <i class="ri-book-read-fill"></i>
+                                <span>Kế hoạch tuần</span>
+                            </a>
+                            <ul class="sub-menu" aria-expanded="false">
+                                <li><a href="{{route('viewDenyWeek')}}">Từ chối</a></li>
+                                <li><a href="{{ route('viewApproveWeek')}}">Duyệt & Kiểm tra</a></li>
+                                <li><a href="{{route('listWorkWeek')}}">Đang thực hiện</a></li>
+                                <li><a href="{{ route('listReportWeekly') }}">Báo cáo</a></li>
                             </ul>
                         </li>
                         

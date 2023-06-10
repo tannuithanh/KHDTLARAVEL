@@ -153,4 +153,45 @@
     }
   });
 });
-  </script>
+
+
+</script>
+<script type="text/javascript">
+ $("form").on("submit", function(event){
+  event.preventDefault();
+  var form = this;
+  $.ajax({
+    url: "{!! route('checktime') !!}", // update this url to the route that points to your controller method
+      type: 'POST',
+      data: { 
+          _token: $("input[name=_token]").val(), 
+          date: $("input[name=date]").val() 
+      },
+      dataType: 'json',
+      success: function(response){
+          if(response.timeOverload){
+              Swal.fire({
+                  title: 'Overload',
+                  text: 'Số giờ của bạn hiện tại đã đủ 8 tiếng. Bạn đang bị quá tải',
+                  icon: 'warning',
+                  showCancelButton: true,
+                  confirmButtonColor: '#3085d6',
+                  cancelButtonColor: '#d33',
+                  confirmButtonText: 'Tiếp tục',
+                  cancelButtonText: 'Hủy bỏ'
+              }).then((result) => {
+                  if (result.isConfirmed) {
+                      form.submit(); // changed here
+                  }
+              });
+          }
+          else {
+              form.submit(); // changed here
+          }
+      },
+      error: function(jqXHR, textStatus, errorThrown) {
+         console.log(textStatus, errorThrown);
+      }
+  });
+});
+</script>

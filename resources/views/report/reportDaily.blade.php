@@ -1,7 +1,7 @@
 @include('include.header')
 <meta name="csrf-token" content="{{ csrf_token() }}">
 <div class="col-12">
-    <div class="page-title-box d-sm-flex align-items-center justify-content-between">
+    <div class="page-title-box d-sm-flex align-items-left justify-content-between">
         <h4 class="mb-sm-0">BÁO CÁO NGÀY</h4>
     </div>
     <div class="col-lg-12">
@@ -76,34 +76,36 @@
                     <table id="table-report" class="table table-sm m-0">
                         <thead>
                             <tr>
-                                <th style="text-align:center ;" class="table-header">STT</th>
-                                <th style="text-align:center ;" class="table-header">Hạng mục công việc</th>
-                                <th style="text-align:center ;" class="table-header">Mô tả công việc</th>
-                                <th style="text-align:center ;" class="table-header">Trách nhiệm</th>
-                                <th style="text-align:center ;" class="table-header">Hỗ trợ</th>
-                                <th style="text-align:center ;" class="table-header">Ngày Tháng Năm</th>
-                                <th style="text-align:center ;" class="table-header">Mục tiêu</th>
-                                <th style="text-align:center ;" class="table-header">Kết quả</th>
-                                <th style="text-align:center ;" class="table-header">Bất cập</th>
-                                <th style="text-align:center ;" class="table-header">Đề xuất</th>
+                                <th></th>
+                                <th style="text-align:left ;" class="table-header">STT</th>
+                                <th style="text-align:left ;" class="table-header">Hạng mục công việc</th>
+                                <th style="text-align:left ;" class="table-header">Mô tả công việc</th>
+                                <th style="text-align:left ;" class="table-header">Trách nhiệm</th>
+                                <th style="text-align:left ;" class="table-header">Hỗ trợ</th>
+                                <th style="text-align:left ;" class="table-header">Ngày Tháng Năm</th>
+                                <th style="text-align:left ;" class="table-header">Mục tiêu</th>
+                                <th style="text-align:left ;" class="table-header">Kết quả</th>
+                                <th style="text-align:left ;" class="table-header">Bất cập</th>
+                                <th style="text-align:left ;" class="table-header">Đề xuất</th>
                             </tr>
                         </thead>
                         <tbody>
                             @php $stt = 1 @endphp
                                 @foreach ($workDaily as $value)
-                                @if ($value->status == 9)
+                                @if ($value->status == 4)
                                 <tr>
-                                    <td style="text-align:center ;" >{{$stt++}}</td>
-                                    <td style="text-align:center ;" >{{$value->categoryDaily}}</td>
+                                    <td><input type="checkbox" class="email-checkbox" value="{{ $value->id }}"></td>
+                                    <td style="text-align:left ;" >{{$stt++}}</td>
+                                    <td style="text-align:left ;" >{{$value->categoryDaily}}</td>
                                     <td style="text-align:left ;" >{!! nl2br($value->describeDaily) !!}</td>
-                                    <td style="text-align:center ;" >{{$value->responsibility}}</td>
-                                    <td style="text-align:center ;" >{!! nl2br($value->support) !!}</td>
-                                    <td style="text-align:center ;" >{{ date('d/m/Y', strtotime($value->date)) }}</td>
-                                    <td style="text-align:center ;" >{{$value->ResultByWookWeek}}%</td>
+                                    <td style="text-align:left ;" >{{$value->responsibility}}</td>
+                                    <td style="text-align:left ;" >{!! nl2br($value->support) !!}</td>
+                                    <td style="text-align:left ;" >{{ date('d/m/Y', strtotime($value->date)) }}</td>
+                                    <td style="text-align:left ;" >{{$value->ResultByWookWeek}}%</td>
                                     @if ($value->Result=="Hoàn Thành")
-                                    <td style="text-align:center ;color: white; background-color: green;border: 1px solid black!important" >{{$value->Result}}</td>
+                                    <td style="text-align:left ;color: white; background-color: green;" >{{$value->Result}}</td>
                                     @elseif ($value->Result=="Không hoàn Thành")
-                                    <td style="text-align:center ;color: white; background-color: rgb(244, 1, 1);border: 1px solid black!important" >{{$value->Result}}</td>  
+                                    <td style="text-align:left ;color: white; background-color: rgb(244, 1, 1)" >{{$value->Result}}</td>  
                                     @endif
                                     <td style="text-align:left ;" >{!! nl2br($value->inadequacy) !!}</td>
                                     <td style="text-align:left ;" >{!! nl2br($value->propose) !!}</td>
@@ -114,7 +116,7 @@
                     </table>
                     @if (in_array($user['position_id'], [5, 6, 7, 8,9,10,11]))
                     <button id="send-email-btn" class="btn btn-info waves-effect waves-light">
-                        <span>Send Email</span>
+                        <span>Gửi mail</span>
                         <i class="fab fa-telegram-plane ms-2"></i>
                     </button>
                     @endif
@@ -204,6 +206,14 @@
         });
 // ------------------------------------------ GỞI MAIL --------------------------------------------------//    
 $(document).on('click', '#send-email-btn', function() {
+    if ($('.email-checkbox:checked').length == 0) {
+        Swal.fire({
+            title: 'Chọn nội dung bạn muốn gởi mail',
+            icon: 'warning'
+        });
+        return;
+    }
+
     // Hiển thị thông báo xác nhận trước khi gửi email
     Swal.fire({
         title: 'Bạn có muốn gởi mail không?',
@@ -216,19 +226,20 @@ $(document).on('click', '#send-email-btn', function() {
         if (result.isConfirmed) {
             var token= $('meta[name="csrf-token"]').attr('content');
             var tableData = [];
-            $('#table-report tr').each(function(row, tr) {
-                tableData[row] = {
-                    'stt': $(tr).find('td:eq(0)').text(),
-                    'categoryDaily': $(tr).find('td:eq(1)').text(),
-                    'describeDaily': $(tr).find('td:eq(2)').text(),
-                    'responsibility': $(tr).find('td:eq(3)').text(),
-                    'support': $(tr).find('td:eq(4)').text(),
-                    'date': $(tr).find('td:eq(5)').text(),
-                    'ResultByWookWeek': $(tr).find('td:eq(6)').text(),
-                    'Result': $(tr).find('td:eq(7)').text(),
-                    'inadequacy': $(tr).find('td:eq(8)').text(),
-                    'propose': $(tr).find('td:eq(9)').text()
-                }
+            $('.email-checkbox:checked').each(function() {
+                var tr = $(this).closest('tr');
+                tableData.push({
+                    'stt': tr.find('td:eq(1)').text(), // Bắt đầu từ 1 do có thêm một cột checkbox
+                    'categoryDaily': tr.find('td:eq(2)').text(),
+                    'describeDaily': tr.find('td:eq(3)').text(),
+                    'responsibility': $(tr).find('td:eq(4)').text(),
+                    'support': $(tr).find('td:eq(5)').text(),
+                    'date': $(tr).find('td:eq(6)').text(),
+                    'ResultByWookWeek': $(tr).find('td:eq(7)').text(),
+                    'Result': $(tr).find('td:eq(8)').text(),
+                    'inadequacy': $(tr).find('td:eq(9)').text(),
+                    'propose': $(tr).find('td:eq(10)').text()
+                });
             });
             
             $.ajax({

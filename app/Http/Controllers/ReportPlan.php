@@ -253,7 +253,7 @@ class ReportPlan extends Controller
         $workDaily->inadequacy = $request->inadequacy;
         $workDaily->propose = $request->propose;
         $workDaily->Result = $request->Result;
-        $workDaily->status = 9;
+        $workDaily->status = 4;
         $workDaily->update();
         }
         return redirect()->route('listReportDaily')->with('report','Cập nhật thành công');
@@ -575,26 +575,91 @@ class ReportPlan extends Controller
         return view('report.reportWeekly', compact('user', 'mydate', 'teams', 'userById','month','dates'))->with(compact('start'))->with(compact('workWeek'))->with(compact('end'))->with(compact('weekNumber'))->with(compact('departments'))->with(compact('formattedDateStart'))->with(compact('formattedDateEnd'));
     }
 
-    public function sendmail(Request $request){
+    public function sendmail(Request $request) {
         $user = Auth::user();
-        $manager=User::select('users.*')
-                    ->where('department_id',$user['department_id'])
-                    ->where('position_id',5)->first();
-        
-        $deputy = User::select('users.*')
-        ->where('department_id',$user['department_id'])
-        ->where('position_id',6)->first();
-        // dd($deputy->toArray());
-                    
+    
         $tableData = $request->input('tableData');
         $mailData = [
             'tableData' => $tableData,
         ];
-        Mail::to($manager['email'])
-            ->cc([$deputy['email'],$user['email']])
+    
+        $receivers = [];
+        $cc = [];
+    
+        $departments = [$user['department_id']];
+        if(!empty($user['department_id1'])){
+            $departments[] = $user['department_id1'];
+        }
+    
+        foreach($departments as $department_id){
+            $department = Department::find($department_id);
+    
+            // Get managers of the department
+            $managers = User::select('users.*')
+                ->where('department_id', $department_id)
+                ->whereIn('position_id', [5, 6]) // Manager and deputy
+                ->get();
+    
+            // Get the team of the user
+            $team = Team::find($user['team_id']);
+    
+            if($user['position_id'] == 9 || $user['position_id'] == 10){ // Staff
+                // Send to managers
+                foreach($managers as $manager){
+                    $receivers[] = $manager['email'];
+                }
+    
+                // CC the team leader and sub-leader if exists
+                if($team){
+                    $team_leader = User::select('users.*')
+                        ->where('team_id', $team['id'])
+                        ->where('position_id', 7) // Team leader
+                        ->first();
+    
+                    if($team_leader){
+                        $cc[] = $team_leader['email'];
+    
+                        $team_sub_leader = User::select('users.*')
+                            ->where('team_id', $team['id'])
+                            ->where('position_id', 8) // Team sub-leader
+                            ->first();
+                        
+                        if($team_sub_leader){
+                            $cc[] = $team_sub_leader['email'];
+                        }
+                    }
+                }
+            } else if($user['position_id'] == 7 || $user['position_id'] == 8){ // Team leader or sub-leader
+                foreach($managers as $manager){
+                    $receivers[] = $manager['email'];
+                }
+            } else if($user['position_id'] == 5 || $user['position_id'] == 6){ // Department leader or deputy
+                if($department['trademark_id'] == 1){
+                    $receivers[] = "totanson@thaco.com.vn";
+                } else if($department['trademark_id'] == 2){
+                    $receivers[] = "levandoanh@thaco.com.vn";
+                }
+                // If the sender is the deputy, CC the manager
+                if($user['position_id'] == 6){
+                    foreach($managers as $manager){
+                        if($manager['position_id'] == 5){
+                            $cc[] = $manager['email'];
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+    
+        $cc[] = $user['email'];
+    
+        Mail::to($receivers)
+            ->cc($cc)
             ->send(new ReportMail($mailData));
+    
         return response()->json(['success'=>'Gởi mail thành công rồi đó Tân.']);
     }
+    
 }
 
 

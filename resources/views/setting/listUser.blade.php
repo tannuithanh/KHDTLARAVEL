@@ -81,7 +81,7 @@
                                     <tr>
                                         <th style="text-align:center ;width:0">{{ $stt++ }}</th>
                                         @if ($user->id == $value->id)
-                                        <th style="color:red;border: 1px solid black!important">{{ $value->name }}</th>
+                                        <th style="color:red;">{{ $value->name }}</th>
                                         @else
                                         <th >{{ $value->name }}</th>
                                         @endif

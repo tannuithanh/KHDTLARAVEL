@@ -22,10 +22,10 @@
                 </div>
                 <div class="mb-3">
                     <label class="form-label">Hỗ trợ</label>
-                    <select class="select2 form-control select2-multiple"name="support" multiple="multiple"
+                    <select class="select2 form-control select2-multiple" name="support[]" multiple="multiple"
                         multiple data-placeholder="Tên nhân sự hỗ trợ">
                         @foreach ($allUser as $value)
-                            <option value="{{ $value->id }}">{{ $value->name }}</option>
+                            <option value="{{ $value->name }}">{{ $value->name }}</option>
                         @endforeach
                     </select>
                 </div>

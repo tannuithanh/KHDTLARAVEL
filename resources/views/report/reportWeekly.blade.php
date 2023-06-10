@@ -1,8 +1,24 @@
 @include('include.header')
 <style>
-    .th, td{
-        font-size: 20px
+    th {
+        background-color: #16c745a2 !important;
+        text-align: center;
+        vertical-align: middle;
+        color: #000000c9;
+        font-size: 20px;
     }
+
+    td,
+    th {
+        border-color: black !important;
+        border: 1px solid black;
+        font-size: 20px;
+        font-family: 'Times New Roman', Times, serif;
+        vertical-align: middle;
+        /* Vertically centers text */
+    }
+
+   
 </style>
 <div class="col-12">
     <div class="page-title-box d-sm-flex align-items-center justify-content-between">
@@ -63,23 +79,7 @@
                 </form>
 
                 <div class="table-responsive class scrollable-table-wrapper mt-5">
-                    @if (Session::has('successful'))
-                    <div class="alert alert-success alert-dismissible fade show" role="alert">
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                        <strong>Thông báo!</strong> Đã thêm thành công việc tuần thành công, hãy tìm kiếm để xem chi
-                        tiết.
-                    </div>
-                    @elseif (Session::has('deleteSuccess'))
-                    <div class="alert alert-warning alert-dismissible fade show" role="alert">
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                        <strong>Thông báo!</strong> Bạn đã xóa thành công.
-                    </div>
-                    @elseif (Session::has('status'))
-                    <div class="alert alert-info alert-dismissible fade show" role="alert">
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                        <strong>Thông báo!</strong> Chỉnh sửa công việc thành công.
-                    </div>
-                    @endif
+                 
                     <span style="font-size: 19px;"><strong>KẾ HOẠCH TUẦN:</strong> {{ $weekNumber }}
                         &emsp;&emsp;</span> <span style="font-size: 19px;"><strong> Từ:</strong> <span style="color: green;">{{ $formattedDateStart }}</span> <strong> Đến:</strong> <span style="color: green;">{{ $formattedDateEnd }}</span></span>
                     <table class="table table-sm m-0">
@@ -92,16 +92,16 @@
                                 <th style="text-align:center ;" class="table-header">Hỗ trợ</th>
                                 <th style="text-align:center ;" class="table-header">Bất cập</th>
                                 <th style="text-align:center ;" class="table-header">Đề xuất</th>
-                                <th style="text-align:center ;" class="table-header">Kết quả</th>
-                                <th style="text-align:center ;" class="table-header">File đính kèm</th>
+                                <th style="text-align:center ;width: 7%" class="table-header">Kết quả</th>
+                                <th style="text-align:center ;" class="table-header">File</th>
                             </tr>
                         </thead>
                         <tbody>
                             @php $stt = 1 @endphp
                                 @foreach ( $workWeek as $value)
                                     @if ($value->status == 1)
-                                        <tr style="font-size: 17px">
-                                            <td style="text-align: center;widtd: 0"> {{ $stt++ }}</td>
+                                        <tr>
+                                            <td style="text-align: center;"> {{ $stt++ }}</td>
                                             <td style=""> {{ $value->categoryWeek }} </td>
                                             <td style=""> {!! nl2br($value->describeWeek) !!}</td>
                                             <td style="text-align: center;"> {{ $value->responsibility }}</td>

@@ -16,7 +16,7 @@
                                     <div class="mb-3">
                                         <select name="responsibility" class="form-select">
                                             @foreach($userAssign as $value)
-                                                <option value="{{$value->id}}">{{$value->name}}</option>
+                                                <option value="{{$value->name}}">{{$value->name}}</option>
                                             @endforeach
                                         </select>
                                     </div>
@@ -162,4 +162,46 @@
     }
   });
 });
-  </script>
+
+</script>
+  <script type="text/javascript">
+    $("form").on("submit", function(event){
+     event.preventDefault();
+     var form = this;
+     $.ajax({
+       url: "{!! route('checktime') !!}", // update this url to the route that points to your controller method
+         type: 'POST',
+         data: { 
+             _token: $("input[name=_token]").val(), 
+             date: $("input[name=date]").val(),
+             responsibility: $("select[name=responsibility]").val()
+         },
+         dataType: 'json',
+         success: function(response){
+             if(response.timeOverload){
+                 Swal.fire({
+                     title: 'Overload',
+                     text: 'Số giờ của nhân sự này hiện tại đã đủ 8 tiếng. Họ đang bị quá tải bạn nên xem xét!',
+                     icon: 'warning',
+                     showCancelButton: true,
+                     confirmButtonColor: '#3085d6',
+                     cancelButtonColor: '#d33',
+                     confirmButtonText: 'Tiếp tục',
+                     cancelButtonText: 'Hủy bỏ'
+                 }).then((result) => {
+                     if (result.isConfirmed) {
+                         form.submit(); // changed here
+                     }
+                 });
+             }
+             else {
+                 form.submit(); // changed here
+             }
+         },
+         error: function(jqXHR, textStatus, errorThrown) {
+            console.log(textStatus, errorThrown);
+         }
+     });
+   });
+   </script>
+   

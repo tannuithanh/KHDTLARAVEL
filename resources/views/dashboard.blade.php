@@ -291,7 +291,7 @@
                             </div>
                         </div>
                     </div>
-                    {{--------------------------}}
+                    {{---------------------------------------------------------------------------------------------------------------------}}
                     <div class="dropdown d-inline-block d-lg-none ms-2">
                         <button type="button" class="btn header-item noti-icon waves-effect"
                             id="page-header-search-dropdown" data-bs-toggle="dropdown" aria-haspopup="true"
@@ -371,7 +371,7 @@
                             </a>
                         </li>
                         <li>
-                            <a href="{{ route('listCarBrands') }}" class="waves-effect">
+                            <a href="{{ route('listCarBrands')}} " class="waves-effect">
                                 <i class="fas fa-project-diagram"></i>
                                 <span>Quản lý dự án</span>
                             </a>
@@ -379,24 +379,28 @@
                         <li>
                             <a href="javascript: void(0);" class="has-arrow waves-effect">
                                 <i class="ri-book-read-fill"></i>
-                                <span>Kế hoạch công việc</span>
+                                <span>Kế hoạch ngày</span>
                             </a>
                             <ul class="sub-menu" aria-expanded="false">
-                                <li><a href="{{ route('listWorkWeek') }}">Kế hoạch tuần</a></li>
-                                <li><a href="{{ route('listWorkDaily') }}">Kế hoạch ngày</a></li>
+                                <li><a href="{{route('viewDenyDaily')}}">Từ chối</a></li>
+                                <li><a href="{{route('viewApproveDaily')}}">Duyệt & Kiểm tra</a></li>
+                                <li><a href="{{route('listWorkDaily')}}">Đang thực hiện</a></li>
+                                <li><a href="{{ route('listReportDaily') }}">Báo cáo</a></li>
                             </ul>
                         </li>
-
                         <li>
                             <a href="javascript: void(0);" class="has-arrow waves-effect">
-                                <i class="ri-bookmark-3-line"></i>
-                                <span>Báo cáo công việc</span>
+                                <i class="ri-book-read-fill"></i>
+                                <span>Kế hoạch tuần</span>
                             </a>
                             <ul class="sub-menu" aria-expanded="false">
-                                <li><a href="{{ route('listReportWeekly') }}">Báo cáo tuần</a></li>
-                                <li><a href="{{ route('listReportDaily') }}">Báo cáo ngày</a></li>
+                                <li><a href="{{route('viewDenyWeek')}}">Từ chối</a></li>
+                                <li><a href="{{ route('viewApproveWeek')}}">Duyệt & Kiểm tra</a></li>
+                                <li><a href="{{route('listWorkWeek')}}">Đang thực hiện</a></li>
+                                <li><a href="{{ route('listReportWeekly') }}">Báo cáo</a></li>
                             </ul>
                         </li>
+                        
                     </ul>
                 </div>
             </div>
@@ -518,7 +522,7 @@
 
                     @include('include.footer')
 </body>
-<div class="modal fade fullscreen-modal" id="todayTasksModal" tabindex="-1" role="dialog" style="font-size: 30px"
+{{-- <div class="modal fade fullscreen-modal" id="todayTasksModal" tabindex="-1" role="dialog" style="font-size: 30px"
     aria-labelledby="todayTasksModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -598,7 +602,7 @@
             </div>
         </div>
     </div>
-</div>
+</div> --}}
 
 </html>
 <script>

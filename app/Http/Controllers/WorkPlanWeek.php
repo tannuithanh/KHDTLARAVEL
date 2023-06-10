@@ -201,6 +201,7 @@ class WorkPlanWeek extends Controller
         ->leftjoin('teams', 'teams.id', '=', 'users.team_id')
         ->where('users.id', Auth::user()->id)
         ->first();
+        // dD($user->toarray());
         if ($user['position_id'] == 1 || $user['position_id'] == 2) {
             $teams = Team::get();
         } elseif ($user['position_id'] == 3) {
@@ -413,8 +414,17 @@ class WorkPlanWeek extends Controller
     //--------------- Lấy thông tin từ FORM (POST) CÔNG VIỆC TUẦN ----------------------/// 
     public function insertWorkWeek(request $request)
     {
-        // dd($request->toArray());
+  
         $user = Auth::user();
+        $status = 1; // default status
+    
+        if (empty($user['team_id']) || $user['position_id']==7) {
+            $status = 2; // set status to 2 if team_id is not set
+        }
+    
+        if (in_array($user['position_id'], [1, 2, 3, 4, 5, 6])) {
+            $status = 0; // set status to 0 if position is one of the specified values
+        }
         $alldata = $request->all();
         if(isset($alldata['support'])){
             $supportJson = json_encode($alldata['support'], true);
@@ -448,7 +458,7 @@ class WorkPlanWeek extends Controller
         // dd($alldata['workDescription_mon']);
         $mytime = date('Y-m-d H:i:s');
         if($alldata['enddate']>$alldata['startdate']){
-        $id = Workweek::insertGetId(
+        Workweek::insertGetId(
             [
                 'categoryWeek' => $alldata['categoryWeek'],
                 'describeWeek' => $alldata['describeWeek'],
@@ -466,33 +476,11 @@ class WorkPlanWeek extends Controller
                 'friday'=> $alldata['workDescription_fri'],
                 'saturday'=> $alldata['workDescription_sat'],
                 'sunday'=> $alldata['workDescription_sun'],
+                'status'=> $status,
                 'created_at' => $mytime,
                 'updated_at' => $mytime
             ],
         );
-        $startDate = Carbon::parse($alldata['startdate']);
-        $endDate = Carbon::parse($alldata['enddate']);
-        $countDate = [];
-
-        for ($day = $startDate; $day->lte($endDate); $day->addDay()) {
-            $countDate[] = $day->format('Y-m-d');
-        };
-        foreach($countDate as $value){
-        Workdaily::insert(
-            [
-                'workweek_id' => $id,
-                'categoryDaily' => $alldata['categoryWeek'],
-                'support' => isset($supportString) ? $supportString : null,
-                'responsibility' => $user['name'],
-                'date' => $value,
-                'department_id' => $user['department_id'],
-                'team_id' => $user['team_id'],
-                'created_at' => $mytime,
-                'updated_at' => $mytime,
-                'status' => -1,
-            ],
-        );
-        }
         }else{
             return redirect()->route('chooseDate.get')->with('failder', 'Thêm kế hoạch thất bại');     
         }
@@ -501,12 +489,12 @@ class WorkPlanWeek extends Controller
         return redirect()->route('listWorkWeek')->with('successful', 'Thêm kế hoạch thành công');
     }
     //--------------- XÓA CÔNG VIỆC TUẦN----------------------/// 
-    public function deleteWorkWeek($id)
+    public function deleteWorkWeek(request $request)
     {
-        $deleteWorkWeek = Workweek::find($id);
-        Workdaily::where('workweek_id',$id)->delete();
+        $deleteWorkWeek = Workweek::find($request->id);
+        Workdaily::where('workweek_id',$request->id)->delete();
         $deleteWorkWeek->delete();
-        return redirect()->route('listWorkWeek')->with('deleteSuccess', 'Xóa kế hoạch thành công');
+        return response()->json(['message' => 'Cập nhật thành công!'], 200);
     }
 
     //--------------- SỬA CÔNG VIỆC TUẦN----------------------/// 
@@ -534,6 +522,43 @@ class WorkPlanWeek extends Controller
 
     public function updateWorkWeek(Request $request, $id)
     {
+        $user = Auth::user();
+        $status = 1; // default status
+    
+        if (empty($user['team_id']) || $user['position_id']==7) {
+            $status = 2; // set status to 2 if team_id is not set
+        }
+    
+        if (in_array($user['position_id'], [1, 2, 3, 4, 5, 6])) {
+            $status = 0; // set status to 0 if position is one of the specified values
+        }
+        if(isset($request['support'])){
+            // If $request['support'] is a string, decode it to an array
+            if (is_string($request['support'])) {
+                $supportArray = json_decode($request['support'], true);
+            }
+            // If $request['support'] is already an array, use it as is
+            elseif (is_array($request['support'])) {
+                $supportArray = $request['support'];
+            }
+            // If $request['support'] is neither a string nor an array, set $supportArray to null
+            else {
+                $supportArray = null;
+            }
+        
+            // If $supportArray is an array, implode it to a string
+            if (is_array($supportArray)) {
+                $supportString = implode("\n", $supportArray);
+            }
+            // If $supportArray is not an array, set $supportString to null
+            else {
+                $supportString = null;
+            }
+        } else {
+            $supportString = null;
+        }
+        // dd($supportString);        
+        
         if (!isset($request['workDescription_mon'])) {
             $request['workDescription_mon'] = null;
         }
@@ -561,7 +586,8 @@ class WorkPlanWeek extends Controller
         $workWeek->describeWeek = $request->input('describeWeek');
         $workWeek->startdate = $request->input('startdate');
         $workWeek->enddate = $request->input('enddate');
-        $workWeek->support = $request->input('support');
+        $workWeek->support = $workWeek->support = isset($supportString) ? $supportString : null;
+        $workWeek->status = $status;
         $workWeek->monday = $request->input('workDescription_mon');
         $workWeek->tuesday = $request->input('workDescription_tue');
         $workWeek->wednesday = $request->input('workDescription_wed');
@@ -571,7 +597,7 @@ class WorkPlanWeek extends Controller
         $workWeek->sunday = $request->input('workDescription_sun');
         $workWeek->updated_at = $mytime;
         $workWeek->update();
-        return redirect()->route('listWorkWeek')->with('status', 'Cập nhật thành công')->with('hack', $id);
+        return redirect()->route('viewApproveWeek')->with('status', 'Cập nhật thành công')->with('hack', $id);
     }
     //-------------Cập nhật công việc từ dự án---------------------//
     public function updateWorkWeekGet($id){
@@ -595,6 +621,41 @@ class WorkPlanWeek extends Controller
         return view('plan.creat.updateWorkWeek', compact('workWeekById'))->with(compact('user'))->with(compact('allUser'))->with(compact('weekdays'))->with(compact('weekNumber'))->with(compact('month'));
     }
     public function updateWorkWeekPost(Request $request, $id){
+        $user = Auth::user();
+        $status = 1; // default status
+    
+        if (empty($user['team_id']) || $user['position_id']==7) {
+            $status = 2; // set status to 2 if team_id is not set
+        }
+    
+        if (in_array($user['position_id'], [1, 2, 3, 4, 5, 6])) {
+            $status = 0; // set status to 0 if position is one of the specified values
+        }
+        if(isset($request['support'])){
+            // If $request['support'] is a string, decode it to an array
+            if (is_string($request['support'])) {
+                $supportArray = json_decode($request['support'], true);
+            }
+            // If $request['support'] is already an array, use it as is
+            elseif (is_array($request['support'])) {
+                $supportArray = $request['support'];
+            }
+            // If $request['support'] is neither a string nor an array, set $supportArray to null
+            else {
+                $supportArray = null;
+            }
+        
+            // If $supportArray is an array, implode it to a string
+            if (is_array($supportArray)) {
+                $supportString = implode("\n", $supportArray);
+            }
+            // If $supportArray is not an array, set $supportString to null
+            else {
+                $supportString = null;
+            }
+        } else {
+            $supportString = null;
+        }
         if (!isset($request['workDescription_mon'])) {
             $request['workDescription_mon'] = null;
         }
@@ -622,7 +683,7 @@ class WorkPlanWeek extends Controller
         $workWeek->describeWeek = $request->input('describeWeek');
         $workWeek->startdate = $request->input('startdate');
         $workWeek->enddate = $request->input('enddate');
-        $workWeek->support = $request->input('support');
+        $workWeek->support = $workWeek->support = isset($supportString) ? $supportString : null;
         $workWeek->monday = $request->input('workDescription_mon');
         $workWeek->tuesday = $request->input('workDescription_tue');
         $workWeek->wednesday = $request->input('workDescription_wed');
@@ -631,8 +692,8 @@ class WorkPlanWeek extends Controller
         $workWeek->saturday = $request->input('workDescription_sat');
         $workWeek->sunday = $request->input('workDescription_sun');
         $workWeek->updated_at = $mytime;
-        $workWeek->status = 0;
+        $workWeek->status = $status;
         $workWeek->update();
-        return redirect()->route('listWorkWeek')->with('status', 'Cập nhật thành công')->with('hack', $id);
+        return redirect()->route('viewApproveWeek')->with('status', 'Cập nhật thành công')->with('hack', $id);
     }
 }

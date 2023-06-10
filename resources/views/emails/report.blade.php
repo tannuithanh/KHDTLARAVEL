@@ -40,7 +40,7 @@
                 @foreach($tableData['tableData'] as $key => $row)
                 @if ($row['stt']!=null)
                 <tr>
-                    <td style="text-align:center ;" >{{ $row['stt'] }}</td>
+                    <td style="text-align:center ;" >{{ $key + 1 }}</td>
                     <td style="text-align:left ;">{{ $row['categoryDaily'] }}</td>
                     <td style="text-align:left ;">{!! nl2br($row['describeDaily']) !!}</td>
                     <td style="text-align:center ;">{{ $row['responsibility'] }}</td>
