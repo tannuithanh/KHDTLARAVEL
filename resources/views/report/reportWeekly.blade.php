@@ -99,7 +99,7 @@
                         <tbody>
                             @php $stt = 1 @endphp
                                 @foreach ( $workWeek as $value)
-                                    @if ($value->status == 1)
+                                    @if ($value->status == 4)
                                         <tr>
                                             <td style="text-align: center;"> {{ $stt++ }}</td>
                                             <td style=""> {{ $value->categoryWeek }} </td>

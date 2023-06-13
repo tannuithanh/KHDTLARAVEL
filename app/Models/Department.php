@@ -7,15 +7,11 @@ use Illuminate\Database\Eloquent\Model;
 
 class Department extends Model
 {
-    public $table = 'departments';
     use HasFactory;
+    public $table = 'departments';
     protected $fillable = [
-        'id',
         'name',
         'description',
-        'describeWeek',
-
+        'trademark_id'
     ];
-
-    
 }

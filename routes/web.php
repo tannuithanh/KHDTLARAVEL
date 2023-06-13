@@ -94,6 +94,7 @@ route::get('/dashboard', [Dashboard::class, 'dashboardGet'])->name('DashBoard')-
     route::middleware('checkLogin')->prefix('/Work-Weeko')->group(function () {
         route::get('/Approve-Week', [ApproveDaiLyWeekly::class, 'viewApproveWeek'])->name('viewApproveWeek');
         route::get('/deny-week', [ApproveDaiLyWeekly::class, 'viewDenyWeek'])->name('viewDenyWeek');
+        route::get('/chart-week', [ApproveDaiLyWeekly::class, 'ChartWeek'])->name('ChartWeek');
         route::POST('/WeekAprroveTN', [ApproveDaiLyWeekly::class, 'WeekAprroveTN'])->name('WeekAprroveTN');
         route::POST('/WeekdenyTN', [ApproveDaiLyWeekly::class, 'WeekdenyTN'])->name('WeekdenyTN');
         route::POST('/WeekaprroveTP', [ApproveDaiLyWeekly::class, 'WeekaprroveTP'])->name('WeekaprroveTP');
@@ -213,8 +214,39 @@ route::middleware('checkLogin')->prefix('/report')->group(function () {
 
 
 
+//------- QUẢN LÝ KẾ HOẠCH THÁNG -----//
+    route::middleware('checkLogin')->prefix('/WorkMonth')->group(function () {
+        route::get('/approve-Month', [ApproveDaiLyWeekly::class, 'viewApproveMonth'])->name('viewApproveMonth');
+        route::get('/deny-Month', [ApproveDaiLyWeekly::class, 'viewDenyMonth'])->name('viewDenyMonth');
+        route::get('/list-Month', [ApproveDaiLyWeekly::class, 'listStartMonth'])->name('listStartMonth');
+        route::get('/report-Month', [ApproveDaiLyWeekly::class, 'listReportMonth'])->name('listReportMonth');
+        route::POST('/aprroveMonthTP', [ApproveDaiLyWeekly::class, 'aprroveMonthTP'])->name('aprroveMonthTP');
+        route::POST('/denyMonthTP', [ApproveDaiLyWeekly::class, 'denyMonthTP'])->name('denyMonthTP');
+        route::POST('/aprroveMonthTN', [ApproveDaiLyWeekly::class, 'aprroveMonthTN'])->name('aprroveMonthTN');
+        route::POST('/denyMonthTN', [ApproveDaiLyWeekly::class, 'denyMonthTN'])->name('denyMonthTN');
+    });
+    //-------------------------------------- TẠO CÔNG VIỆC THÁNG  --------------------------------------------//    
+    route::middleware('checkLogin')->prefix('/Creat')->group(function () {
+        route::get('/Creat-Work-Month', [ApproveDaiLyWeekly::class, 'viewCreatWorkMonth'])->name('creatWorkMonth');
+        route::POST('/Creat-Work-Month', [ApproveDaiLyWeekly::class, 'InsertWorkMonth'])->name('InsertWorkMonth');
+    });
+    //-------------------------------------- CHỈNH SỬA-------------------------------//
+    route::middleware('checkLogin')->prefix('/Edit-WorkMonth-From-WorkWeek')->group(function () {
+        route::get('/edit-WorkMonth/{id}', [ApproveDaiLyWeekly::class, 'editWorkMonthGet'])->name('editWorkMonth.get');
+        route::post('/edit-WorkMonth/{id}', [ApproveDaiLyWeekly::class, 'editWorkMonthPost'])->name('editWorkMonth.Post');
+    });
+     //-------------------------------------- XÓA CÔNG VIỆC THÁNG -------------------------------//
+     route::middleware('checkLogin')->prefix('/Delete-WorkMonth')->group(function () {
+        route::post('/delete-WorkMonth', [ApproveDaiLyWeekly::class, 'DeletetWorkMonth'])->name('DeletetWorkMonth');
+    });
+    //--------------------------------- BÁO CÁO ---------------------------------------//
+    route::get('/Report-Month/{id}', [ReportPlan::class, 'formReportMonth'])->name('reportMonth.get');
+    route::POST('/Report-Month/{id}', [ReportPlan::class, 'formReportMonthPost'])->name('reportMonth.post');
 
-
+    //------------------- Tìm kiếm nhóm người dùng và phòng ban --------------//
+    Route::get('/department/{id}/teams', [ApproveDaiLyWeekly::class, 'getTeams'])->name('getTeamByDP');
+    Route::get('/department/{id}/users', [ApproveDaiLyWeekly::class, 'getDepartmentUsers'])->name('getTeamByUser');
+    Route::get('/team/{id}/users', [ApproveDaiLyWeekly::class, 'getTeamUsers'])->name('getUserByTeams');
 
 
 

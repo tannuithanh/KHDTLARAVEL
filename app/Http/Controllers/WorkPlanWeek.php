@@ -486,7 +486,7 @@ class WorkPlanWeek extends Controller
         }
 
        
-        return redirect()->route('listWorkWeek')->with('successful', 'Thêm kế hoạch thành công');
+        return redirect()->route('viewApproveWeek')->with('successful', 'Thêm kế hoạch thành công');
     }
     //--------------- XÓA CÔNG VIỆC TUẦN----------------------/// 
     public function deleteWorkWeek(request $request)

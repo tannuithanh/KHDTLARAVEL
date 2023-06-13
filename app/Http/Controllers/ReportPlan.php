@@ -8,6 +8,7 @@ use App\Models\User;
 use App\Mail\ReportMail;
 use App\Models\Workweek;
 use App\Models\Workdaily;
+use App\Models\Workmonth;
 use App\Models\Department;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -140,7 +141,7 @@ class ReportPlan extends Controller
             }
             //Bước này quan trọng. Làm nhớ dd để hiểu chứ khó nói
             
-            $workWeek->status = 1;
+            $workWeek->status = 4;
             $workWeek->inadequacy = $request->input('Inadequacy');
             $workWeek->propose = $request->input('Propose');
             $workWeek->Result = $request->input('result');
@@ -660,6 +661,22 @@ class ReportPlan extends Controller
         return response()->json(['success'=>'Gởi mail thành công rồi đó Tân.']);
     }
     
+    public function formReportMonth ($id){
+        $workMonth = Workmonth::find($id);
+        $user = Auth::user();
+        return view('report.formReportMonth',compact('user','workMonth','id'));
+    }
+    public function formReportMonthPost(request $request, $id){
+        $user = Auth::user();
+        $workmonth = Workmonth::find($id);
+        $workmonth->update([
+            'inadequacy' => $request->Inadequacy,
+            'propose' => $request->Propose,
+            'result' => $request->result,
+            'status' => 4,
+        ]);
+        return redirect()->route('listReportMonth');
+    }
 }
 
 

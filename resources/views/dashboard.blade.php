@@ -400,7 +400,19 @@
                                 <li><a href="{{ route('listReportWeekly') }}">Báo cáo</a></li>
                             </ul>
                         </li>
-                        
+                        <li>
+                            <a href="javascript: void(0);" class="has-arrow waves-effect">
+                                <i class="ri-book-read-fill"></i>
+                                <span>Kế hoạch tháng</span>
+                            </a>
+                            <ul class="sub-menu" aria-expanded="false">
+                                <li><a href="{{route('viewDenyMonth')}}" >Từ chối</a></li>
+                                <li><a href="{{route('viewApproveMonth')}}">Duyệt & Kiểm tra</a></li>
+                                <li><a href="{{route('listStartMonth')}}">Đang thực hiện</a></li>
+                                <li><a >Báo cáo</a></li>
+                                <li><a >Biểu đồ</a></li>
+                            </ul>
+                        </li>
                     </ul>
                 </div>
             </div>

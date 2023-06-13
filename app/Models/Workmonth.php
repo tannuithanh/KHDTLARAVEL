@@ -5,29 +5,25 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Workweek extends Model
+class Workmonth extends Model
 {
-    public $table = 'workweek';
+    public $table = 'workmonth';
     use HasFactory;
     protected $fillable = [
         'id',
-        'categoryWeek',
-        'describeWeek',
+        'startMonth',
+        'endMonth',
+        'categoryMonth',
+        'describeMonth',
         'responsibility',
-        'support',
         'department_id',
         'team_id',
-        'startdate',
-        'enddate',
         'note',
+        'support',
         'status',
         'inadequacy',
         'propose',
         'Result',
-        'fileupload',
 
     ];
-    public function department(){
-        return $this->belongsTo(Department::class, 'department_id');
-    }
 }

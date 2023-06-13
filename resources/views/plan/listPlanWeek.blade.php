@@ -258,11 +258,14 @@
                         </thead>
                         <tbody>
 
-                            @php $stt = 1 @endphp
+                            @php $stt = 1; 
+                            $dataExists = false;
+                            @endphp
                             @if (!$workWeek->isEmpty())
-
                                 @foreach ($workWeek as $value)
+
                                     @if ($value->startdate >= $start && $value->startdate < $end)
+                                        @if ($value->status == 0)
                                         <tr>
                                             <td class="col1" style="text-align: center;"> {{ $stt++ }}</td>
                                             <td class="left-align col2"> {{ $value->categoryWeek }} </td>
@@ -272,57 +275,23 @@
                                                 {{ $value->responsibility }}</td>
                                             <td class="col5 hidden-column" style="text-align: left;">
                                                 {!! nl2br($value->support) !!}</td>
-                                            {{-- <td style="text-align: center;"> {{ $dates[0] }}</td> --}}
-                                            @if ($dates[0] >= $value->startdate && $dates[0] <= $value->enddate)
-                                                <td style="text-align: center; background-color: #85b7de;"><b
-                                                        style="font-size: 15px">{{ $value->monday }}</b></td>
-                                            @else
-                                                <td style="text-align: center;"></td>
-                                            @endif
-                                            @if ($dates[1] >= $value->startdate && $dates[1] <= $value->enddate)
-                                                <td style="text-align: center; background-color: #85b7de;"><b
-                                                        style="font-size: 15px">{{ $value->tuesday }}</b></td>
-                                            @else
-                                                <td style="text-align: center;"></td>
-                                            @endif
-                                            @if ($dates[2] >= $value->startdate && $dates[2] <= $value->enddate)
-                                                <td style="text-align: center; background-color: #85b7de;"><b
-                                                        style="font-size: 15px">{{ $value->wednesday }}</b></td>
-                                            @else
-                                                <td style="text-align: center;"></td>
-                                            @endif
-                                            @if ($dates[3] >= $value->startdate && $dates[3] <= $value->enddate)
-                                                <td style="text-align: center; background-color: #85b7de;"><b
-                                                        style="font-size: 15px">{{ $value->thursday }}</b></td>
-                                            @else
-                                                <td style="text-align: center;"></td>
-                                            @endif
-                                            @if ($dates[4] >= $value->startdate && $dates[4] <= $value->enddate)
-                                                <td style="text-align: center; background-color: #85b7de;"><b
-                                                        style="font-size: 15px">{{ $value->friday }}</b></td>
-                                            @else
-                                                <td style="text-align: center;"></td>
-                                            @endif
-                                            @if ($dates[5] >= $value->startdate && $dates[5] <= $value->enddate)
-                                                <td style="text-align: center; background-color: #85b7de;"><b
-                                                        style="font-size: 15px">{{ $value->saturday }}</b></td>
-                                            @else
-                                                <td style="text-align: center;"></td>
-                                            @endif
-                                            @if ($dates[6] >= $value->startdate && $dates[6] <= $value->enddate)
-                                                <td style="text-align: center; background-color: #85b7de;"><b
-                                                        style="font-size: 15px">{{ $value->sunday }}</b></td>
-                                            @else
-                                                <td style="text-align: center;"></td>
-                                            @endif
-                                            @if ($value->status == -1)
-                                                <td class=" hidden-column"
-                                                    style="color:white;text-align: center;background-color:rgb(81, 82, 82); ">
-                                                    Chưa cập nhật</td>
-                                            @elseif ($mydate < $value->startdate && $value->status == 0)
-                                                <td class="hidden-column col6"
-                                                    style="color:#ffffff;text-align: center; background-color:rgb(133, 58, 219)">
-                                                    Chưa đến hạng </td>
+                                                @php
+                                                $days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
+                                            @endphp
+                                            
+                                            @foreach ($days as $index => $day)
+                                                @if ($dates[$index] >= $value->startdate && $dates[$index] <= $value->enddate)
+                                                    <td style="text-align: center; background-color: #85b7de;">
+                                                        <b style="font-size: 15px">{{ $value->$day }}</b>
+                                                    </td>
+                                                @else
+                                                    <td style="text-align: center;"></td>
+                                                @endif
+                                            @endforeach
+                                            
+                                           
+                                            @if ($mydate < $value->startdate && $value->status == 0)
+                                                <td class="hidden-column col6">Chưa đến hạng </td>
                                             @elseif($mydate <= $value->enddate && $value->status == 0)
                                                 <td class="hidden-column col6"
                                                     style="text-align: center; background-color:yellow"> Đang thực
@@ -338,57 +307,45 @@
                                             @endif
                                             <td style="text-align: left; "class="hidden-column xuongdong col7">
                                                 {{ $value->note }}</td>
-                                    @endif
+                                    @php
+                                        $isInDateRange = $mydate >= $value->startdate && $mydate <= $value->enddate;
+                                        $isOverDue = $mydate > $value->enddate;
+                                        $isResponsible = $value->responsibility == $user->name;
+                                        $isManager = in_array($user['position_id'], [3, 4, 5, 6]);
+                                    @endphp
+
                                     <td class="hidden-column" style="text-align:center">
-                                        @if ($value->status != -1)
-                                            @if ($mydate <= $value->enddate && $mydate >= $value->startdate && $value->status == 0)
-                                                @if ($value->responsibility == $user->name)
-                                                    <a href="{{ route('formReportWeekly', $value->id) }}"
-                                                        class="btn btn-outline-primary waves-light btn-sm "
-                                                        title="Báo cáo"><i class="ri-book-mark-line"></i></a>
-                                                @endif
-                                            @elseif($mydate > $value->enddate && $value->status == 0)
-                                                @if ($value->idreason == 0 && $value->responsibility == $user->name)
-                                                    <button type="button"
-                                                        class="btn btn-outline-secondary waves-effect waves-light lyDoBtn"
-                                                        data-item-id="{{ $value->id }}">Lý do</button>
-                                                @elseif(
-                                                    $value->idreason == 1 &&
-                                                        ($user['position_id'] == 3 ||
-                                                            $user['position_id'] == 4 ||
-                                                            $user['position_id'] == 5 ||
-                                                            $user['position_id'] == 6))
-                                                    <button type="button"
-                                                        class="btn btn-outline-secondary waves-effect waves-light reason"
-                                                        data-reason-id="{{ $value->id }}"
-                                                        data-reason-type="{{ $value->idreason }}"
-                                                        data-reason-text="{{ $value->reason }}">Lý do</button>
-                                                @elseif(
-                                                    ($value->idreason == 2 && $value->responsibility == $user->name) ||
-                                                        ($user['position_id'] == 3 ||
-                                                            $user['position_id'] == 4 ||
-                                                            $user['position_id'] == 5 ||
-                                                            $user['position_id'] == 6))
-                                                    <button type="button"
-                                                        class="btn btn-outline-success btn-sm reasontext"
-                                                        data-reason-id="{{ $value->id }}"
-                                                        data-reason-text="{{ $value->reason }}">Lý do</button>
-                                                    @if ($value->responsibility == $user->name)
-                                                        <a href="{{ route('formReportWeekly', $value->id) }}"
-                                                            class="btn btn-outline-primary waves-light btn-sm "
-                                                            title="Báo cáo"><i class="ri-book-mark-line"></i></a>
-                                                    @endif
+                                        @if ($isInDateRange && $value->status == 0 && $isResponsible)
+                                            <a href="{{ route('formReportWeekly', $value->id) }}" class="btn btn-outline-primary waves-light btn-sm " title="Báo cáo"><i class="ri-book-mark-line"></i></a>
+                                        @elseif($isOverDue && $value->status == 0)
+                                            @if ($value->idreason == 0 && $isResponsible)
+                                                <button type="button" class="btn btn-outline-secondary waves-effect waves-light lyDoBtn" data-item-id="{{ $value->id }}">Lý do</button>
+                                            @elseif($value->idreason == 1 && $isManager)
+                                                <button type="button" class="btn btn-outline-secondary waves-effect waves-light reason" data-reason-id="{{ $value->id }}" data-reason-type="{{ $value->idreason }}" data-reason-text="{{ $value->reason }}">Lý do</button>
+                                            @elseif(($value->idreason == 2 && $isResponsible) || $isManager)
+                                                <button type="button" class="btn btn-outline-success btn-sm reasontext" data-reason-id="{{ $value->id }}" data-reason-text="{{ $value->reason }}">Lý do</button>
+                                                @if ($isResponsible)
+                                                    <a href="{{ route('formReportWeekly', $value->id) }}" class="btn btn-outline-primary waves-light btn-sm " title="Báo cáo"><i class="ri-book-mark-line"></i></a>
                                                 @endif
                                             @endif
                                         @endif
                                     </td>
+
                                     </tr>
+                                    @php $dataExists = true; @endphp
+                                    @endif
+                                    @endif
                                 @endforeach
-                            @else
+                                @if (!$dataExists)
                                 <tr>
                                     <td style="text-align: center;" colspan="15"> Không có dữ liệu</td>
                                 </tr>
                             @endif
+                        @else
+                            <tr>
+                                <td style="text-align: center;" colspan="15"> Không có dữ liệu</td>
+                            </tr>
+                        @endif         
                         </tbody>
                     </table>
                 </div>
