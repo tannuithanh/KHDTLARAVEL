@@ -29,6 +29,22 @@
                     @csrf
                     <div class="card-body" style="border: 1px solid; border-radius: 30px; ">
                         <div class="d-flex gap-2 flex-wrap">
+                            @if (in_array($user['position_id'], [1, 2, 3, 4]))
+
+                            <div class="btn-group">
+                                <h4 style="margin-right:1%; min-width: max-content;margin-top:10px;"
+                                    class="card-title">
+                                    Phòng:</h4>
+                                <select style="width:200px ;" class="form-control form-select"
+                                    id="validationCustom03" name="departmentsId">
+                                    <option value="0">Tất cả</option>
+                                    @foreach ($departments as $value)
+                                        <option value="{{ $value->id }}">{{ $value->name }}</option>
+                                    @endforeach
+                                </select>
+                            </div><!-- /btn-group -->
+
+                        @endif
                             <div class="btn-group">
                                 <h4 style="margin-right:1%; min-width: max-content;margin-top:10px;" class="card-title">
                                     Nhóm:</h4>
@@ -128,6 +144,83 @@
 </div>
 @include('include.footer')
 <script>
+// ------------------------------------------ JS TÌM KIẾM PHÒNG BAN --------------------------------------------------//    
+        $(document).ready(function() {
+        $('[name="departmentsId"]').on('change', function() {
+            var departmentId = $('[name="departmentsId"]').val();
+            if (departmentId) {
+                $.ajax({
+                    url: "{!! route('listWorkWeekdepartments') !!}",
+                    type: 'GET',
+                    data: {
+                        departments_id: departmentId,
+                        token: '{!! csrf_token() !!}'
+                    },
+                    success: function(response) {
+                        console.log(response);
+
+                        var options1 = '<option value="0">Tất cả</option>';
+                        if (response.teamId && response.teamId.length > 0) {
+                            $.each(response.teamId, function(index, team) {
+                                options1 += '<option value="' + team.id + '">' +
+                                    team.name + '</option>';
+
+                            });
+
+                        } else {
+                            options = '<option value="0">Tất cả</option>';
+                        }
+                        $('select[name="teamId"]').html(options1).attr('selected',
+                            'selected');;
+
+                        var options = '<option value="">Tất cả</option>';
+                        if (response.users && response.users.length > 0) {
+                            $.each(response.users, function(index, user) {
+                                options += '<option value="' + user.name + '">' +
+                                    user
+                                    .name + '</option>';
+                            });
+                        } else {
+                            options = '<option value="0">Tất cả</option>';
+                        }
+                        $('select[name="userName"]').html(options);
+                    }
+                });
+            } else {
+                $('select[name="userName"]').html('<option value="">Tất cả</option>');
+            }
+        });
+    });
+// ------------------------------------------ JS TÌM KIẾM NHÂN SỰ --------------------------------------------------//    
+    $('[name="teamId"]').on('change', function() {
+        var teamId = $('[name="teamId"]').val();
+        if (teamId) {
+            $.ajax({
+                url: "{!! route('listWorkWeekUsers') !!}",
+                type: 'GET',
+                data: {
+                    team_id: teamId,
+                    token: '{!! csrf_token() !!}'
+                },
+                success: function(response) {
+                    console.log(response);
+
+                    var options = '<option value="">Tất cả</option>';
+                    if (response && response.length > 0) {
+                        $.each(response, function(index, user) {
+                            options += '<option value="' + user.name + '">' + user
+                                .name + '</option>';
+                        });
+                    } else {
+                        options = '<option value="">Tất cả</option>';
+                    }
+                    $('select[name="userName"]').html(options);
+                }
+            });
+        } else {
+            $('select[name="userName"]').html('<option value="">Tất cả</option>');
+        }
+    });
 //------------ DUYỆT TP/PP -----------//
         $(document).ready(function(){
             $('.truongphongduyet').click(function(){

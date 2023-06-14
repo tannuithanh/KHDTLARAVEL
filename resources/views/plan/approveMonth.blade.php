@@ -69,15 +69,21 @@
                                 name="userName">
                                 <option value="">Tất cả</option>
                                 @foreach ($users as $value)
-                                <option value="{{$value->id}}">{{$value->name}}</option>
+                                <option value="{{$value->name}}">{{$value->name}}</option>
                             @endforeach
                             </select>
                         </div>
                         <div class="btn-group">
                             <h4 style="margin-right:1%; min-width: max-content;margin-top:10px;" class="card-title">
-                                Ngày:</h4>
+                                Ngày bắt đầu:</h4>
                             <input class="form-control" type="date" id="example-date-input"
-                                id="validationCustom03" required="" name="Day">
+                                id="validationCustom03" required="" name="startMonth">
+                        </div>
+                        <div class="btn-group">
+                            <h4 style="margin-right:1%; min-width: max-content;margin-top:10px;" class="card-title">
+                                Ngày kết thúc:</h4>
+                            <input class="form-control" type="date" id="example-date-input"
+                                id="validationCustom03" required="" name="endMonth">
                         </div>
                         <div style="margin-left: 1%;" class="btn-group">
                             <button class="btn btn-primary" type="submit">Tìm kiếm</button>
@@ -239,7 +245,8 @@ $(document).ready(function(){
     // Khi chọn phòng ban
     $('#department-select').change(function() {
         var departmentId = $(this).val();
-
+        // var tan ="{!! route('getTeamByDP', ['id' => " + departmentId + "]) !!}";
+        // alert(tan);
         // Xóa các options hiện tại của nhóm và nhân sự
         $('#team-select').empty();
         $('#user-select').empty();
@@ -247,7 +254,7 @@ $(document).ready(function(){
         // Nếu chọn một phòng ban cụ thể
         if (departmentId) {
             $.ajax({
-                url:  "/department/" + departmentId + "/teams",
+                url: "{!! route('getTeamByDP', ['id' => " + departmentId + "]) !!}",
                 method: 'GET',
                 success: function(data) {
                     $('#team-select').append('<option value="">Tất cả</option>');
@@ -284,7 +291,7 @@ $(document).ready(function(){
         // Nếu chọn một nhóm cụ thể
         if (teamId) {
             $.ajax({
-                url: "/team/" + teamId + "/users",
+                url: "{!! route('getUserByTeams', ['id' => " + teamId + "]) !!}",
                 method: 'GET',
                 success: function(data) {
                     $('#user-select').append('<option value="">Tất cả</option>');
@@ -299,7 +306,6 @@ $(document).ready(function(){
         }
     });
 });
-
 
 
 

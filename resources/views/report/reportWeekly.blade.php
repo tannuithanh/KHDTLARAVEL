@@ -33,39 +33,48 @@
                         <div class="d-flex gap-2 flex-wrap">
                             @if (in_array($user['position_id'], [1, 2, 3, 4]))
 
-                            <div class="btn-group">
-                                <h4 style="margin-right:1%; min-width: max-content;margin-top:10px;"
-                                    class="card-title">
-                                    Phòng:</h4>
-                                <select style="width:200px ;" class="form-control form-select"
-                                    id="validationCustom03" name="departmentsId">
-                                    <option value="0">Tất cả</option>
-                                    @foreach ($departments as $value)
-                                        <option value="{{ $value->id }}">{{ $value->name }}</option>
-                                    @endforeach
-                                </select>
-                            </div><!-- /btn-group -->
+                                <div class="btn-group">
+                                    <h4 style="margin-right:1%; min-width: max-content;margin-top:10px;"
+                                        class="card-title">
+                                        Phòng:</h4>
+                                    <select style="width:200px ;" class="form-control form-select"
+                                        id="validationCustom03" name="departmentsId">
+                                        <option value="0">Tất cả</option>
+                                        @foreach ($departments as $value)
+                                            <option value="{{ $value->id }}">{{ $value->name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div><!-- /btn-group -->
 
-                        @endif
+                            @endif
                             <div class="btn-group">
                                 <h4 style="margin-right:1%; min-width: max-content;margin-top:10px;" class="card-title">
                                     Nhóm:</h4>
-                                <select style="width:200px ;" class="form-control form-select" id="validationCustom03" name="teamId">
-                                    <option value="">Tất cả</option>
-                                    <option value=" echo $group['id'];"></option>
+                                <select style="width:200px ;" class="form-control form-select teams"
+                                    id="validationCustom03" name="teamId">
+                                    <option value="0">Tất cả</option>
+                                    @foreach ($teams as $value)
+                                        <option value="{{ $value->id }}">{{ $value->name }}</option>
+                                    @endforeach
+
                                 </select>
                             </div><!-- /btn-group -->
                             <div class="btn-group">
                                 <h4 style="margin-right:1%; min-width: max-content;margin-top:10px;" class="card-title">
                                     Nhân sự:</h4>
-                                <select style="width:200px ;" class="form-control form-select" id="validationCustom03" name="userName">
+                                <select style="width:200px ;" class="form-control form-select users"
+                                    id="validationCustom03" name="userName">
                                     <option value="">Tất cả</option>
+                                    @foreach ($userById as $value)
+                                        <option value="{{ $value->name }}">{{ $value->name }}</option>
+                                    @endforeach
                                 </select>
                             </div><!-- /btn-group -->
                             <div class="btn-group">
                                 <h4 style="margin-right:1%; min-width: max-content;margin-top:10px;" class="card-title">
                                     Ngày:</h4>
-                                <input type="date" class="form-control" name="Day" id="validationTooltip01" placeholder="hãy nhập năm" required="">
+                                <input type="date" class="form-control" name="Day" id="validationTooltip01"
+                                    placeholder="hãy nhập năm" required="">
                             </div>
 
                             <div class="btn-group">

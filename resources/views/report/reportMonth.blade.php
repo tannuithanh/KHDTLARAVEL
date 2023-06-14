@@ -74,9 +74,15 @@
                         </div>
                         <div class="btn-group">
                             <h4 style="margin-right:1%; min-width: max-content;margin-top:10px;" class="card-title">
-                                Ngày:</h4>
+                                Ngày bắt đầu:</h4>
                             <input class="form-control" type="date" id="example-date-input"
-                                id="validationCustom03" required="" name="Day">
+                                id="validationCustom03" required="" name="startMonth">
+                        </div>
+                        <div class="btn-group">
+                            <h4 style="margin-right:1%; min-width: max-content;margin-top:10px;" class="card-title">
+                                Ngày kết thúc:</h4>
+                            <input class="form-control" type="date" id="example-date-input"
+                                id="validationCustom03" required="" name="endMonth">
                         </div>
                         <div style="margin-left: 1%;" class="btn-group">
                             <button class="btn btn-primary" type="submit">Tìm kiếm</button>

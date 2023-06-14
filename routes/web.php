@@ -93,8 +93,13 @@ route::get('/dashboard', [Dashboard::class, 'dashboardGet'])->name('DashBoard')-
  //-------------------------------------- DUYỆT VÀ KIỂM TRA --------------------------------------------//
     route::middleware('checkLogin')->prefix('/Work-Weeko')->group(function () {
         route::get('/Approve-Week', [ApproveDaiLyWeekly::class, 'viewApproveWeek'])->name('viewApproveWeek');
+        route::Post('/Approve-Week', [ApproveDaiLyWeekly::class, 'viewApproveWeekPost'])->name('viewApproveWeekPost');
+
         route::get('/deny-week', [ApproveDaiLyWeekly::class, 'viewDenyWeek'])->name('viewDenyWeek');
+        route::Post('/deny-week', [ApproveDaiLyWeekly::class, 'viewDenyWeekPost'])->name('viewDenyWeekPost');
+        
         route::get('/chart-week', [ApproveDaiLyWeekly::class, 'ChartWeek'])->name('ChartWeek');
+
         route::POST('/WeekAprroveTN', [ApproveDaiLyWeekly::class, 'WeekAprroveTN'])->name('WeekAprroveTN');
         route::POST('/WeekdenyTN', [ApproveDaiLyWeekly::class, 'WeekdenyTN'])->name('WeekdenyTN');
         route::POST('/WeekaprroveTP', [ApproveDaiLyWeekly::class, 'WeekaprroveTP'])->name('WeekaprroveTP');
@@ -145,7 +150,9 @@ route::middleware('checkLogin')->prefix('/creat')->group(function () {
     //-------------------------------------- DUYỆT VÀ KIỂM TRA --------------------------------------------//
     route::middleware('checkLogin')->prefix('/Work-Daily')->group(function () {
         route::get('/approve-daily', [ApproveDaiLyWeekly::class, 'viewApproveDaily'])->name('viewApproveDaily');
+        route::POST('/approve-daily', [ApproveDaiLyWeekly::class, 'viewApproveDailyPost'])->name('viewApproveDailyPost');
         route::get('/deny-daily', [ApproveDaiLyWeekly::class, 'viewDenyDaily'])->name('viewDenyDaily');
+        route::Post('/deny-daily', [ApproveDaiLyWeekly::class, 'viewDenyDailyPost'])->name('viewDenyDailyPost');
         route::POST('/aprrovetruongphong', [ApproveDaiLyWeekly::class, 'aprroveTP'])->name('aprroveTP');
         route::POST('/denyTP', [ApproveDaiLyWeekly::class, 'denyTP'])->name('denyTP');
         route::POST('/aprroveTN', [ApproveDaiLyWeekly::class, 'aprroveTN'])->name('aprroveTN');
@@ -217,9 +224,16 @@ route::middleware('checkLogin')->prefix('/report')->group(function () {
 //------- QUẢN LÝ KẾ HOẠCH THÁNG -----//
     route::middleware('checkLogin')->prefix('/WorkMonth')->group(function () {
         route::get('/approve-Month', [ApproveDaiLyWeekly::class, 'viewApproveMonth'])->name('viewApproveMonth');
+        route::post('/approve-Month', [ApproveDaiLyWeekly::class, 'viewApproveMonthPost'])->name('viewApproveMonthPost');
+
         route::get('/deny-Month', [ApproveDaiLyWeekly::class, 'viewDenyMonth'])->name('viewDenyMonth');
+        route::post('/deny-Month', [ApproveDaiLyWeekly::class, 'viewDenyMonthPost'])->name('viewDenyMonthPost');
+
         route::get('/list-Month', [ApproveDaiLyWeekly::class, 'listStartMonth'])->name('listStartMonth');
+        route::Post('/list-Month', [ApproveDaiLyWeekly::class, 'listStartMonthPost'])->name('listStartMonthPost');
+
         route::get('/report-Month', [ApproveDaiLyWeekly::class, 'listReportMonth'])->name('listReportMonth');
+        route::Post('/report-Month', [ApproveDaiLyWeekly::class, 'listReportMonthPost'])->name('listReportMonthPost');
         route::POST('/aprroveMonthTP', [ApproveDaiLyWeekly::class, 'aprroveMonthTP'])->name('aprroveMonthTP');
         route::POST('/denyMonthTP', [ApproveDaiLyWeekly::class, 'denyMonthTP'])->name('denyMonthTP');
         route::POST('/aprroveMonthTN', [ApproveDaiLyWeekly::class, 'aprroveMonthTN'])->name('aprroveMonthTN');
@@ -247,6 +261,7 @@ route::middleware('checkLogin')->prefix('/report')->group(function () {
     Route::get('/department/{id}/teams', [ApproveDaiLyWeekly::class, 'getTeams'])->name('getTeamByDP');
     Route::get('/department/{id}/users', [ApproveDaiLyWeekly::class, 'getDepartmentUsers'])->name('getTeamByUser');
     Route::get('/team/{id}/users', [ApproveDaiLyWeekly::class, 'getTeamUsers'])->name('getUserByTeams');
+    
 
 
 

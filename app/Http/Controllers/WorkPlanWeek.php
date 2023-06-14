@@ -19,178 +19,80 @@ class WorkPlanWeek extends Controller
     //--------------- TÌm kiếm công việc ----------------------///
 
 
-    public function searchListWork(request $request){
-        // dd($request->toArray());
-        $mydate = date('Y-m-d');
-        $departments = Department::get();
-        $alldata = $request->all();
-        $month = date('m', strtotime($request['Day']));
-        $user = Auth::user();
-        
-      
-        if ($user['position_id'] == 1 || $user['position_id'] == 2) {
+    public function searchListWork(request $request)
+{
+    $departments = Department::get();
+    $alldata = $request->all();
+    $user = Auth::user();
+
+    // Get teams and users based on the position_id
+    $teams="";
+    $userById="";
+    switch($user['position_id']) {
+        case 1:
+        case 2:
             $teams = Team::get();
-        } elseif ($user['position_id'] == 3) {
+            $excludes = [5,6];
+            $userById = User::whereNotIn('position_id', $excludes)->get();
+            break;
+        case 3:
             $teams = Team::join('departments', 'teams.department_id', '=', 'departments.id')->join('trademark', 'departments.trademark_id', '=', 'trademark.id')->where('departments.trademark_id', 1)->select('teams.*')->get();
-        } elseif ($user['position_id'] == 4) {
+            $includes = [3,4];
+            $userById = User::whereIn('position_id', $includes)->get();
+            break;
+        case 4:
             $teams = Team::join('departments', 'teams.department_id', '=', 'departments.id')->join('trademark', 'departments.trademark_id', '=', 'trademark.id')->where('departments.trademark_id', 2)->select('teams.*')->get();
-        } else {
+            $includes = [3,4];
+            $userById = User::whereIn('position_id', $includes)->get();
+            break;
+        default:
             $teams = Team::where('department_id', $user['department_id'])->get();
-        }
-
-        if ($user['position_id'] == 1 || $user['position_id'] == 2) {
-            $excludedIds = [1, 2, 3, 4, 5];
-            $userById = User::whereNotIn('id', $excludedIds)->get();
-        } elseif ($user['position_id'] == 3) {
-            $userById = User::join('departments', 'users.department_id', '=', 'departments.id')->join('trademark', 'departments.trademark_id', '=', 'trademark.id')->where('departments.trademark_id', 1)->select('users.*')->get();
-        } elseif ($user['position_id'] == 4) {
-            $userById = User::join('departments', 'users.department_id', '=', 'departments.id')->join('trademark', 'departments.trademark_id', '=', 'trademark.id')->where('departments.trademark_id', 2)->select('users.*')->get();
-        } else {
             $userById = User::where('department_id', $user['department_id'])->get();
+            break;
+    }
+
+    // Handle the case when Day is present in the request
+    if ($alldata['Day']) {
+        $date = Carbon::parse($alldata['Day']);
+        $weekNumber = $date->weekOfMonth;
+        $month = now()->format('m');
+        $start = $date->startOfWeek()->toDateString();
+        $end = $date->endOfWeek()->toDateString();
+        $formattedDateStart = date_create_from_format('Y-m-d', $start)->format('d/m/Y');
+        $formattedDateEnd = date_create_from_format('Y-m-d', $end)->format('d/m/Y');
+        $startDate = Carbon::parse($request['Day'])->startOfWeek();
+        $endDate = Carbon::parse($request['Day'])->endOfWeek();
+        $dates = array();
+        for ($date = $startDate; $date->lte($endDate); $date->addDay()) {
+            $dates[] = $date->format('Y-m-d');
         }
 
-        if ($alldata['Day']) {
-            $date = Carbon::parse($alldata['Day']);
-            $weekNumber = $date->weekOfMonth;
-            // dd($weekNumber);
-            $start = $date->startOfWeek()->toDateString();
-            $end = $date->endOfWeek()->toDateString();
-            $formattedDateStart = date_create_from_format('Y-m-d', $start)->format('d/m/Y');
-            $formattedDateEnd = date_create_from_format('Y-m-d', $end)->format('d/m/Y');
-            $startDate = Carbon::parse($request['Day'])->startOfWeek();
-            $endDate = Carbon::parse($request['Day'])->endOfWeek();
-            $dates = array();
-            for ($date = $startDate; $date->lte($endDate); $date->addDay()) {
-                $dates[] = $date->format('Y-m-d');
-            }
-        };
-        if($user['position_id'] == 1 || $user['position_id'] == 2 || $user['position_id'] == 3 || $user['position_id'] == 4){
-            if($alldata['Day'] && $alldata['teamId']== 0 && $alldata['departmentsId']== 0 && $alldata['userName']==null){
-                if ($user['position_id'] == 1 || $user['position_id'] == 2) {
-                    $workWeek = Workweek::select('workweek.*')
-                   
-                    ->where('workweek.startdate', '>=', $start)
-                    ->where('workweek.enddate', '<=', $end)->get();
-                }elseif($user['position_id'] == 3 ){
-                    $workWeek = Workweek::select('workweek.*')
-                   
-                    ->join('departments', 'departments.id', '=', 'workweek.department_id')
-                    ->join('trademark', 'trademark.id', '=', 'departments.trademark_id')
-                    ->where('workweek.startdate', '>=', $start)
-                    ->where('workweek.enddate', '<=', $end)
-                    ->where('trademark_id', 1)->get();
-                }else{
-                    $workWeek = Workweek::select('workweek.*')
-                   
-                    ->join('departments', 'departments.id', '=', 'workweek.department_id')
-                    ->join('trademark', 'trademark.id', '=', 'departments.trademark_id')
-                    ->where('workweek.startdate', '>=', $start)
-                    ->where('workweek.enddate', '<=', $end)
-                    ->where('trademark_id', 2)->get();
-                } 
-            }elseif($alldata['Day'] && $alldata['teamId']== 0 && $alldata['departmentsId']!= 0 && $alldata['userName']==null){
-                $workWeek = Workweek::select('workweek.*')
-               
-                ->where('workweek.startdate', '>=', $start)
-                ->where('workweek.enddate', '<=', $end)
-                ->where('workweek.department_id', $alldata['departmentsId'])
-                ->get();
-            }elseif($alldata['Day'] && $alldata['teamId']!= 0 && $alldata['departmentsId']!= 0 && $alldata['userName']==null){
-                $workWeek = Workweek::select('workweek.*')
-               
-                ->where('workweek.startdate', '>=', $start)
-                ->where('workweek.enddate', '<=', $end)
-                ->where('workweek.department_id', $alldata['departmentsId'])
-                ->where('workweek.team_id', $alldata['teamId'])
-                ->get();
-            }elseif($alldata['Day'] && $alldata['teamId']!= 0 && $alldata['departmentsId']==0 && $alldata['userName']==null){
-                $workWeek = Workweek::select('workweek.*')
-               
-                ->where('workweek.startdate', '>=', $start)
-                ->where('workweek.enddate', '<=', $end)
-                ->where('workweek.team_id', $alldata['teamId'])
-                ->get();
-            }elseif($alldata['Day'] && $alldata['teamId']== 0 && $alldata['departmentsId']==0 && $alldata['userName']!=null ){
-                $workWeek = Workweek::select('workweek.*')
-               
-                ->where('workweek.startdate', '>=', $start)
-                ->where('workweek.enddate', '<=', $end)
-                ->where('workweek.responsibility', $alldata['userName'])
-                ->get();
-            }elseif($alldata['Day'] && $alldata['teamId']== 0 && $alldata['departmentsId']!=0 && $alldata['userName']!=null ){
-                $workWeek = Workweek::select('workweek.*')
-               
-                ->where('workweek.startdate', '>=', $start)
-                ->where('workweek.enddate', '<=', $end)
-                ->where('workweek.department_id', $alldata['departmentsId'])
-                ->where('workweek.responsibility', $alldata['userName'])
-                ->get();
-            }elseif($alldata['Day'] && $alldata['teamId']!= 0 && $alldata['departmentsId']!=0 && $alldata['userName']!=null ){
-                $workWeek = Workweek::select('workweek.*')
-               
-                ->where('workweek.startdate', '>=', $start)
-                ->where('workweek.enddate', '<=', $end)
-                ->where('workweek.department_id', $alldata['departmentsId'])
-                ->where('workweek.team_id', $alldata['teamId'])
-                ->where('workweek.responsibility', $alldata['userName'])
-                ->get();
-            }elseif($alldata['Day'] && $alldata['teamId']!= 0 && $alldata['departmentsId']==0 && $alldata['userName']!=null ){
-                $workWeek = Workweek::select('workweek.*')
-               
-                ->where('workweek.startdate', '>=', $start)
-                ->where('workweek.enddate', '<=', $end)
-                ->where('workweek.department_id', $alldata['departmentsId'])
-                ->where('workweek.team_id', $alldata['teamId'])
-                ->where('workweek.responsibility', $alldata['userName'])
-                ->get();
-            }
-        }else{
-            if($alldata['Day'] && $alldata['teamId']== 0 && $alldata['userName']==null){
-                $workWeek = Workweek::select('workweek.*')
-               
-                ->where('workweek.startdate', '>=', $start)
-                ->where('workweek.enddate', '<=', $end)
-                ->where('workweek.department_id', $user['department_id'])
-                ->get();
-            }elseif($alldata['Day'] && $alldata['teamId']!= 0 && $alldata['userName']==null){
-                $workWeek = Workweek::select('workweek.*')
-               
-                ->where('workweek.startdate', '>=', $start)
-                ->where('workweek.enddate', '<=', $end)
-                ->where('workweek.department_id', $user['department_id'])
-                ->where('workweek.team_id', $alldata['teamId'])
-                ->get();
-            }elseif($alldata['Day'] && $alldata['teamId']== 0 && $alldata['userName']!=null){
-                $workWeek = Workweek::select('workweek.*')
-               
-                ->where('workweek.startdate', '>=', $start)
-                ->where('workweek.enddate', '<=', $end)
-                ->where('workweek.department_id', $user['department_id'])
-                ->where('workweek.responsibility', $alldata['userName'])
-                ->get();
-            }elseif($alldata['Day'] && $alldata['teamId']!= 0 && $alldata['userName']!=null){
-                $workWeek = Workweek::select('workweek.*')
-               
-                ->where('workweek.startdate', '>=', $start)
-                ->where('workweek.enddate', '<=', $end)
-                ->where('workweek.department_id', $user['department_id'])
-                ->where('workweek.team_id', $alldata['teamId'])
-                ->where('workweek.responsibility', $alldata['userName'])
-                ->get();
-            }
-        }
-        if ($user['position_id'] == 1 || $user['position_id'] == 2) {
-            $departments = Department::get();
-        } elseif ($user['position_id'] == 3) {
-            $departments = Department::where('trademark_id', 1)->get();
-        } elseif ($user['position_id'] == 4) {
-            $departments = Department::where('trademark_id', 2)->get();
-        } else {
-            return view('plan.listPlanWeek', compact('userById', 'user', 'workWeek', 'start', 'end', 'weekNumber', 'formattedDateStart', 'formattedDateEnd', 'mydate', 'teams','month','dates'));
+        // Query Workweek base on provided criteria
+        $query = Workweek::query();
+        $query->where('workweek.startdate', '>=', $start)
+            ->where('workweek.enddate', '<=', $end)
+            ->where('workweek.status', '=', 0);
+
+        // Add filters
+        if($alldata['teamId'] != 0) {
+            $query->where('workweek.team_id', $alldata['teamId']);
         }
         
-        return view('plan.listPlanWeek', compact('user', 'mydate', 'teams', 'userById','month','dates'))->with(compact('start'))->with(compact('workWeek'))->with(compact('end'))->with(compact('weekNumber'))->with(compact('departments'))->with(compact('formattedDateStart'))->with(compact('formattedDateEnd'));
+        if(isset($alldata['departmentsId']) && $alldata['departmentsId'] != 0) {
+            $query->where('workweek.department_id', $alldata['departmentsId']);
+        }
+        
+        if(isset($alldata['userName']) && $alldata['userName'] != null){
+            $query->where('workweek.responsibility', $alldata['userName']);
+        }
+
+        // Execute the query
+        $workWeek = $query->get();
     }
+
+    return view('plan.listPlanWeek', compact('departments', 'teams', 'userById', 'workWeek','user','weekNumber','month','formattedDateStart','formattedDateEnd','dates'));
+}
+
 
     //--------------- DANH SÁCH CÔNG VIỆC TUẦN ----------------------///  
     public function viewListWorkWeek()

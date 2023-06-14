@@ -315,26 +315,17 @@ class WorkPlanDaily extends Controller
             return response()->json(['message' => 'Cập nhật thành công!'], 200);
     }
 
-    public function searchWorkDaily(request $request){
+    public function searchWorkDaily(Request $request)
+    {
         
-        $today = date('Y-m-d');
         $departments = Department::get();
-        $alldata = $request->all();
-        $month = date('m', strtotime($request['Day']));
+        $teams = Team::get();
         $user = Auth::user();
-        
-      
-        if ($user['position_id'] == 1 || $user['position_id'] == 2) {
-            $teams = Team::get();
-        } elseif ($user['position_id'] == 3) {
-            $teams = Team::join('departments', 'teams.department_id', '=', 'departments.id')->join('trademark', 'departments.trademark_id', '=', 'trademark.id')->where('departments.trademark_id', 1)->select('teams.*')->get();
-        } elseif ($user['position_id'] == 4) {
-            $teams = Team::join('departments', 'teams.department_id', '=', 'departments.id')->join('trademark', 'departments.trademark_id', '=', 'trademark.id')->where('departments.trademark_id', 2)->select('teams.*')->get();
-        } else {
-            $teams = Team::where('department_id', $user['department_id'])->get();
-        }
+        $alldata = $request->all();
+        $today = date('Y-m-d');
 
-        if ($user['position_id'] == 1 || $user['position_id'] == 2) {
+         //--------- LẤY DANH SÁCH NHÂN SỰ THEO CHỨC VỤ ----------//
+         if ($user['position_id'] == 1 || $user['position_id'] == 2) {
             $excludedIds = [1, 2, 3, 4, 5];
             $userById = User::whereNotIn('id', $excludedIds)->get();
         } elseif ($user['position_id'] == 3) {
@@ -344,122 +335,50 @@ class WorkPlanDaily extends Controller
         } else {
             $userById = User::where('department_id', $user['department_id'])->get();
         }
-
-       
-        if($user['position_id'] == 1 || $user['position_id'] == 2 || $user['position_id'] == 3 || $user['position_id'] == 4){
-            if($alldata['Day'] && $alldata['teamId']== 0 && $alldata['departmentsId']== 0 && $alldata['userName']==null){
-                if ($user['position_id'] == 1 || $user['position_id'] == 2) {
-                    $workDaily = Workdaily::select('workdaily.*')
-                   
-                    ->where('workdaily.date', '=', $request['Day'])->get();
-                }elseif($user['position_id'] == 3 ){
-                    $workDaily = Workdaily::select('workdaily.*')
-                   
-                    ->join('departments', 'departments.id', '=', 'workdaily.department_id')
-                    ->join('trademark', 'trademark.id', '=', 'departments.trademark_id')
-                    ->where('workdaily.date', '=', $request['Day'])
-                    ->where('trademark_id', 1)->get();
-                }else{
-                    $workDaily = Workdaily::select('workdaily.*')
-                   
-                    ->join('departments', 'departments.id', '=', 'workdaily.department_id')
-                    ->join('trademark', 'trademark.id', '=', 'departments.trademark_id')
-                    ->where('workdaily.date', '=', $request['Day'])
-                    ->where('trademark_id', 2)->get();
-                } 
-            }elseif($alldata['Day'] && $alldata['teamId']== 0 && $alldata['departmentsId']!= 0 && $alldata['userName']==null){
-                $workDaily = Workdaily::select('workdaily.*')
-               
-                ->where('workdaily.date', '=', $request['Day'])
-                ->where('workdaily.department_id', $alldata['departmentsId'])
-                ->get();
-            }elseif($alldata['Day'] && $alldata['teamId']!= 0 && $alldata['departmentsId']!= 0 && $alldata['userName']==null){
-                $workDaily = Workdaily::select('workdaily.*')
-               
-                ->where('workdaily.date', '=', $request['Day'])
-                ->where('workdaily.department_id', $alldata['departmentsId'])
-                ->where('workdaily.team_id', $alldata['teamId'])
-                ->get();
-            }elseif($alldata['Day'] && $alldata['teamId']!= 0 && $alldata['departmentsId']==0 && $alldata['userName']==null){
-                $workDaily = Workdaily::select('workdaily.*')
-               
-                ->where('workdaily.date', '=', $request['Day'])
-                ->where('workdaily.team_id', $alldata['teamId'])
-                ->get();
-            }elseif($alldata['Day'] && $alldata['teamId']== 0 && $alldata['departmentsId']==0 && $alldata['userName']!=null ){
-                $workDaily = Workdaily::select('workdaily.*')
-               
-                ->where('workdaily.date', '=', $request['Day'])
-                ->where('workdaily.responsibility', $alldata['userName'])
-                ->get();
-            }elseif($alldata['Day'] && $alldata['teamId']== 0 && $alldata['departmentsId']!=0 && $alldata['userName']!=null ){
-                $workDaily = Workdaily::select('workdaily.*')
-               
-                ->where('workdaily.date', '=', $request['Day'])
-                ->where('workdaily.department_id', $alldata['departmentsId'])
-                ->where('workdaily.responsibility', $alldata['userName'])
-                ->get();
-            }elseif($alldata['Day'] && $alldata['teamId']!= 0 && $alldata['departmentsId']!=0 && $alldata['userName']!=null ){
-                $workDaily = Workdaily::select('workdaily.*')
-               
-                ->where('workdaily.date', '=', $request['Day'])
-                ->where('workdaily.department_id', $alldata['departmentsId'])
-                ->where('workdaily.team_id', $alldata['teamId'])
-                ->where('workdaily.responsibility', $alldata['userName'])
-                ->get();
-            }elseif($alldata['Day'] && $alldata['teamId']!= 0 && $alldata['departmentsId']==0 && $alldata['userName']!=null ){
-                $workDaily = Workdaily::select('workdaily.*')
-               
-                ->where('workdaily.date', '=', $request['Day'])
-                ->where('workdaily.department_id', $alldata['departmentsId'])
-                ->where('workdaily.team_id', $alldata['teamId'])
-                ->where('workdaily.responsibility', $alldata['userName'])
-                ->get();
-            }
-        }else{
-            if($alldata['Day'] && $alldata['teamId']== 0 && $alldata['userName']==null){
-                $workDaily = Workdaily::select('workdaily.*')
-               
-                ->where('workdaily.date', '=', $request['Day'])
-                ->where('workdaily.department_id', $user['department_id'])
-                ->get();
-            }elseif($alldata['Day'] && $alldata['teamId']!= 0 && $alldata['userName']==null){
-                $workDaily = Workdaily::select('workdaily.*')
-               
-                ->where('workdaily.date', '=', $request['Day'])
-                ->where('workdaily.department_id', $user['department_id'])
-                ->where('workdaily.team_id', $alldata['teamId'])
-                ->get();
-            }elseif($alldata['Day'] && $alldata['teamId']== 0 && $alldata['userName']!=null){
-                $workDaily = Workdaily::select('workdaily.*')
-               
-                ->where('workdaily.date', '=', $request['Day'])
-                ->where('workdaily.department_id', $user['department_id'])
-                ->where('workdaily.responsibility', $alldata['userName'])
-                ->get();
-            }elseif($alldata['Day'] && $alldata['teamId']!= 0 && $alldata['userName']!=null){
-                $workDaily = Workdaily::select('workdaily.*')
-               
-                ->where('workdaily.date', '=', $request['Day'])
-                ->where('workdaily.department_id', $user['department_id'])
-                ->where('workdaily.team_id', $alldata['teamId'])
-                ->where('workdaily.responsibility', $alldata['userName'])
-                ->get();
-            }
+        
+        
+        $workDaily = Workdaily::query();
+    
+        // Begin with status 0
+        $workDaily->where('status', 0);
+    
+        // If department is chosen
+        if($alldata['departmentsId'] != 0) {
+            $workDaily->where('department_id', $alldata['departmentsId']);
         }
-        if ($user['position_id'] == 1 || $user['position_id'] == 2) {
-            $departments = Department::get();
-        } elseif ($user['position_id'] == 3) {
-            $departments = Department::where('trademark_id', 1)->get();
-        } elseif ($user['position_id'] == 4) {
-            $departments = Department::where('trademark_id', 2)->get();
-        } else {
-            // dd($workDaily->toArray());
-            return view('plan.listPlanDaily', compact('userById', 'user', 'workDaily', 'teams','today'));
+    
+        // If team is chosen
+        if($alldata['teamId'] != 0) {
+            $workDaily->where('team_id', $alldata['teamId']);
         }
-        // dd($workDaily->toArray());
-        return view('plan.listPlanDaily', compact('user', 'today', 'teams', 'userById'))->with(compact('start'))->with(compact('workDaily'))->with(compact('departments'));
+    
+        // If user is chosen
+        if($alldata['userName'] != null) {
+            $workDaily->where('responsibility', $alldata['userName']);
+        }
+    
+        // If date is chosen
+        if($alldata['Day'] != null) {
+            $workDaily->where('date', '=', $request['Day']);
+        }
+    
+        $workDaily = $workDaily->get();
+    
+        // Include more data according to the user's position.
+        switch ($user['position_id']) {
+            case 1:
+            case 2:
+                $departments = Department::get();
+                return view('plan.listPlanDaily', compact('user','userById', 'today', 'teams', 'workDaily', 'departments'));
+            case 3:
+            case 4:
+                $departments = Department::where('trademark_id', $user['position_id'] - 2)->get();
+                return view('plan.listPlanDaily', compact('user','userById', 'today', 'teams', 'workDaily', 'departments'));
+            default:
+                return view('plan.listPlanDaily', compact('user','userById', 'today', 'teams', 'workDaily'));
+        }
     }
+    
 
     public function assignCreatWorkDaily(){
         $allUser = User::get();
