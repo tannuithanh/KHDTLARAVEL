@@ -284,6 +284,12 @@
                                         <i class="fas fa-minus"></i>
                                     </a>
                                     {{ $value->name }}
+                                    @php
+                                        $hasChildTaskWithUserResponsibility = $workByProjectDepartments->where('project_department_id', $value->id)->firstWhere('responsibility', $user['name']) !== null;
+                                    @endphp
+                                    @if($hasChildTaskWithUserResponsibility)
+                                        <span style="color: red;">*</span>
+                                    @endif
                                 </td>
                                 <td style="text-align:left; width: 10%;">{{ $value->tenphongban }} </td>
 
@@ -363,8 +369,16 @@
                                     <tr class="child-row" data-parent-id="{{ $value->id }}" >
                                         <td colspan="2" class="merged-cell">
                                             <span class="stt">{{ $stt-1 . '.' . $childStt++ }}</span>
-                                            <span class="child-content"><a class="texta" href="{{route('ProjectCon',$work->id)}}">{{ $work->name_work }}</a></span>
-                                        </td>
+                                            <span class="child-content">
+                                                <a class="texta" href="{{route('ProjectCon',$work->id)}}">{{ $work->name_work }}</a>
+                                                @php
+                                                    $hasChildTaskWithUserResponsibility = $workByProjectDepartment->work_lv4_projects->firstWhere('responsibility', $user['name']) !== null;
+                                                @endphp
+                                                @if($hasChildTaskWithUserResponsibility)
+                                                    <span style="color: red;">*</span>
+                                                @endif
+                                            </span>
+                                        </td>                                        
                                         <td style="text-align: left">{{ $work->responsibility }} </td>
                                         <td style="text-align: center">{{ date('d/m/Y', strtotime($work->startdate)) }}
                                         </td>

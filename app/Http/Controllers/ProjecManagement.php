@@ -217,9 +217,13 @@ class ProjecManagement extends Controller
         // dd($projectJson->toArray());
         $car_brands = CarBrands::select('car_brands.*')->where('id',$projectJson->car_brands_id)->first();
         // dd($car_brands->toarray());
-        $workByProjectDepartments = Work_By_Project_Department::all();
+        $workByProjectDepartments = Work_By_Project_Department::with('work_lv4_projects')->get();
+        
         $today = date('Y-m-d');
         $user = Auth::user();
+        $hasWorkLv4 = $workByProjectDepartments->contains(function ($workByProjectDepartment) use ($user) {
+            return $workByProjectDepartment->work_lv4_projects->contains('responsibility', $user['name']);
+        });
         $project = Project::find($id);
         // dd($project->toarray());
         $project_manager = ProjectDepartment::where('project_id', $project->id)->pluck('department_id')->toArray();
@@ -259,7 +263,7 @@ class ProjecManagement extends Controller
         }
 
         if (in_array($user['department_id'], $project_manager) || $user['name'] == $project->name_create || (in_array($user['position_id'], [1, 2,3 , 4])) || in_array($user['department_id1'], $project_manager) || $user['department_id'] == 2) {
-            return view('Project management.projectConnect', compact('userAll','departments','user', 'project', 'project_department', 'project_name_counts', 'today', 'workByProjectDepartments', 'id', 'projectJson','car_brands','userAllByDepartment','departmentNames'));
+            return view('Project management.projectConnect', compact('hasWorkLv4','userAll','departments','user', 'project', 'project_department', 'project_name_counts', 'today', 'workByProjectDepartments', 'id', 'projectJson','car_brands','userAllByDepartment','departmentNames'));
         } else {
             return redirect()->back()->with('failder', 'không thành công');
         }
@@ -394,28 +398,6 @@ class ProjecManagement extends Controller
                             'status' => -1,
                             // Add other necessary fields as required...
                         ]);
-                        
-                        // Calculate the days within the week
-                        $dates = [];
-                        for ($date = $week_start_date; $date->lte($week_end_date); $date->addDay()) {
-                            $dates[] = $date->copy();
-                        }
-                        
-                        // Create a Workdaily record for each day
-                        foreach ($dates as $date) {
-                            Workdaily::create([
-                                'workweek_id' => $workWeek->id,
-                                'categoryDaily' => $request['task_name'],
-                                'responsibility' => $request['responsibility'],
-                                'date' => $date->toDateString(),
-                                'department_id' => $user['department_id'],
-                                'team_id' => $user['team_id'],
-                                'status' => -1,
-                            ]);
-                        }
-                        
-
-                        // Move to the start of the next week
                         $start_date->addWeek();
                     }
                 }
@@ -586,27 +568,6 @@ class ProjecManagement extends Controller
                                 // Add other necessary fields
                                                     // as required...
                                 ]);
-
-                                // Calculate the days within the week
-                                $dates = [];
-                                for ($date = $week_start_date; $date->lte($week_end_date); $date->addDay()) {
-                                    $dates[] = $date->copy();
-                                }
-
-                                // Create a Workdaily record for each day
-                                foreach ($dates as $date) {
-                                    Workdaily::create([
-                                        'workweek_id' => $workWeek->id,
-                                        'categoryDaily' => $row[1],
-                                        'responsibility' => $row[2],
-                                        'date' => $date->toDateString(),
-                                        'department_id' => $user['department_id'],
-                                        'team_id' => $user['team_id'],
-                                        'status' => -1,
-                                    ]);
-                                }
-
-                                // Move to the start of the next week
                                 $start_date->addWeek();
                             }
                         }

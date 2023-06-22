@@ -19,6 +19,7 @@ class Work_By_Project_Department extends Model
         'status',
         'completion',
     ];
+    
     public function work_lv4_projects()
     {
         return $this->hasMany(work_lv4_project::class, 'work_by_project_department_id');

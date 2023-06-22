@@ -111,22 +111,22 @@ class ApproveDaiLyWeekly extends Controller
         $workDaily->whereIn('status', [1, 2]);
     
         // If department is chosen
-        if($alldata['departmentsId'] != 0) {
+        if($alldata['departmentsId'] ?? 0 != 0) {
             $workDaily->where('department_id', $alldata['departmentsId']);
         }
     
         // If team is chosen
-        if($alldata['teamId'] != 0) {
+        if($alldata['teamId'] ?? 0 != 0) {
             $workDaily->where('team_id', $alldata['teamId']);
         }
     
         // If user is chosen
-        if($alldata['userName'] != null) {
+        if($alldata['userName'] ?? null != null) {
             $workDaily->where('responsibility', $alldata['userName']);
         }
     
         // If date is chosen
-        if($alldata['Day'] != null) {
+        if($alldata['Day'] ?? null != null) {
             $workDaily->where('date', '=', $request['Day']);
         }
     
@@ -219,6 +219,7 @@ class ApproveDaiLyWeekly extends Controller
         return view('plan.denyDaily',compact('user','teams','userById','departments','workDaily','today'));
     }
     public function viewDenyDailyPost(request $request){
+        // dd($request->toarray());
         $departments = Department::get();
         $teams = Team::get();
         $user = Auth::user();
@@ -244,22 +245,22 @@ class ApproveDaiLyWeekly extends Controller
         $workDaily->whereIn('status', [3, -1]);
     
         // If department is chosen
-        if($alldata['departmentsId'] != 0) {
+        if($alldata['departmentsId'] ?? 0 != 0) {
             $workDaily->where('department_id', $alldata['departmentsId']);
         }
-    
-        // If team is chosen
-        if($alldata['teamId'] != 0) {
+        
+        // The same approach for 'teamId' and other keys
+        if($alldata['teamId'] ?? 0 != 0) {
             $workDaily->where('team_id', $alldata['teamId']);
         }
-    
-        // If user is chosen
-        if($alldata['userName'] != null) {
+        
+        // For 'userName'
+        if($alldata['userName'] ?? null != null) {
             $workDaily->where('responsibility', $alldata['userName']);
         }
-    
-        // If date is chosen
-        if($alldata['Day'] != null) {
+        
+        // For 'Day'
+        if($alldata['Day'] ?? null != null) {
             $workDaily->where('date', '=', $request['Day']);
         }
     
@@ -1582,5 +1583,43 @@ class ApproveDaiLyWeekly extends Controller
         return response()->json($users);
     }
 
+    public function ChartMonth(){     
+        $user = auth()->user();
+        $currentDate = Carbon::now();
     
+        // Determine user's access level
+        $positionId = $user->position_id;
+        $departmentId = $user->department_id;
+        $trademarkId = Department::find($departmentId)->trademark_id;
+        $query = Workmonth::query();
+    
+        if ($positionId >= 5 && $positionId <= 10) {
+            $query->where('department_id', $departmentId);
+        } elseif ($positionId == 4 && $trademarkId == 2) {
+            $departments = Department::where('trademark_id', 2)->pluck('id');
+            $query->whereIn('department_id', $departments);
+        } elseif ($positionId == 3 && $trademarkId == 1) {
+            $departments = Department::where('trademark_id', 1)->pluck('id');
+            $query->whereIn('department_id', $departments);
+        }
+    
+        // Query data
+        $workmonths = $query->select('categoryMonth', 'status', 'endMonth')
+            ->get()
+            ->groupBy('categoryMonth')
+            ->map(function ($workmonth) use ($currentDate) {
+                $startMonth = $workmonth->min('startMonth');
+                $endMonth = $workmonth->max('endMonth');
+                return [
+                    'completed' => $workmonth->where('status', 4)->count(),
+                    'pending' => $workmonth->where('status', '>=', 1)->where('status', '<=', 2)->count(),
+                    'in_progress' => $workmonth->where('status', 0)->where('endMonth', '>', $currentDate)->count(),
+                    'late' => $workmonth->where('status', 0)->where('endMonth', '<', $currentDate)->count(),
+                    'startMonth' => $startMonth,
+                    'endMonth' => $endMonth,
+                ];
+            });
+            // dd($workmonths->toarray());
+        return view('plan.ChartMonth', compact('workmonths','user'));
+    }
 }

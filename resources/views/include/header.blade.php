@@ -15,8 +15,6 @@
    
     <link href="{{ asset('assets/libs/select2/css/select2.min.css') }}" rel="stylesheet" type="text/css">
     <!-- Bootstrap Css -->
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.20/dist/sweetalert2.min.js"></script>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.20/dist/sweetalert2.min.css">
     <link href="{{ asset('assets/css/bootstrap.min.css') }}" id="bootstrap-style" rel="stylesheet" type="text/css" />
     <!-- Icons Css -->
     <link href="{{ asset('assets/css/icons.min.css') }}" rel="stylesheet" type="text/css" />
@@ -28,8 +26,7 @@
     <link href="{{ asset('assets/css/thongbao.css') }}" id="app-style" rel="stylesheet" type="text/css" />
     <link href="{{ asset('assets/css/xuongdong.css') }}" id="app-style" rel="stylesheet" type="text/css" />
     <link href="{{ asset('assets/css/pageloading.css') }}" id="app-style" rel="stylesheet" type="text/css" />
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js"></script>
-    <script src="https://d3js.org/d3.v4.min.js"></script>
+    <link href="{{ asset('assets/js/sweetalert2.min.css')}} " id="app-style" rel="stylesheet" type="text/css" />
 
     
 
@@ -100,55 +97,7 @@
                 <div class="simplebar-height-auto-observer-wrapper">
                     <div class="simplebar-height-auto-observer"></div>
                 </div>
-                <div class="simplebar-mask">
-                    <div class="simplebar-offset" style="right: -16.6667px; bottom: 0px;">
-                        <div class="simplebar-content-wrapper" style="height: 100%; overflow: hidden scroll;">
-                            <div class="simplebar-content" style="padding: 0px;">
-                                <div class="rightbar-title d-flex align-items-center px-3 py-4">
-
-                                    <h5 class="m-0 me-2">Chế độ</h5>
-
-                                    <a href="javascript:void(0);" class="right-bar-toggle ms-auto">
-                                        <i class="mdi mdi-close noti-icon"></i>
-                                    </a>
-                                </div>
-                                <!-- Settings -->
-                                <hr class="mt-0">
-                                <h6 class="text-center mb-0">Chọn bố cục</h6>
-
-                                <div class="p-4">
-                                    <div class="mb-2">
-                                        <img src="assets/images/layouts/layout-1.png" class="img-thumbnail" alt="layout-1">
-                                    </div>
-
-                                    <div class="form-check form-switch mb-3">
-                                        <input class="form-check-input theme-choice" type="checkbox" id="light-mode-switch" checked="">
-                                        <label class="form-check-label" for="light-mode-switch">Chế độ sáng</label>
-                                    </div>
-
-                                    <div class="mb-2">
-                                        <img src="assets/images/layouts/layout-2.png" class="img-thumbnail" alt="layout-2">
-                                    </div>
-                                    <div class="form-check form-switch mb-3">
-                                        <input class="form-check-input theme-choice" type="checkbox" id="dark-mode-switch" data-bsstyle="assets/css/bootstrap-dark.min.css" data-appstyle="assets/css/app-dark.min.css">
-                                        <label class="form-check-label" for="dark-mode-switch">Chế độ tối</label>
-                                    </div>
-
-                                    <div class="mb-2">
-                                        <img src="assets/images/layouts/layout-3.png" class="img-thumbnail" alt="layout-3">
-                                    </div>
-                                    <div class="form-check form-switch mb-5">
-                                        <input class="form-check-input theme-choice" type="checkbox" id="rtl-mode-switch" data-appstyle="assets/css/app-rtl.min.css">
-                                        <label class="form-check-label" for="rtl-mode-switch">Chế độ RTL</label>
-                                    </div>
-
-
-                                </div>
-
-                            </div>
-                        </div>
-                    </div>
-                </div>
+               
                 <div class="simplebar-placeholder" style="width: auto; height: 850px;"></div>
             </div>
             <div class="simplebar-track simplebar-horizontal" style="visibility: hidden;">
@@ -188,66 +137,6 @@
                 </div>
                 <div class="d-flex">
                     <div class="d-flex">
-                        <div class="dropdown d-none d-lg-inline-block ms-1">
-                            <button type="button" class="btn header-item noti-icon waves-effect" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <i class="ri-apps-2-line"></i>
-                            </button>
-                            <div class="dropdown-menu dropdown-menu-lg dropdown-menu-end" style="">
-                                <div class="px-lg-2">
-                                    <div class="row g-0">
-                                        <div class="col">
-                                            <a class="dropdown-icon-item" href="http://113.161.6.179:8089/RD/">
-                                        
-                                                <span>CHỮ KÝ ĐIỆN TỬ</span>
-                                            </a>
-                                        </div>
-                                        <div class="col">
-                                            <a class="dropdown-icon-item" href="http://113.161.6.179:8089/mahoatenduan/">
-                                               
-                                                <span>MÃ HÓA TÊN DỰ ÁN</span>
-                                            </a>
-                                        </div>
-                                        <div class="col">
-                                            <a class="dropdown-icon-item" href="http://113.161.6.179:8089/QLTB/">
-                                      
-                                                <span>QUẢN LÝ THIẾT BỊ</span>
-                                            </a>
-                                        </div>
-                                        <div class="col">
-                                            <a class="dropdown-icon-item" href="https://eoffice.thacochulai.vn/">
-                                      
-                                                <span>THACO EOFFICE</span>
-                                            </a>
-                                        </div>
-                                    </div>
-    
-                                 
-                                </div>
-                            </div>
-                        </div>
-                    <div class="dropdown d-inline-block d-lg-none ms-2">
-                        <button type="button" class="btn header-item noti-icon waves-effect" id="page-header-search-dropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <i class="ri-search-line"></i>
-                        </button>
-                        <div class="dropdown-menu dropdown-menu-lg dropdown-menu-end p-0" aria-labelledby="page-header-search-dropdown">
-                            <form class="p-3">
-                                <div class="mb-3 m-0">
-                                    <div class="input-group">
-                                        <input type="text" class="form-control" placeholder="Search ...">
-                                        <div class="input-group-append">
-                                            <button class="btn btn-primary" type="submit"><i class="ri-search-line"></i></button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                    <div class="dropdown d-inline-block user-dropdown">
-                        <div class="dropdown d-none d-lg-inline-block ms-1">
-                            <button type="button" class="btn header-item noti-icon waves-effect" data-toggle="fullscreen">
-                                <i class="ri-fullscreen-line"></i>
-                            </button>
-                        </div>
                         <div class="dropdown d-inline-block">
                             <button type="button" class="btn header-item waves-effect" id="page-header-user-dropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 <img class="rounded-circle header-profile-user" src="{{ asset('assets/images/users/avatar-2.jpg') }}" alt="Header Avatar">
@@ -270,11 +159,6 @@
                                 <a class="dropdown-item text-danger"  id="logout-btn"  href="{{ route('Logout') }}"><i class="ri-shut-down-line align-middle me-1 text-danger"></i>Đăng xuất</a>
                             </div>
                         </div>
-                        <div class="dropdown d-inline-block">
-                            <button type="button" class="btn header-item noti-icon right-bar-toggle waves-effect">
-                                <i class="mdi mdi-cog"></i>
-                            </button>
-                        </div>
                     </div>
         </header>
         <div class="vertical-menu">
@@ -292,7 +176,13 @@
                         <li>
                             <a href="{{ route('listCarBrands')}} " class="waves-effect">
                                 <i class="fas fa-project-diagram"></i>
-                                <span>Quản lý dự án</span>
+                                <span>Dự án xe</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ route('listProfessional') }}" class="waves-effect">
+                                <i class="fas fa-project-diagram"></i>
+                                <span>Dự án khối nghiệp vụ</span>
                             </a>
                         </li>
                         <li>
@@ -323,14 +213,14 @@
                         <li>
                             <a href="javascript: void(0);" class="has-arrow waves-effect">
                                 <i class="ri-book-read-fill"></i>
-                                <span>Kế hoạch tháng</span>
+                                <span>Kế hoạch dài hạn</span>
                             </a>
                             <ul class="sub-menu" aria-expanded="false">
                                 <li><a href="{{route('viewDenyMonth')}}" >Từ chối</a></li>
                                 <li><a href="{{route('viewApproveMonth')}}">Duyệt & Kiểm tra</a></li>
                                 <li><a href="{{route('listStartMonth')}}">Đang thực hiện</a></li>
                                 <li><a href="{{route('listReportMonth')}}">Báo cáo</a></li>
-                                <li><a >Biểu đồ</a></li>
+                                <li><a href="{{route('ChartMonth')}}">Biểu đồ</a></li>
                             </ul>
                         </li>
                         

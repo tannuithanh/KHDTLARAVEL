@@ -21,7 +21,7 @@
     <link href="{{ asset('assets/css/app.min.css') }}" id="app-style" rel="stylesheet" type="text/css" />
     {{-- <link href="{{ asset('assets/css/table.css') }}" id="app-style" rel="stylesheet" type="text/css" /> --}}
     <link href="{{ asset('assets/css/chunhapnhay.css') }}" id="app-style" rel="stylesheet" type="text/css" />
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
 
     <style>
         body{
@@ -373,17 +373,34 @@
                         <li>
                             <a href="{{ route('listCarBrands')}} " class="waves-effect">
                                 <i class="fas fa-project-diagram"></i>
-                                <span>Quản lý dự án</span>
+                                <span>Dự án xe</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ route('listProfessional') }}" class="waves-effect">
+                                <i class="fas fa-project-diagram"></i>
+                                <span>Dự án khối nghiệp vụ</span>
                             </a>
                         </li>
                         <li>
                             <a href="javascript: void(0);" class="has-arrow waves-effect">
                                 <i class="ri-book-read-fill"></i>
-                                <span>Kế hoạch ngày</span>
+                                <span>Kế hoạch dài hạn</span>
                             </a>
                             <ul class="sub-menu" aria-expanded="false">
+
                                 <li><a href="{{route('viewDenyDaily')}}">Từ chối</a></li>
-                                <li><a href="{{route('viewApproveDaily')}}">Duyệt & Kiểm tra</a></li>
+                                <li>
+                                    <a href="{{route('viewApproveDaily')}}" class="waves-effect">
+                                        @if ($count == 0)
+                                            <span class="badge rounded-pill bg-primary float-end"></span>
+                                        @else
+                                            <span class="badge rounded-pill bg-primary float-end">{{$count}}</span>
+                                        @endif
+
+                                        <span>Duyệt & Kiểm tra</span>
+                                    </a>
+                                </li>
                                 <li><a href="{{route('listWorkDaily')}}">Đang thực hiện</a></li>
                                 <li><a href="{{ route('listReportDaily') }}">Báo cáo</a></li>
                             </ul>
@@ -409,8 +426,8 @@
                                 <li><a href="{{route('viewDenyMonth')}}" >Từ chối</a></li>
                                 <li><a href="{{route('viewApproveMonth')}}">Duyệt & Kiểm tra</a></li>
                                 <li><a href="{{route('listStartMonth')}}">Đang thực hiện</a></li>
-                                <li><a >Báo cáo</a></li>
-                                <li><a >Biểu đồ</a></li>
+                                <li><a href="{{route('listReportMonth')}}">Báo cáo</a></li>
+                                <li><a href="{{route('ChartMonth')}}">Biểu đồ</a></li>
                             </ul>
                         </li>
                     </ul>

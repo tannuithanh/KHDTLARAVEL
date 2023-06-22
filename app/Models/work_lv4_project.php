@@ -21,6 +21,7 @@ class work_lv4_project extends Model
         'created_at',
         'updated_at'
     ];
+    
     public function workByProjectDepartment()
     {
         return $this->belongsTo(Work_By_Project_Department::class, 'work_by_project_department_id');

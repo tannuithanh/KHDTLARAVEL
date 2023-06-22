@@ -21,7 +21,7 @@
 </style>
 <div class="col-12">
     <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-        <h4 class="mb-sm-0">KẾ HOẠCH THÁNG</h4>
+        <h4 class="mb-sm-0">KẾ HOẠCH DÀI HẠN</h4>
     </div>
 <div class="col-lg-12">
     <div class="card">

@@ -46,11 +46,6 @@ class CarBrandsDatabase extends Seeder
                 'created_at'=> now(),
                 'updated_at'=> now(),
             ],
-            [
-                'name' => 'Nghiệp vụ',
-                'created_at'=> now(),
-                'updated_at'=> now(),
-            ],
         ]);
     }
 }

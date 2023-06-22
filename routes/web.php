@@ -1,6 +1,5 @@
 <?php
 
-use App\Http\Controllers\ApproveDaiLyWeekly;
 use App\Http\Controllers\Login;
 use App\Http\Controllers\Logout;
 use App\Http\Controllers\Profile;
@@ -13,6 +12,8 @@ use App\Http\Controllers\setting\Users;
 use App\Http\Controllers\WorkPlanDaily;
 use App\Http\Controllers\ChatController;
 use App\Http\Controllers\ProjecManagement;
+use App\Http\Controllers\ApproveDaiLyWeekly;
+use App\Http\Controllers\ProjectProfessional;
 use App\Http\Controllers\setting\Departments;
 
 Route::get('/', function () {
@@ -22,93 +23,93 @@ Route::get('/', function () {
 
 //------------------------------------------ ĐĂNG NHẬP --------------------------------------//
 
-route::get('/login', [Login::class, 'loginGet'])->name('LoginGet')->middleware('checkUser');
-route::post('/login', [Login::class, 'loginPost'])->name('LoginPost');
-route::get('/back', [Login::class, 'back'])->name('back');
+Route::get('/login', [Login::class, 'loginGet'])->name('LoginGet')->middleware('checkUser');
+Route::post('/login', [Login::class, 'loginPost'])->name('LoginPost');
+Route::get('/back', [Login::class, 'back'])->name('back');
 
 //------------------------------------------ QUÊN MẬT KHẨU --------------------------------------//
-route::get('/Recover-PassWord', [Login::class, 'Recover'])->name('recover')->middleware('checkUser');
-route::post('/Recover-PassWord', [Login::class, 'RecoverPost'])->name('recoverPost')->middleware('checkUser');
+Route::get('/Recover-PassWord', [Login::class, 'Recover'])->name('recover')->middleware('checkUser');
+Route::post('/Recover-PassWord', [Login::class, 'RecoverPost'])->name('recoverPost')->middleware('checkUser');
 
 //------------------------------------------ THAY ĐỔI MẬT KHẨU --------------------------------------//
-route::get('/reset-PassWord', [Login::class, 'Reset'])->name('Reset')->middleware('checkUser');
-route::post('/reset-PassWord', [Login::class, 'ResetPost'])->name('ResetPost')->middleware('checkUser');
+Route::get('/reset-PassWord', [Login::class, 'Reset'])->name('Reset')->middleware('checkUser');
+Route::post('/reset-PassWord', [Login::class, 'ResetPost'])->name('ResetPost')->middleware('checkUser');
 
 
 //------------------------------------------ Đăng xuất --------------------------------------//
-route::get('/logout', [Logout::class, 'logout'])->name('Logout');
+Route::get('/logout', [Logout::class, 'logout'])->name('Logout');
 
 
 //------------------------------------------ Thông tin cá nhân --------------------------------------//
-route::middleware('checkLogin')->prefix('/profile')->group(function () {
-    route::get('/Your-personal-information', [Profile::class, 'profile'])->name('profile');
+Route::middleware('checkLogin')->prefix('/profile')->group(function () {
+    Route::get('/Your-personal-information', [Profile::class, 'profile'])->name('profile');
 });
 
 //------------------------------------------ QUẢN LÝ PHÒNG BAN --------------------------------------//
-route::middleware('checkLogin')->prefix('/departments')->group(function () {
-    route::get('/Your-Department-information', [Departments::class, 'listDepartment'])->name('departments.view');
+Route::middleware('checkLogin')->prefix('/departments')->group(function () {
+    Route::get('/Your-Department-information', [Departments::class, 'listDepartment'])->name('departments.view');
 });
 
 //------------------------------------------ QUẢN LÝ NHÂN SỰ --------------------------------------//
-route::middleware('checkLogin')->prefix('/User')->group(function () {
-    route::get('/Your-Users-information', [Users::class, 'listUsers'])->name('listUser.view');
-    route::post('/Your-Users-information', [Users::class, 'searchUsers']);
+Route::middleware('checkLogin')->prefix('/User')->group(function () {
+    Route::get('/Your-Users-information', [Users::class, 'listUsers'])->name('listUser.view');
+    Route::post('/Your-Users-information', [Users::class, 'searchUsers']);
     //--------------------------------------THÊM NHÂN SỰ --------------------------------------------//
-    route::get('/add-Users', [Users::class, 'addUsers'])->name('addUsers');
-    route::post('/add-Users', [Users::class, 'insertUsers'])->name('insertUsers');
+    Route::get('/add-Users', [Users::class, 'addUsers'])->name('addUsers');
+    Route::post('/add-Users', [Users::class, 'insertUsers'])->name('insertUsers');
 
     //--------------------------------------SỬA THÔNG TIN NHÂN SỰ --------------------------------------------//
-    route::get('/edit-Users/{id}', [Users::class, 'editUsers'])->name('editUsers');
-    route::post('/edit-Users/{id}', [Users::class, 'updateUsers'])->name('updateUsers');
+    Route::get('/edit-Users/{id}', [Users::class, 'editUsers'])->name('editUsers');
+    Route::post('/edit-Users/{id}', [Users::class, 'updateUsers'])->name('updateUsers');
 
     //-------------------------------------- XÓA THÔNG TIN NHÂN SỰ --------------------------------------------//
-    route::Delete('/Delete-Users/{id}', [Users::class, 'deleteUsers'])->name('deleteUsers');
+    Route::Delete('/Delete-Users/{id}', [Users::class, 'deleteUsers'])->name('deleteUsers');
 });
 
 
 //------------------------------------------ QUẢN LÝ NHÓM --------------------------------------//
-route::middleware('checkLogin')->prefix('/Team')->group(function () {
-    route::get('/Your-Teams-information', [Teams::class, 'listTeam'])->name('listTeam.view');
+Route::middleware('checkLogin')->prefix('/Team')->group(function () {
+    Route::get('/Your-Teams-information', [Teams::class, 'listTeam'])->name('listTeam.view');
     //--------------------------------------THÊM NHÓM --------------------------------------------//
-    route::get('/add-Teams', [Teams::class, 'addTeams'])->name('addTeams');
-    route::post('/add-Teams', [Teams::class, 'creatTeams'])->name('addTeams.post');
+    Route::get('/add-Teams', [Teams::class, 'addTeams'])->name('addTeams');
+    Route::post('/add-Teams', [Teams::class, 'creatTeams'])->name('addTeams.post');
 
     //--------------------------------------XÓA NHÓM --------------------------------------------//
-    route::Delete('/delete/{id}', [Teams::class, 'deleteTeam'])->name('deleteTeam');
+    Route::Delete('/delete/{id}', [Teams::class, 'deleteTeam'])->name('deleteTeam');
 
     //--------------------------------------SỬA NHÓM --------------------------------------------//
-    route::get('/edit-Team/{id}', [Teams::class, 'editTeam'])->name('editTeam');
-    route::post('/edit-Team/{id}', [Teams::class, 'updateTeam'])->name('updateTeam');
+    Route::get('/edit-Team/{id}', [Teams::class, 'editTeam'])->name('editTeam');
+    Route::post('/edit-Team/{id}', [Teams::class, 'updateTeam'])->name('updateTeam');
 });
 
 
 
 //------------------------------------------ DASHBOARD --------------------------------------//
-route::get('/dashboard', [Dashboard::class, 'dashboardGet'])->name('DashBoard')->middleware('checkLogin');
+Route::get('/dashboard', [Dashboard::class, 'dashboardGet'])->name('DashBoard')->middleware('checkLogin');
 
 
 
 
 //------------------------------------------ QUẢN LÝ KẾ HOẠCH TUẦN --------------------------------------//
  //-------------------------------------- DUYỆT VÀ KIỂM TRA --------------------------------------------//
-    route::middleware('checkLogin')->prefix('/Work-Weeko')->group(function () {
-        route::get('/Approve-Week', [ApproveDaiLyWeekly::class, 'viewApproveWeek'])->name('viewApproveWeek');
-        route::Post('/Approve-Week', [ApproveDaiLyWeekly::class, 'viewApproveWeekPost'])->name('viewApproveWeekPost');
+    Route::middleware('checkLogin')->prefix('/Work-Weeko')->group(function () {
+        Route::get('/Approve-Week', [ApproveDaiLyWeekly::class, 'viewApproveWeek'])->name('viewApproveWeek');
+        Route::Post('/Approve-Week', [ApproveDaiLyWeekly::class, 'viewApproveWeekPost'])->name('viewApproveWeekPost');
 
-        route::get('/deny-week', [ApproveDaiLyWeekly::class, 'viewDenyWeek'])->name('viewDenyWeek');
-        route::Post('/deny-week', [ApproveDaiLyWeekly::class, 'viewDenyWeekPost'])->name('viewDenyWeekPost');
+        Route::get('/deny-week', [ApproveDaiLyWeekly::class, 'viewDenyWeek'])->name('viewDenyWeek');
+        Route::Post('/deny-week', [ApproveDaiLyWeekly::class, 'viewDenyWeekPost'])->name('viewDenyWeekPost');
         
-        route::get('/chart-week', [ApproveDaiLyWeekly::class, 'ChartWeek'])->name('ChartWeek');
+        Route::get('/chart-week', [ApproveDaiLyWeekly::class, 'ChartWeek'])->name('ChartWeek');
 
-        route::POST('/WeekAprroveTN', [ApproveDaiLyWeekly::class, 'WeekAprroveTN'])->name('WeekAprroveTN');
-        route::POST('/WeekdenyTN', [ApproveDaiLyWeekly::class, 'WeekdenyTN'])->name('WeekdenyTN');
-        route::POST('/WeekaprroveTP', [ApproveDaiLyWeekly::class, 'WeekaprroveTP'])->name('WeekaprroveTP');
-        route::POST('/WeedenyTP', [ApproveDaiLyWeekly::class, 'WeedenyTP'])->name('WeedenyTP');
+        Route::POST('/WeekAprroveTN', [ApproveDaiLyWeekly::class, 'WeekAprroveTN'])->name('WeekAprroveTN');
+        Route::POST('/WeekdenyTN', [ApproveDaiLyWeekly::class, 'WeekdenyTN'])->name('WeekdenyTN');
+        Route::POST('/WeekaprroveTP', [ApproveDaiLyWeekly::class, 'WeekaprroveTP'])->name('WeekaprroveTP');
+        Route::POST('/WeedenyTP', [ApproveDaiLyWeekly::class, 'WeedenyTP'])->name('WeedenyTP');
     });
 //--------------------------------------Danh sách --------------------------------------------//
-route::middleware('checkLogin')->prefix('/plan')->group(function () {
-    route::get('/workWeek', [WorkPlanWeek::class, 'viewListWorkWeek'])->name('listWorkWeek');
-    route::post('/workWeek', [WorkPlanWeek::class, 'searchListWork'])->name('searchlistWorkWeek');
+Route::middleware('checkLogin')->prefix('/plan')->group(function () {
+    Route::get('/workWeek', [WorkPlanWeek::class, 'viewListWorkWeek'])->name('listWorkWeek');
+    Route::post('/workWeek', [WorkPlanWeek::class, 'searchListWork'])->name('searchlistWorkWeek');
     //-------------------------------------- PHẢN HỒI TRẢ JSON VỀ AJAX  --------------------------------------------//    
     Route::get('/workWeek/departments', [WorkPlanWeek::class, 'getDepartments'])->name('listWorkWeekdepartments');;
     Route::get('/workWeek/users', [WorkPlanWeek::class, 'getUsers'])->name('listWorkWeekUsers');;
@@ -122,21 +123,21 @@ route::middleware('checkLogin')->prefix('/plan')->group(function () {
 });
 
 //-------------------------------------- TẠO/XÓA/SỬA KẾ HOẠCH  --------------------------------------------//    
-route::middleware('checkLogin')->prefix('/creat')->group(function () {
+Route::middleware('checkLogin')->prefix('/creat')->group(function () {
 
     //-------------------------------------- TẠO KẾ HOẠCH TUẦN  --------------------------------------------//
-    route::get('/choosedate', [WorkPlanWeek::class, 'chooseDate'])->name('chooseDate.get');
-    route::POST('/choosedate', [WorkPlanWeek::class, 'showWeekdays'])->name('showWeekdays.get');
+    Route::get('/choosedate', [WorkPlanWeek::class, 'chooseDate'])->name('chooseDate.get');
+    Route::POST('/choosedate', [WorkPlanWeek::class, 'showWeekdays'])->name('showWeekdays.get');
 
 
-    route::get('/creatWorkWeek', [WorkPlanWeek::class, 'creatWorkWeek'])->name('creatWorkWeek.get');
-    route::post('/creatWorkWeek', [WorkPlanWeek::class, 'insertWorkWeek']);
+    Route::get('/creatWorkWeek', [WorkPlanWeek::class, 'creatWorkWeek'])->name('creatWorkWeek.get');
+    Route::post('/creatWorkWeek', [WorkPlanWeek::class, 'insertWorkWeek']);
     //-------------------------------------- XÓA KẾ HOẠCH TUẦN  --------------------------------------------//
     Route::post('/deleteWorkWeek', [WorkPlanWeek::class, 'deleteWorkWeek'])->name('deleteWorkWeek');
 
     //-------------------------------------- SỬA KẾ HOẠCH TUẦN  --------------------------------------------//
     Route::get('/editWorkWeek/{id}', [WorkPlanWeek::class, 'editWorkWeek'])->name('editWorkWeek');
-    Route::post('/editWorkWeek/{id}', [WorkPlanWeek::class, 'updateWorkWeek'])->name('updateWorkWeek');
+    Route::post('/editWorkWeek/{id}', [WorkPlanWeek::class, 'updateWorkWeek'])->name('updateWorkWeekEdit');
 
     //-------------------------------------- CẬP NHẬT KẾ HOẠCH TUẦN  --------------------------------------------//
     Route::get('/updateWorkWeek/{id}', [WorkPlanWeek::class, 'updateWorkWeekGet'])->name('updateWorkWeek');
@@ -148,47 +149,47 @@ route::middleware('checkLogin')->prefix('/creat')->group(function () {
 
 //------------------------------------------ QUẢN LÝ KẾ HOẠCH NGÀY --------------------------------------//
     //-------------------------------------- DUYỆT VÀ KIỂM TRA --------------------------------------------//
-    route::middleware('checkLogin')->prefix('/Work-Daily')->group(function () {
-        route::get('/approve-daily', [ApproveDaiLyWeekly::class, 'viewApproveDaily'])->name('viewApproveDaily');
-        route::POST('/approve-daily', [ApproveDaiLyWeekly::class, 'viewApproveDailyPost'])->name('viewApproveDailyPost');
-        route::get('/deny-daily', [ApproveDaiLyWeekly::class, 'viewDenyDaily'])->name('viewDenyDaily');
-        route::Post('/deny-daily', [ApproveDaiLyWeekly::class, 'viewDenyDailyPost'])->name('viewDenyDailyPost');
-        route::POST('/aprrovetruongphong', [ApproveDaiLyWeekly::class, 'aprroveTP'])->name('aprroveTP');
-        route::POST('/denyTP', [ApproveDaiLyWeekly::class, 'denyTP'])->name('denyTP');
-        route::POST('/aprroveTN', [ApproveDaiLyWeekly::class, 'aprroveTN'])->name('aprroveTN');
-        route::POST('/denyTN', [ApproveDaiLyWeekly::class, 'denyTN'])->name('denyTN');
+    Route::middleware('checkLogin')->prefix('/Work-Daily')->group(function () {
+        Route::get('/approve-daily', [ApproveDaiLyWeekly::class, 'viewApproveDaily'])->name('viewApproveDaily');
+        Route::POST('/approve-daily', [ApproveDaiLyWeekly::class, 'viewApproveDailyPost'])->name('viewApproveDailyPost');
+        Route::get('/deny-daily', [ApproveDaiLyWeekly::class, 'viewDenyDaily'])->name('viewDenyDaily');
+        Route::Post('/deny-daily', [ApproveDaiLyWeekly::class, 'viewDenyDailyPost'])->name('viewDenyDailyPost');
+        Route::POST('/aprrovetruongphong', [ApproveDaiLyWeekly::class, 'aprroveTP'])->name('aprroveTP');
+        Route::POST('/denyTP', [ApproveDaiLyWeekly::class, 'denyTP'])->name('denyTP');
+        Route::POST('/aprroveTN', [ApproveDaiLyWeekly::class, 'aprroveTN'])->name('aprroveTN');
+        Route::POST('/denyTN', [ApproveDaiLyWeekly::class, 'denyTN'])->name('denyTN');
     });
     
 
-route::middleware('checkLogin')->prefix('/Work-Plan-Daily')->group(function () {
-    route::get('/List-Work-Daily', [WorkPlanDaily::class, 'viewListWorkDaily'])->name('listWorkDaily');
-    route::post('/List-Work-Daily', [WorkPlanDaily::class, 'searchWorkDaily'])->name('searchWorkDaily');
+Route::middleware('checkLogin')->prefix('/Work-Plan-Daily')->group(function () {
+    Route::get('/List-Work-Daily', [WorkPlanDaily::class, 'viewListWorkDaily'])->name('listWorkDaily');
+    Route::post('/List-Work-Daily', [WorkPlanDaily::class, 'searchWorkDaily'])->name('searchWorkDaily');
 });
 
 
 //-------------------------------------- TẠO CÔNG VIỆC NGÀY  --------------------------------------------//    
-route::middleware('checkLogin')->prefix('/Creat')->group(function () {
-    route::get('/Creat-Work-Daily', [WorkPlanDaily::class, 'viewCreatWorkDaily'])->name('creatWorkDaily.get');
-    route::post('/Creat-Work-Daily', [WorkPlanDaily::class, 'insertWorkDaily'])->name('creatWorkDaily.post');
-    route::post('/Checktime', [WorkPlanDaily::class, 'checktime'])->name('checktime');
-    route::get('/Assign-Work-Daily', [WorkPlanDaily::class, 'assignCreatWorkDaily'])->name('assignCreatWorkDaily.get');
-    route::post('/Assign-Work-Daily', [WorkPlanDaily::class, 'assignCreatWorkDailyPost'])->name('assignCreatWorkDaily.post');
+Route::middleware('checkLogin')->prefix('/Creat')->group(function () {
+    Route::get('/Creat-Work-Daily', [WorkPlanDaily::class, 'viewCreatWorkDaily'])->name('creatWorkDaily.get');
+    Route::post('/Creat-Work-Daily', [WorkPlanDaily::class, 'insertWorkDaily'])->name('creatWorkDaily.post');
+    Route::post('/Checktime', [WorkPlanDaily::class, 'checktime'])->name('checktime');
+    Route::get('/Assign-Work-Daily', [WorkPlanDaily::class, 'assignCreatWorkDaily'])->name('assignCreatWorkDaily.get');
+    Route::post('/Assign-Work-Daily', [WorkPlanDaily::class, 'assignCreatWorkDailyPost'])->name('assignCreatWorkDaily.post');
     //-------------------------------------- NÚT TÌM KIẾM BẰNG AJAX HIHI  --------------------------------------------//    
     Route::get('/workDaily/departments', [WorkPlanDaily::class, 'getDepartments'])->name('listWorkDailydepartments');;
     Route::get('/workDaily/users', [WorkPlanDaily::class, 'getUsers'])->name('listWorkDailyUsers');;
 });
 //-------------------------------------- CẬP NHẬT CÔNG VIỆC NGÀY LẤY TỪ KẾ HOẠCH TUẦN  ------------------//    
-route::middleware('checkLogin')->prefix('/Update-WorkDaily-From-WorkWeek')->group(function () {
-    route::get('/Update-WorkDaily/{id}', [WorkPlanDaily::class, 'updateWorkDaily'])->name('updateWorkDaily.get');
-    route::post('/Update-WorkDaily/{id}', [WorkPlanDaily::class, 'updateWorkDailyPost'])->name('updateWorkDaily.Post');
+Route::middleware('checkLogin')->prefix('/Update-WorkDaily-From-WorkWeek')->group(function () {
+    Route::get('/Update-WorkDaily/{id}', [WorkPlanDaily::class, 'updateWorkDaily'])->name('updateWorkDaily.get');
+    Route::post('/Update-WorkDaily/{id}', [WorkPlanDaily::class, 'updateWorkDailyPost'])->name('updateWorkDaily.Post');
 });
 //-------------------------------------- CHỈNH SỬA CÔNG VIỆC NGÀY  ------------------//    
-route::middleware('checkLogin')->prefix('/Edit-WorkDaily-From-WorkWeek')->group(function () {
-    route::get('/edit-WorkDaily/{id}', [WorkPlanDaily::class, 'editWorkDailyGet'])->name('editWorkDaily.get');
-    route::post('/edit-WorkDaily/{id}', [WorkPlanDaily::class, 'editWorkDailyPost'])->name('editWorkDaily.Post');
+Route::middleware('checkLogin')->prefix('/Edit-WorkDaily-From-WorkWeek')->group(function () {
+    Route::get('/edit-WorkDaily/{id}', [WorkPlanDaily::class, 'editWorkDailyGet'])->name('editWorkDaily.get');
+    Route::post('/edit-WorkDaily/{id}', [WorkPlanDaily::class, 'editWorkDailyPost'])->name('editWorkDaily.Post');
 });
 //-------------------------------------- XÓA CÔNG VIỆC NGÀY  ------------------//      
-route::POST('/Delete-WorkDaily', [WorkPlanDaily::class, 'deleteWorkDaily'])->name('deleteWorkDaily');
+Route::POST('/Delete-WorkDaily', [WorkPlanDaily::class, 'deleteWorkDaily'])->name('deleteWorkDaily');
 
 
 
@@ -197,19 +198,19 @@ route::POST('/Delete-WorkDaily', [WorkPlanDaily::class, 'deleteWorkDaily'])->nam
 //------------------------------------------ BÁO CÁO KẾ HOẠCH --------------------------------------//
 
 //--------------------------------------Danh sách --------------------------------------------//
-route::middleware('checkLogin')->prefix('/report')->group(function () {
-    route::get('/reportWeekly', [ReportPlan::class, 'listReportWeekly'])->name('listReportWeekly');
-    route::post('/reportWeekly', [ReportPlan::class, 'SearchlistReportWeekly'])->name('SearchlistReportWeekly');
-    route::get('/reportDaily', [ReportPlan::class, 'listReportDaily'])->name('listReportDaily');
-    route::post('/reportDaily', [ReportPlan::class, 'SearchlistReportDaily'])->name('SearchlistReportDaily');
+Route::middleware('checkLogin')->prefix('/report')->group(function () {
+    Route::get('/reportWeekly', [ReportPlan::class, 'listReportWeekly'])->name('listReportWeekly');
+    Route::post('/reportWeekly', [ReportPlan::class, 'SearchlistReportWeekly'])->name('SearchlistReportWeekly');
+    Route::get('/reportDaily', [ReportPlan::class, 'listReportDaily'])->name('listReportDaily');
+    Route::post('/reportDaily', [ReportPlan::class, 'SearchlistReportDaily'])->name('SearchlistReportDaily');
 
 
     //--------------------------------------BÁO CÁO --------------------------------------------//
-    route::get('/formReportWeekly/{id}', [ReportPlan::class, 'formReportWeekly'])->name('formReportWeekly');
-    route::POST('/formReportWeekly/{id}', [ReportPlan::class, 'reportWeekly'])->name('reportWeekly');
+    Route::get('/formReportWeekly/{id}', [ReportPlan::class, 'formReportWeekly'])->name('formReportWeekly');
+    Route::POST('/formReportWeekly/{id}', [ReportPlan::class, 'reportWeekly'])->name('reportWeekly');
 
-    route::get('/Report-Daily/{id}', [ReportPlan::class, 'formReportDaily'])->name('reportDaily.get');
-    route::POST('/Report-Daily/{id}', [ReportPlan::class, 'reportDaily'])->name('reportDaily.post');
+    Route::get('/Report-Daily/{id}', [ReportPlan::class, 'formReportDaily'])->name('reportDaily.get');
+    Route::POST('/Report-Daily/{id}', [ReportPlan::class, 'reportDaily'])->name('reportDaily.post');
 
     //--------------------------------------TẢI FILE --------------------------------------------//
     Route::get('/download/{file}', [ReportPlan::class, 'download'])->name('reportWeekly.download');
@@ -222,40 +223,42 @@ route::middleware('checkLogin')->prefix('/report')->group(function () {
 
 
 //------- QUẢN LÝ KẾ HOẠCH THÁNG -----//
-    route::middleware('checkLogin')->prefix('/WorkMonth')->group(function () {
-        route::get('/approve-Month', [ApproveDaiLyWeekly::class, 'viewApproveMonth'])->name('viewApproveMonth');
-        route::post('/approve-Month', [ApproveDaiLyWeekly::class, 'viewApproveMonthPost'])->name('viewApproveMonthPost');
+    Route::middleware('checkLogin')->prefix('/WorkMonth')->group(function () {
+        Route::get('/approve-Month', [ApproveDaiLyWeekly::class, 'viewApproveMonth'])->name('viewApproveMonth');
+        Route::post('/approve-Month', [ApproveDaiLyWeekly::class, 'viewApproveMonthPost'])->name('viewApproveMonthPost');
 
-        route::get('/deny-Month', [ApproveDaiLyWeekly::class, 'viewDenyMonth'])->name('viewDenyMonth');
-        route::post('/deny-Month', [ApproveDaiLyWeekly::class, 'viewDenyMonthPost'])->name('viewDenyMonthPost');
+        Route::get('/deny-Month', [ApproveDaiLyWeekly::class, 'viewDenyMonth'])->name('viewDenyMonth');
+        Route::post('/deny-Month', [ApproveDaiLyWeekly::class, 'viewDenyMonthPost'])->name('viewDenyMonthPost');
 
-        route::get('/list-Month', [ApproveDaiLyWeekly::class, 'listStartMonth'])->name('listStartMonth');
-        route::Post('/list-Month', [ApproveDaiLyWeekly::class, 'listStartMonthPost'])->name('listStartMonthPost');
+        Route::get('/list-Month', [ApproveDaiLyWeekly::class, 'listStartMonth'])->name('listStartMonth');
+        Route::Post('/list-Month', [ApproveDaiLyWeekly::class, 'listStartMonthPost'])->name('listStartMonthPost');
 
-        route::get('/report-Month', [ApproveDaiLyWeekly::class, 'listReportMonth'])->name('listReportMonth');
-        route::Post('/report-Month', [ApproveDaiLyWeekly::class, 'listReportMonthPost'])->name('listReportMonthPost');
-        route::POST('/aprroveMonthTP', [ApproveDaiLyWeekly::class, 'aprroveMonthTP'])->name('aprroveMonthTP');
-        route::POST('/denyMonthTP', [ApproveDaiLyWeekly::class, 'denyMonthTP'])->name('denyMonthTP');
-        route::POST('/aprroveMonthTN', [ApproveDaiLyWeekly::class, 'aprroveMonthTN'])->name('aprroveMonthTN');
-        route::POST('/denyMonthTN', [ApproveDaiLyWeekly::class, 'denyMonthTN'])->name('denyMonthTN');
+        Route::get('/report-Month', [ApproveDaiLyWeekly::class, 'listReportMonth'])->name('listReportMonth');
+        Route::Post('/report-Month', [ApproveDaiLyWeekly::class, 'listReportMonthPost'])->name('listReportMonthPost');
+        Route::POST('/aprroveMonthTP', [ApproveDaiLyWeekly::class, 'aprroveMonthTP'])->name('aprroveMonthTP');
+        Route::POST('/denyMonthTP', [ApproveDaiLyWeekly::class, 'denyMonthTP'])->name('denyMonthTP');
+        Route::POST('/aprroveMonthTN', [ApproveDaiLyWeekly::class, 'aprroveMonthTN'])->name('aprroveMonthTN');
+        Route::POST('/denyMonthTN', [ApproveDaiLyWeekly::class, 'denyMonthTN'])->name('denyMonthTN');
+
+        Route::get('/chart-Month', [ApproveDaiLyWeekly::class, 'ChartMonth'])->name('ChartMonth');
     });
     //-------------------------------------- TẠO CÔNG VIỆC THÁNG  --------------------------------------------//    
-    route::middleware('checkLogin')->prefix('/Creat')->group(function () {
-        route::get('/Creat-Work-Month', [ApproveDaiLyWeekly::class, 'viewCreatWorkMonth'])->name('creatWorkMonth');
-        route::POST('/Creat-Work-Month', [ApproveDaiLyWeekly::class, 'InsertWorkMonth'])->name('InsertWorkMonth');
+    Route::middleware('checkLogin')->prefix('/Creat')->group(function () {
+        Route::get('/Creat-Work-Month', [ApproveDaiLyWeekly::class, 'viewCreatWorkMonth'])->name('creatWorkMonth');
+        Route::POST('/Creat-Work-Month', [ApproveDaiLyWeekly::class, 'InsertWorkMonth'])->name('InsertWorkMonth');
     });
     //-------------------------------------- CHỈNH SỬA-------------------------------//
-    route::middleware('checkLogin')->prefix('/Edit-WorkMonth-From-WorkWeek')->group(function () {
-        route::get('/edit-WorkMonth/{id}', [ApproveDaiLyWeekly::class, 'editWorkMonthGet'])->name('editWorkMonth.get');
-        route::post('/edit-WorkMonth/{id}', [ApproveDaiLyWeekly::class, 'editWorkMonthPost'])->name('editWorkMonth.Post');
+    Route::middleware('checkLogin')->prefix('/Edit-WorkMonth-From-WorkWeek')->group(function () {
+        Route::get('/edit-WorkMonth/{id}', [ApproveDaiLyWeekly::class, 'editWorkMonthGet'])->name('editWorkMonth.get');
+        Route::post('/edit-WorkMonth/{id}', [ApproveDaiLyWeekly::class, 'editWorkMonthPost'])->name('editWorkMonth.Post');
     });
      //-------------------------------------- XÓA CÔNG VIỆC THÁNG -------------------------------//
-     route::middleware('checkLogin')->prefix('/Delete-WorkMonth')->group(function () {
-        route::post('/delete-WorkMonth', [ApproveDaiLyWeekly::class, 'DeletetWorkMonth'])->name('DeletetWorkMonth');
+     Route::middleware('checkLogin')->prefix('/Delete-WorkMonth')->group(function () {
+        Route::post('/delete-WorkMonth', [ApproveDaiLyWeekly::class, 'DeletetWorkMonth'])->name('DeletetWorkMonth');
     });
     //--------------------------------- BÁO CÁO ---------------------------------------//
-    route::get('/Report-Month/{id}', [ReportPlan::class, 'formReportMonth'])->name('reportMonth.get');
-    route::POST('/Report-Month/{id}', [ReportPlan::class, 'formReportMonthPost'])->name('reportMonth.post');
+    Route::get('/Report-Month/{id}', [ReportPlan::class, 'formReportMonth'])->name('reportMonth.get');
+    Route::POST('/Report-Month/{id}', [ReportPlan::class, 'formReportMonthPost'])->name('reportMonth.post');
 
     //------------------- Tìm kiếm nhóm người dùng và phòng ban --------------//
     Route::get('/department/{id}/teams', [ApproveDaiLyWeekly::class, 'getTeams'])->name('getTeamByDP');
@@ -265,25 +268,25 @@ route::middleware('checkLogin')->prefix('/report')->group(function () {
 
 
 
-//------------------------------------------ QUẢN LÝ DỰ ÁN --------------------------------------//
+//------------------------------------------ QUẢN LÝ DỰ ÁN XE--------------------------------------//
 
 // 1. -------------------------------------- DANH SÁCH DỰ ÁN --------------------------------------------//    
-route::middleware('checkLogin')->prefix('/Project-Managerment')->group(function () {
-    route::get('/listCarBrands', [ProjecManagement::class, 'listCarBrands'])->name('listCarBrands');
-    route::get('/List-Project-Management/{id}', [ProjecManagement::class, 'listProjectManagement'])->name('listProjectManagerment');
-    route::get('Project-Connect/{id}', [ProjecManagement::class, 'ProjectConnectView'])->name('projectConnect');
-    route::get('Project-con/{id}', [ProjecManagement::class, 'ProjectCon'])->name('ProjectCon');
-    route::get('/List-Project-Management-child/{car_brands_id}/{car_brands_child_id}', [ProjecManagement::class, 'listProjectManagementChild'])->name('listProjectManagementChild');
+Route::middleware('checkLogin')->prefix('/Project-Managerment')->group(function () {
+    Route::get('/listCarBrands', [ProjecManagement::class, 'listCarBrands'])->name('listCarBrands');
+    Route::get('/List-Project-Management/{id}', [ProjecManagement::class, 'listProjectManagement'])->name('listProjectManagerment');
+    Route::get('Project-Connect/{id}', [ProjecManagement::class, 'ProjectConnectView'])->name('projectConnect');
+    Route::get('Project-con/{id}', [ProjecManagement::class, 'ProjectCon'])->name('ProjectCon');
+    Route::get('/List-Project-Management-child/{car_brands_id}/{car_brands_child_id}', [ProjecManagement::class, 'listProjectManagementChild'])->name('listProjectManagementChild');
 });
 
 // 2. -------------------------------------- TẠO DỰ ÁN --------------------------------------------//    
-route::middleware('checkLogin')->prefix('/Creat-Project')->group(function () {
+Route::middleware('checkLogin')->prefix('/Creat-Project')->group(function () {
     Route::get('Creat-Projec-Form/{id}/{car_brands_child_id?}', [ProjecManagement::class, 'formCreatProject'])->name('creatProject.get')->where(['id' => '[0-9]+', 'car_brands_child_id' => '[0-9]+']);
     Route::post('Creat-Projec-Form/{id}/{car_brands_child_id?}', [ProjecManagement::class, 'insertCreatProject'])->name('creatProject.post')->where(['id' => '[0-9]+', 'car_brands_child_id' => '[0-9]+']);
 });
 
 // 3. -------------------------------------- XÓA DỰ ÁN  --------------------------------------------//   
-route::Delete('/Delete-projec/{id}', [ProjecManagement::class, 'deleteProject'])->name('deleteProject');
+Route::Delete('/Delete-projec/{id}', [ProjecManagement::class, 'deleteProject'])->name('deleteProject');
 Route::delete('/project-department/{id}', [ProjecManagement::class, 'destroy'])->name('destroy');
 Route::delete('/project-work/{id}', [ProjecManagement::class, 'deleteWork'])->name('deleteWork');
 Route::delete('/project-Lv4/{id}', [ProjecManagement::class, 'deleteLv4'])->name('deleteLv4');
@@ -303,18 +306,53 @@ Route::delete('/project-Lv4/{id}', [ProjecManagement::class, 'deleteLv4'])->name
 
 
 // 5 .-------------------------------------- CẬP NHẬT TIẾN ĐỘ CÔNG VIỆC  --------------------------------------------//   
-route::post('update-result-project-connect', [ProjecManagement::class, 'updateResult'])->name('updateResult');
-route::post('update-result-project-con', [ProjecManagement::class, 'updateResultCon'])->name('updateResultCon');
-route::post('update-result-project-lv4', [ProjecManagement::class, 'updateResultLv4'])->name('updateResultLv4');
+Route::post('update-result-project-connect', [ProjecManagement::class, 'updateResult'])->name('updateResult');
+Route::post('update-result-project-con', [ProjecManagement::class, 'updateResultCon'])->name('updateResultCon');
+Route::post('update-result-project-lv4', [ProjecManagement::class, 'updateResultLv4'])->name('updateResultLv4');
 
 // 6.----------------------------------------- GHI CHÚ ----------------------------------------------------------------//
-route::post('/save-note-Project', [ProjecManagement::class, 'saveNoteProject'])->name('saveNoteProject');
-route::post('/save-note', [ProjecManagement::class, 'saveNote'])->name('savenote');
-route::post('/save-note-Lv4', [ProjecManagement::class, 'saveNoteLv4'])->name('saveNoteLv4');
+Route::post('/save-note-Project', [ProjecManagement::class, 'saveNoteProject'])->name('saveNoteProject');
+Route::post('/save-note', [ProjecManagement::class, 'saveNote'])->name('savenote');
+Route::post('/save-note-Lv4', [ProjecManagement::class, 'saveNoteLv4'])->name('saveNoteLv4');
         
 
- //-------------------- CHAT REALTIME -----------------------//
 
+//------------------------------------------ QUẢN LÝ DỰ ÁN KHỐI NGHIỆP VỤ--------------------------------------//
+    // 1. -------------------------------------- DANH SÁCH DỰ ÁN --------------------------------------------//    
+        Route::middleware('checkLogin')->prefix('/Project-Professional')->group(function () {
+            Route::get('/List-Project', [ProjectProfessional::class, 'listProfessional'])->name('listProfessional');
+            Route::get('/List-Project-Child-1/{id}', [ProjectProfessional::class, 'listProChild1'])->name('listProChild1');
+            Route::get('/List-Project-Child-2/{id}', [ProjectProfessional::class, 'listProChild2'])->name('listProChild2');
+        });
+    // 2. -------------------------------------- THÊM DỰ ÁN, CÔNG VIỆC  --------------------------------//
+        Route::POST('/add-Project', [ProjectProfessional::class, 'insertPP'])->name('insertPP')->middleware('checkLogin');
+        Route::POST('/add-work-Child-1', [ProjectProfessional::class, 'insertWorkChild'])->name('insertWorkChild')->middleware('checkLogin');
+        Route::POST('/add-work-Child-2', [ProjectProfessional::class, 'insertWorkChild2'])->name('insertWorkChild2')->middleware('checkLogin');
+    // 3. -------------------------------------- CẬP NHẬT KẾT QUẢ, GHI CHÚ --------------------------------//
+        Route::POST('/update-work-Child-1', [ProjectProfessional::class, 'updatePP'])->name('updatePP')->middleware('checkLogin');
+        Route::POST('/update-work-Child-2', [ProjectProfessional::class, 'updatePP2'])->name('updatePP2')->middleware('checkLogin');
+        Route::POST('/note-work-Child-1', [ProjectProfessional::class, 'notePP'])->name('notePP')->middleware('checkLogin');
+        Route::POST('/note-work-Child-2', [ProjectProfessional::class, 'notePP2'])->name('notePP2')->middleware('checkLogin');
+    // 4. -------------------------------------- XÓA --------------------------------//
+        Route::POST('/Delete-work-Child-1', [ProjectProfessional::class, 'deletePP'])->name('deletePP')->middleware('checkLogin');
+        Route::POST('/Delete-work-Child-2', [ProjectProfessional::class, 'deletePP2'])->name('deletePP2')->middleware('checkLogin');
+    // 5. -------------------------------------- SỬA --------------------------------//
+        Route::post('/Get-work-Child-1', [ProjectProfessional::class, 'getPP'])->name('getPP')->middleware('checkLogin');
+        Route::post('/Edit-work-Child-1', [ProjectProfessional::class, 'editPP'])->name('editPP')->middleware('checkLogin');
+        Route::post('/Get-work-Child-2', [ProjectProfessional::class, 'getPP2'])->name('getPP2')->middleware('checkLogin');
+        Route::POST('/Edit-work-Child-2', [ProjectProfessional::class, 'editPP2'])->name('editPP2')->middleware('checkLogin');
+        
+        
+
+
+
+
+
+
+
+
+
+ //-------------------- CHAT REALTIME -----------------------//
 Route::get('/chat', [ChatController::class, 'chat'])->middleware('auth');
 
 

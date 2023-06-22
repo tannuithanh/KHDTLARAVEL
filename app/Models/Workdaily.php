@@ -28,4 +28,5 @@ class Workdaily extends Model
         'Result',
         'ResultByWookWeek',
     ];
+
 }
