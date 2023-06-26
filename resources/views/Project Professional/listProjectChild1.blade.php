@@ -11,7 +11,7 @@
                     <h4 class="card-title" style="font-size:18px; font-family: 'Times New Roman', Times, serif !important;">Người tạo: <span style="color: red"> {{$projectpro->user->name}}</span>  </h4>
                     <h4 class="card-title" style="font-size:18px; font-family: 'Times New Roman', Times, serif !important;">Ngày bắt đầu: <span style="color: red"> {{ date('d/m/Y', strtotime($projectpro->startdate)) }}</span></h4>
                     <h4 class="card-title" style="font-size:18px; font-family: 'Times New Roman', Times, serif !important;">Ngày kết thúc: <span style="color: red"> {{ date('d/m/Y', strtotime($projectpro->enddate)) }}</span></h4>
-                    <h4 class="card-title" style="font-size:18px; font-family: 'Times New Roman', Times, serif !important;">Lưu ý: Dấu <span style="color: red">*</span> này là để đánh dấu bạn có công việc nhỏ bên trong</h4>
+                    <h4 class="card-title" style="font-size:18px; font-family: 'Times New Roman', Times, serif !important;">Lưu ý: dấu <span style="color: red">*</span> này là để đánh dấu bạn có công việc nhỏ trong mục này</h4>
                 </div>
                 <div class="table-responsive">
                   @if ($projectpro->user_id == $user['id'])
@@ -63,6 +63,7 @@
                                                 @endif
                                             </td>                                    
                                             <td>
+                                                @if($projectpro->lock == 0)
                                                 {{-- NÚT XÓA, SỬA --}}
                                                     @if ($projectpro->user_id == $user['id'] && $value->completion != 100)
                                                         <button type="button" class="btn btn-outline-danger btn-sm delete ri-delete-bin-line" title="Xóa" data-dialog="dialog-{{ $value->id }}" data-id="{{ $value->id }}"></button>
@@ -75,6 +76,7 @@
                                                         @endif
                                                         <button data-id1="{{ $value->id }}" class="btn btn btn-outline-info btn-sm note" title="update"><i class="mdi mdi-microsoft-onenote"></i></button>
                                                     @endif
+                                                @endif
                                             </td>
                                         </tr>
                                     @endforeach
@@ -93,9 +95,9 @@
         </div>
     </div>
 </div>
-<div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasChart" aria-labelledby="offcanvasChartLabel">
+<div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasChart" aria-labelledby="offcanvasChartLabel" style="width: 100%;">
     <div class="offcanvas-header">
-      <h5 id="offcanvasChartLabel">Biểu đồ Gantt</h5>
+      <h5 id="offcanvasChartLabel">Biểu đồ: <span style="color: red"> {{$projectpro->name}}</span></h5>
       <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
     </div>
     <div class="offcanvas-body">
@@ -104,6 +106,7 @@
     </div>
   </div>
 @include('include.footer')
+<script type="text/javascript" src="{{asset('assets/js/gstatic.com_charts_loader.js')}}"></script>
 <script>
 //------------- THÊM CÔNG VIỆC BẰNG SWEETALERT2 ----------//
             document.getElementById('addProject').addEventListener('click', function() {
@@ -378,3 +381,49 @@
 
 
 </script>
+<script type="text/javascript">
+    var projectpro = {!! $projectpro !!};
+    var projectprochild1 = {!! $projectprochild1 !!};
+    google.charts.load('current', {'packages':['gantt']});
+    google.charts.setOnLoadCallback(drawChart);
+
+    function drawChart() {
+        var data = new google.visualization.DataTable();
+        data.addColumn('string', 'Task ID');
+        data.addColumn('string', 'Task Name');
+        data.addColumn('string', 'Resource');
+        data.addColumn('date', 'Start Date');
+        data.addColumn('date', 'End Date');
+        data.addColumn('number', 'Duration');
+        data.addColumn('number', 'Percent Complete');
+        data.addColumn('string', 'Dependencies');
+
+        // Add projectpro data
+        data.addRow([
+            'Project', projectpro.name, 'Project',
+            new Date(projectpro.startdate), new Date(projectpro.enddate),
+            null, projectpro.completion, null
+        ]);
+
+        // Add each projectprochild1 data
+        for (var i = 0; i < projectprochild1.length; i++) {
+            data.addRow([
+                projectprochild1[i].id.toString(), projectprochild1[i].name, 'Task',
+                new Date(projectprochild1[i].startdate), new Date(projectprochild1[i].enddate),
+                null, projectprochild1[i].completion, null
+            ]);
+        }
+
+        var options = {
+            height: 400,
+            gantt: {
+            trackHeight: 30
+            }
+        };
+
+        var chart = new google.visualization.Gantt(document.getElementById('chart_div'));
+
+        chart.draw(data, options);
+    }
+</script>
+

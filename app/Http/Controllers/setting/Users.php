@@ -20,7 +20,8 @@ class Users extends Controller
        
         $user = Auth::user();
         $tradeMark = Trademark::all();
-        $department = Department::where('id', $user['department_id'])->get();
+        $department = Department::where('id', $user['department_id'])->orwhere('id', $user['department_id1'])->get();
+        // dd($department->toarray());
         if ($user['position_id'] == 1 || $user['position_id'] == 2 || $user['position_id'] == 10) {
             $allUser = User::join('departments', 'users.department_id', '=', 'departments.id')
                 ->join('positions', 'users.position_id', '=', 'positions.id')
@@ -41,10 +42,13 @@ class Users extends Controller
                 ->select('users.*', 'departments.name as tenphongban', 'positions.name as tenchucvu','teams.name as tennhom')->paginate(10);
         } else {
             $allUser = User::join('departments', 'users.department_id', '=', 'departments.id')
-                ->join('positions', 'users.position_id', '=', 'positions.id')
-                ->leftJoin('teams', 'users.team_id', '=', 'teams.id')
-                ->where('users.department_id', $department[0]['id'])
-                ->select('users.*', 'departments.name as tenphongban', 'positions.name as tenchucvu','teams.name as tennhom')->paginate(10);
+            ->join('positions', 'users.position_id', '=', 'positions.id')
+            ->leftJoin('teams', 'users.team_id', '=', 'teams.id')
+            ->where('users.department_id', $department[0]['id']);
+            if (isset($department[1])) {
+                $allUser = $allUser->orwhere('users.department_id1', $department[1]['id']);
+            }
+            $allUser = $allUser->select('users.*', 'departments.name as tenphongban', 'positions.name as tenchucvu','teams.name as tennhom')->paginate(10);
         }
         if ($user['position_id'] == 1 || $user['position_id'] == 2) {
             $departmentAll = Department::get();

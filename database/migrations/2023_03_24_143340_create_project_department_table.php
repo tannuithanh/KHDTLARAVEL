@@ -17,7 +17,7 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('project_id');
             $table->unsignedBigInteger('department_id');
-            $table->unsignedBigInteger('department_id1');
+            $table->unsignedBigInteger('department_id1')->nullable();
             $table->foreign('project_id')->references('id')->on('project')->onDelete('cascade');
             $table->foreign('department_id')->references('id')->on('departments')->onDelete('cascade');
             $table->foreign('department_id1')->references('id')->on('departments')->onDelete('cascade');
@@ -28,6 +28,8 @@ return new class extends Migration
             $table->string('note')->nullable();
             $table->double('completion', 5, 2)->default(0);
             $table->integer('number_of_edits')->default(0);
+            $table->integer('preceding_work_id')->nullable();
+            $table->string('relationship_type')->nullable();
             $table->timestamps();
         });
     }

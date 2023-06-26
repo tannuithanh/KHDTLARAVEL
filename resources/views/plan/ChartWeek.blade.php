@@ -14,7 +14,7 @@
     </div>
 </div>
 @include('include.footer')
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="{{asset('assets/js/cdn.jsdelivr.net_npm_chart.js')}}"></script>
 <script>
     var ctx = document.getElementById('myChart').getContext('2d');
     var myChart = new Chart(ctx, {

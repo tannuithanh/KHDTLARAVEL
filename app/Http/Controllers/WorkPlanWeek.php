@@ -50,7 +50,7 @@ class WorkPlanWeek extends Controller
             $userById = User::where('department_id', $user['department_id'])->get();
             break;
     }
-
+    $mydate = date('Y-m-d');
     // Handle the case when Day is present in the request
     if ($alldata['Day']) {
         $date = Carbon::parse($alldata['Day']);
@@ -90,7 +90,7 @@ class WorkPlanWeek extends Controller
         $workWeek = $query->get();
     }
 
-    return view('plan.listPlanWeek', compact('departments', 'teams', 'userById', 'workWeek','user','weekNumber','month','formattedDateStart','formattedDateEnd','dates'));
+    return view('plan.listPlanWeek', compact('departments','mydate', 'teams','start','end','userById', 'workWeek','user','weekNumber','month','formattedDateStart','formattedDateEnd','dates'));
 }
 
 

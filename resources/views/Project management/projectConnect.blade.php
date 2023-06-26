@@ -1,8 +1,5 @@
 @include('include.header')
 <meta name="csrf-token" content="{{ csrf_token() }}">
-<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.css" />
-<script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.js"></script>
 <style>
 
     tbody, thead{
@@ -457,9 +454,7 @@
     </div>
 </div>
 @include('include.footer')
-
-<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="{{asset('assets/js/jquery-3.7.0.min.js')}}"></script>
 <script>
 //----------------------------------- CÂY THƯỚC THỂ HIỂN ----------------------///
     const projectJson = @json($projectJson);

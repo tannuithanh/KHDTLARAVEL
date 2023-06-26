@@ -1,7 +1,6 @@
 @include('include.header')
 <head>
     <!-- Thêm đoạn mã này vào phần head của trang HTML -->
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
   </head>
 <div class="col-12">
     <div class="page-title-box d-sm-flex align-items-center justify-content-between">
@@ -40,10 +39,10 @@
                     <table class="table table-editable table-nowrap align-middle table-edits ">
                         <thead>
                             <tr>
-                                <th style="text-align:center; width: 0" class="table-header">STT</th>
-                                <th style="text-align:center ;" class="table-header">Tên nhóm</th>
-                                <th style="text-align:center ;" class="table-header">Phòng</th>
-                                <th style="text-align:center ;" class="table-header">Thao tác</th>
+                                <th class="table-header">STT</th>
+                                <th  class="table-header">Tên nhóm</th>
+                                <th  class="table-header">Phòng</th>
+                                <th  class="table-header">Thao tác</th>
                                 
                             </tr>
                         </thead>
@@ -53,14 +52,14 @@
                             <tr>
                                 @if(Session::has('hack') && session('hack') == $value->id)
                                     <th style=" background-color: #00802c3b">{{ $stt++ }}</th>
-                                    <th style=" background-color: #00802c3b">{{ $value->name }}</th>
-                                    <th style=" background-color: #00802c3b">{{ $value->tenphongban }}</th>
+                                    <td style=" background-color: #00802c3b">{{ $value->name }}</td>
+                                    <td style=" background-color: #00802c3b">{{ $value->tenphongban }}</td>
                                 @else
-                                    <th >{{ $stt++ }}</th>
-                                    <th>{{ $value->name }}</th>
-                                    <th>{{ $value->tenphongban }}</th>
+                                    <td >{{ $stt++ }}</td>
+                                    <td>{{ $value->name }}</td>
+                                    <td>{{ $value->tenphongban }}</td>
                                 @endif
-                                <th style="text-align:center ;"> 
+                                <td> 
                                     <form action="{{route('deleteTeam',$value->id)}}" method="POST" class="delete-form">
                                         @csrf
                                         @method('DELETE')
@@ -69,7 +68,7 @@
                                             <button type="button" class="btn btn-outline-danger btn-sm delete ri-delete-bin-line" title="Xóa" data-dialog="dialog-{{ $value->id }}"></button>
                                         @endif
                                     </form>
-                                </th>
+                                </td>
                                 
                             </tr>
                             @endforeach
@@ -86,7 +85,7 @@
     document.querySelectorAll('.delete').forEach(deleteButton => {
         deleteButton.addEventListener('click', () => {
             Swal.fire({
-                title: 'Bạn có muốn nhóm này này?',
+                title: 'Bạn có muốn nhóm này?',
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonText: 'Đồng ý',

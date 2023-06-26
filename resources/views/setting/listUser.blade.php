@@ -1,7 +1,6 @@
 @include('include.header')
 <head>
-    <!-- Thêm đoạn mã này vào phần head của trang HTML -->
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+
   </head>
 <div class="col-12">
     <div class="page-title-box d-sm-flex align-items-center justify-content-between">
@@ -73,17 +72,15 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @php
-                                $stt=1;
-                            @endphp
-                            @foreach ( $allUser as $value )
-                                
+                                @foreach ( $allUser as $value )
                                     <tr>
-                                        <th style="text-align:center ;width:0">{{ $stt++ }}</th>
+                                        <th style="text-align:center ;width:0">
+                                            {{ ($allUser->currentPage() - 1) * $allUser->perPage() + $loop->iteration }}
+                                        </th>
                                         @if ($user->id == $value->id)
-                                        <th style="color:red;">{{ $value->name }}</th>
+                                            <th style="color:red;">{{ $value->name }}</th>
                                         @else
-                                        <th >{{ $value->name }}</th>
+                                            <th >{{ $value->name }}</th>
                                         @endif
                                         <th >{{ $value->email }}</th>
                                         <th style="text-align:center ;">{{ $value->msnv }}</th>
@@ -91,19 +88,18 @@
                                         <th >{{ $value->tennhom }}</th>
                                         <th >{{ $value->tenchucvu }}</th>
                                         @if ( $user->position_id == 11 ||$user->position_id == 5 ||$user->position_id == 6 ||$user->position_id == 10 )
-                                        <th style="text-align:center ;">
-                                            <form method="POST" action="{{route('deleteUsers',$value->id)}}" class="delete-form">
-                                                @csrf
-                                                @method('DELETE')
-                                                <a href="{{ route('editUsers',$value->id) }}" class="btn btn-outline-secondary btn-sm edit" title="Sửa"><i class="fas fa-pencil-alt"></i></a>
-                                                <button type="button" class="btn btn-outline-danger btn-sm delete ri-delete-bin-line" title="Xóa" data-dialog="dialog-{{ $value->id }}"></button>
-                                            </form>
-                                        </th>
+                                            <th style="text-align:center ;">
+                                                <form method="POST" action="{{route('deleteUsers',$value->id)}}" class="delete-form">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <a href="{{ route('editUsers',$value->id) }}" class="btn btn-outline-secondary btn-sm edit" title="Sửa"><i class="fas fa-pencil-alt"></i></a>
+                                                    <button type="button" class="btn btn-outline-danger btn-sm delete ri-delete-bin-line" title="Xóa" data-dialog="dialog-{{ $value->id }}"></button>
+                                                </form>
+                                            </th>
                                         @endif
                                     </tr>
-                               
-                            @endforeach
-                        </tbody>
+                                @endforeach
+                            </tbody>
                     </table>
                     <div >
                     {!!  $allUser->links('pagination::bootstrap-4') !!}

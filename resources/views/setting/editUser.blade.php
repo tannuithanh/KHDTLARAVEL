@@ -43,6 +43,7 @@
                             <div class="mb-3 position-relative">
                                 <label class="form-label" for="validationTooltip02">Nhóm</label>
                                 <select class="form-control form-select" id="validationCustom03" name="team_id">
+                                    <option value="">Không có nhóm</option>
                                     @foreach ($team as $value)
                                     <option value="{{$value->id}}">{{ $value->name }}</option>
                                     @endforeach

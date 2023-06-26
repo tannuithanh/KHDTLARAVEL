@@ -24,6 +24,8 @@ return new class extends Migration
             $table->integer('status')->default(0);
             $table->string('note')->nullable();
             $table->double('completion', 5, 2)->default(0);
+            $table->integer('preceding_work_id')->nullable();
+            $table->string('relationship_type')->nullable();
             $table->timestamps();
         });
     }

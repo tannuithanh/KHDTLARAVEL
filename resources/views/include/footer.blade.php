@@ -41,19 +41,17 @@
 </footer>
 <!-- Right bar overlay-->
 <div class="rightbar-overlay"></div>
-<script src="{{asset('assets/libs/jquery/jquery.min.js')}}"></script>
+<script src="{{asset('assets/js/jquery-3.7.0.min.js')}}"></script>
 <script src="{{asset('assets/libs/bootstrap/js/bootstrap.bundle.min.js')}}"></script>
 <script src="{{asset('assets/libs/metismenu/metisMenu.min.js')}}"></script>
-<script src="{{asset('assets/libs/simplebar/simplebar.min.js')}}"></script>
 <script src="{{asset('assets/libs/node-waves/waves.min.js')}}"></script>
 <script src="{{asset('assets/libs/apexcharts/apexcharts.min.js')}}"></script>
 <script src="{{asset('assets/libs/jqvmap/jquery.vmap.min.js')}}"></script>
 <script src="{{asset('assets/libs/jqvmap/maps/jquery.vmap.usa.js')}}"></script>
-<script src="{{asset('assets/libs/select2/js/select2.min.js')}}"></script>
+<script src="{{asset('assets/js/select2.min.js')}}"></script>
 <script src="{{asset('assets/libs/bootstrap-datepicker/js/bootstrap-datepicker.min.js')}}"></script>
 <script src="{{asset('assets/libs/spectrum-colorpicker2/spectrum.min.js')}}"></script>
 <script src="{{asset('assets/libs/bootstrap-maxlength/bootstrap-maxlength.min.js')}}"></script>
-<script src="{{asset('assets/js/pages/form-advanced.init.js')}}"></script>
 <script src="{{asset('assets/js/app.js')}}"></script>
 <script src="{{ asset('assets/js/sweetalert2.all.min.js') }}"></script>
 
@@ -62,6 +60,12 @@
 </body>
 </html>
 <script>
+$(document).ready(function() {
+    $('.select2').select2();
+});
+</script>
+<script>
+    
 $(window).on('load', function() {
   $('#preloader').fadeOut('slow');
 });

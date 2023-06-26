@@ -758,7 +758,6 @@ class ApproveDaiLyWeekly extends Controller
                 $workdaily->responsibility = $Workweek->responsibility;
                 $workdaily->department_id = $Workweek->department_id;
                 $workdaily->team_id = $Workweek->team_id;
-                $workdaily->ResultByWookWeek = $percentagePerDay;
                 $workdaily->status = -1;
                 $workdaily->save();
             }

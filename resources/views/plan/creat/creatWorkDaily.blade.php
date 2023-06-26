@@ -108,6 +108,8 @@
 
 @include('include.footer')
 <script>
+</script>
+<script>
     $(document).ready(function() {
       $('input[type="checkbox"]').click(function() {
         var option = $(this).val();

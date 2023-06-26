@@ -385,7 +385,7 @@
                         <li>
                             <a href="javascript: void(0);" class="has-arrow waves-effect">
                                 <i class="ri-book-read-fill"></i>
-                                <span>Kế hoạch dài hạn</span>
+                                <span>Kế hoạch ngày</span>
                             </a>
                             <ul class="sub-menu" aria-expanded="false">
 

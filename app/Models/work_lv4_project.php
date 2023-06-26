@@ -19,7 +19,9 @@ class work_lv4_project extends Model
         'status',
         'completion',
         'created_at',
-        'updated_at'
+        'updated_at',
+        'preceding_work_id', 
+        'relationship_type' 
     ];
     
     public function workByProjectDepartment()

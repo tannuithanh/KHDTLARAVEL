@@ -333,7 +333,10 @@ Route::post('/save-note-Lv4', [ProjecManagement::class, 'saveNoteLv4'])->name('s
         Route::POST('/update-work-Child-2', [ProjectProfessional::class, 'updatePP2'])->name('updatePP2')->middleware('checkLogin');
         Route::POST('/note-work-Child-1', [ProjectProfessional::class, 'notePP'])->name('notePP')->middleware('checkLogin');
         Route::POST('/note-work-Child-2', [ProjectProfessional::class, 'notePP2'])->name('notePP2')->middleware('checkLogin');
+        Route::POST('/lock-Projectpro', [ProjectProfessional::class, 'lockProjectpro'])->name('lockProjectpro')->middleware('checkLogin');
+        Route::POST('/unlock-Projectpro', [ProjectProfessional::class, 'unlockProjectpro'])->name('unlockProjectpro')->middleware('checkLogin');
     // 4. -------------------------------------- XÓA --------------------------------//
+        Route::POST('/Delete-projectpro', [ProjectProfessional::class, 'deletePPP'])->name('deletePPP')->middleware('checkLogin');
         Route::POST('/Delete-work-Child-1', [ProjectProfessional::class, 'deletePP'])->name('deletePP')->middleware('checkLogin');
         Route::POST('/Delete-work-Child-2', [ProjectProfessional::class, 'deletePP2'])->name('deletePP2')->middleware('checkLogin');
     // 5. -------------------------------------- SỬA --------------------------------//

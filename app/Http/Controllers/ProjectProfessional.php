@@ -20,11 +20,24 @@ class ProjectProfessional extends Controller
     }
 //------ DANH SÁCH DỰ ÁN CON LV1 ----//
     public function listProChild1($id){
+        $user = Auth::user();
         $ngayHienTai = date('Y-m-d');
         $projectpro = ProjectPro::with('user', 'department')->where('id', $id)->first();
+
+        // Kiểm tra xem người dùng có thuộc dự án hay không
+        if (
+            (!$projectpro || $projectpro->user_id !== $user['id']) &&
+            !in_array($user['position_id'], [1, 2, 3, 4]) &&
+            ($projectpro->department_id !== $user['department_id'])
+        ) {
+            return back()->with('error', 'Bạn không có quyền truy cập vào trang này.'); 
+        }
+        
+        
+
         $projectprochild1 = projectprochild1::with('user', 'department')->where('projectpro_id', $id)->get();
         $userAll = User::with('department')->get();
-        $user = Auth::user();
+       
         return view('Project Professional.listProjectChild1',compact('user','projectpro','userAll','projectprochild1','ngayHienTai'));
     }
 //------ DANH SÁCH DỰ ÁN CON LV2 ----//
@@ -32,11 +45,12 @@ class ProjectProfessional extends Controller
         $user = Auth::user();
         $ngayHienTai = date('Y-m-d');
         $projectprochild1 = projectprochild1::with('user', 'department')->where('id', $id)->first();
+        $projectpro = ProjectPro::with('user', 'department')->where('id',$projectprochild1->id)->first();
 
         $projectprochild2 = projectprochild2::with('user', 'department')->where('projectprochild1_id', $id)->get();
         $userAll = User::with('department')->where('department_id',$user->department_id)->orWhere('department_id',$user->department_id1)->get();
        
-        return view('Project Professional.listProjectChild2',compact('user','projectprochild2','userAll','projectprochild1','ngayHienTai'));
+        return view('Project Professional.listProjectChild2',compact('user','projectprochild2','userAll','projectprochild1','ngayHienTai','projectpro'));
     }
 //------ THÊM DỰ ÁN ---- //
     public function insertPP(request $request){
@@ -237,4 +251,52 @@ class ProjectProfessional extends Controller
             return response()->json(['status' => 'error', 'message' => $e->getMessage()], 500);
         }
     }
+//----- KHOA DU AN ----//
+    public function lockProjectpro(request $request){
+        $project = ProjectPro::find($request->id);
+        if($project) {
+            $project->lock = 1;
+            $project->save();
+            return response()->json(['success' => true]);
+        } else {
+            return response()->json(['error' => 'Project not found']);
+        }
+    }
+    //---- MO KHOA DU AN ----// 
+    public function unlockProjectpro(request $request){
+        $projectId = $request->input('id');
+    
+        $project = ProjectPro::find($projectId); 
+    
+        if ($project) { 
+            $project->lock = 0; 
+            $project->save();
+    
+            return response()->json(['success' => 'Project unlocked successfully']); 
+        }
+    
+        return response()->json(['error' => 'Project not found'], 404); 
+    }
+
+    public function deletePPP(request $request){
+        $projectId = $request->input('id'); // lấy id từ request
+    
+        $project = ProjectPro::find($projectId); // tìm project trong database dựa vào id
+    
+        if ($project) { // nếu project tồn tại
+            // Xóa tất cả projectprochild1 liên quan
+            foreach ($project->projectProChild1s as $child1) {
+                // Xóa tất cả projectprochild2 liên quan
+                foreach ($child1->projectProChild2s as $child2) {
+                    $child2->delete();
+                }
+                $child1->delete();
+            }
+            $project->delete(); // Xóa project
+    
+            return response()->json(['success' => 'Project and related items deleted successfully']); // trả về phản hồi cho client
+        }
+    
+        return response()->json(['error' => 'Project not found'], 404); // nếu không tìm thấy project, trả về lỗi
+    }    
 }

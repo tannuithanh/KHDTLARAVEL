@@ -21,6 +21,8 @@ class ProjectDepartment extends Model
         'status',
         'completion',
         'number_of_edits',
+        'preceding_work_id',
+        'relationship_type' 
     ];
 
     public function project()

@@ -261,6 +261,7 @@ class ReportPlan extends Controller
         }
 
     public function SearchlistReportDaily(request $request){
+        // dd($request->toarray());
         $departments = Department::get();
         $teams = Team::get();
         $user = Auth::user();
@@ -286,22 +287,22 @@ class ReportPlan extends Controller
         $workDaily->where('status', 4);
     
         // If department is chosen
-        if($alldata['departmentsId'] != 0) {
+        if($alldata['departmentsId'] ?? 0 != 0) {
             $workDaily->where('department_id', $alldata['departmentsId']);
         }
     
         // If team is chosen
-        if($alldata['teamId'] != 0) {
+        if($alldata['teamId'] ?? 0 != 0) {
             $workDaily->where('team_id', $alldata['teamId']);
         }
     
         // If user is chosen
-        if($alldata['userName'] != null) {
+        if($alldata['userName'] ?? null != null) {
             $workDaily->where('responsibility', $alldata['userName']);
         }
     
         // If date is chosen
-        if($alldata['Day'] != null) {
+        if($alldata['Day'] ?? null != null) {
             $workDaily->where('date', '=', $request['Day']);
         }
     
@@ -376,15 +377,15 @@ class ReportPlan extends Controller
             ->where('workweek.status', '=', 4);
 
         // Add filters
-        if($alldata['teamId'] != 0) {
+        if($alldata['teamId'] ?? 0 != 0) {
             $query->where('workweek.team_id', $alldata['teamId']);
         }
         
-        if(isset($alldata['departmentsId']) && $alldata['departmentsId'] != 0) {
+        if(isset($alldata['departmentsId']) && $alldata['departmentsId'] ?? 0 != 0) {
             $query->where('workweek.department_id', $alldata['departmentsId']);
         }
         
-        if(isset($alldata['userName']) && $alldata['userName'] != null){
+        if(isset($alldata['userName']) && $alldata['userName'] ?? null != null){
             $query->where('workweek.responsibility', $alldata['userName']);
         }
 

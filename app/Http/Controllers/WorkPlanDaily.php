@@ -343,22 +343,22 @@ class WorkPlanDaily extends Controller
         $workDaily->where('status', 0);
     
         // If department is chosen
-        if($alldata['departmentsId'] != 0) {
+        if($alldata['departmentsId'] ?? 0 != 0) {
             $workDaily->where('department_id', $alldata['departmentsId']);
         }
     
         // If team is chosen
-        if($alldata['teamId'] != 0) {
+        if($alldata['teamId'] ?? 0 != 0) {
             $workDaily->where('team_id', $alldata['teamId']);
         }
     
         // If user is chosen
-        if($alldata['userName'] != null) {
+        if($alldata['userName'] ?? null != null) {
             $workDaily->where('responsibility', $alldata['userName']);
         }
     
         // If date is chosen
-        if($alldata['Day'] != null) {
+        if($alldata['Day'] ?? null != null) {
             $workDaily->where('date', '=', $request['Day']);
         }
     
@@ -396,11 +396,12 @@ class WorkPlanDaily extends Controller
     }
 
     public function assignCreatWorkDailyPost(request $request){
+        // dd($request->toarray());
         $mytime = date('Y-m-d H:i:s');
         $user = Auth::user();
         $alldata = $request->all();
         $userAssign = User::where('id',$alldata['responsibility'])->first();
-        // dd($userAssign->toarray());   
+        // dd($userAssign);   
         if(isset($alldata['support'])){
             $supportJson = json_encode($alldata['support'], true);
             $supportArray =  json_decode($supportJson, true);
@@ -419,6 +420,7 @@ class WorkPlanDaily extends Controller
                 'date'=>$alldata['date'],
                 'note' => $alldata['note'],
                 'department_id' => $userAssign['department_id'],
+                'status' => 0,
                 'team_id' => $userAssign['team_id'],
                 'created_at' => $mytime,
                 'updated_at' => $mytime

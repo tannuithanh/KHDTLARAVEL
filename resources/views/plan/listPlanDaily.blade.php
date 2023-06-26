@@ -151,7 +151,7 @@ td {
                                 @endforeach
                             @else
                                 <tr>
-                                    <td colspan="10" style="text-align: center;">Không có dữ liệu</td>
+                                    <td colspan="11" style="text-align: center;">Không có dữ liệu</td>
                                 </tr>
                             @endif
 

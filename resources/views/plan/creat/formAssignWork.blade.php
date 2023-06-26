@@ -16,7 +16,7 @@
                                     <div class="mb-3">
                                         <select name="responsibility" class="form-select">
                                             @foreach($userAssign as $value)
-                                                <option value="{{$value->name}}">{{$value->name}}</option>
+                                                <option value="{{$value->id}}">{{$value->name}}</option>
                                             @endforeach
                                         </select>
                                     </div>

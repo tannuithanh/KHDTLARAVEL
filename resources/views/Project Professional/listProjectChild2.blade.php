@@ -60,6 +60,7 @@
                                                 @endif
                                             </td>                                    
                                             <td>
+                                            @if($projectpro->lock == 0)
                                                 {{-- NÚT XÓA, SỬA --}}
                                                     @if ($projectprochild1->user_id == $user['id'] && $value->completion != 100)
                                                         <button type="button" class="btn btn-outline-danger btn-sm delete ri-delete-bin-line" title="Xóa" data-dialog="dialog-{{ $value->id }}" data-id="{{ $value->id }}"></button>
@@ -72,6 +73,7 @@
                                                         @endif
                                                         <button data-id1="{{ $value->id }}" class="btn btn btn-outline-info btn-sm note" title="update"><i class="mdi mdi-microsoft-onenote"></i></button>
                                                     @endif
+                                            @endif
                                             </td>
                                         </tr>
                                     @endforeach

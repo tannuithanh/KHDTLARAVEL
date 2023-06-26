@@ -7,7 +7,14 @@
         <div class="card">
             <div class="card-body">
                 <h4 class="card-title">Danh sách dự án</h4>
-
+                @if (Session::has('error'))
+                    <div class="alert alert-danger alert-dismissible fade show " role="alert">
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"
+                            aria-label="Close"></button>
+                        <strong>Thông báo!</strong> Đây không phải dự án của bạn, bạn không được truy cập vào dự án
+                        này.
+                    </div>
+                @endif
                 <div class="table-responsive">
                     <button type="button" id="addProject" class="themduan btn btn-outline-success waves-effect waves-light">Thêm dự án</button>
                     <table class="table mb-0">
@@ -28,7 +35,7 @@
                             @php $stt=1 @endphp
                                 @if (!$projectpro->isEmpty())
                                     @foreach ($projectpro as $value)
-                                        <tr>
+                                    <tr data-id="{{$value->id}}">
                                             <th>{{$stt++}}</th>
                                             <td><a href="{{ route('listProChild1', ['id' => $value->id]) }}">{{$value->name}}</a></td>
                                             <td>{{ $value->department->name}}</td>
@@ -54,10 +61,11 @@
                                                     @endif
                                                 {{-- NÚT KHÓA DỰ ÁN--}}
                                                     @if ($value->lock==0)
-                                                        <button type="button" class="btn btn-outline-danger btn-sm lock ri-rotate-lock-fill" title="lock" data-dialog="dialog-{{ $value->id }}" data-id="{{ $value->id }}"></button>
+                                                           <button type="button" class="btn btn-outline-danger btn-sm lock ri-rotate-lock-fill" title="lock" data-dialog="dialog-{{ $value->id }}" data-id="{{ $value->id }}"></button>
                                                     @else
-                                                        <button type="button" class="btn btn-outline-primary  btn-sm lock ri-lock-unlock-fill" title="UnLock" data-dialog="dialog-{{ $value->id }}" data-id="{{ $value->id }}"></button>
+                                                           <button type="button" class="btn btn-outline-primary btn-sm unlock ri-lock-unlock-fill" title="UnLock" data-dialog="dialog-{{ $value->id }}" data-id="{{ $value->id }}"></button>
                                                     @endif
+
                                             </td>
                                         </tr>
                                     @endforeach
@@ -137,6 +145,113 @@
             }
         })
         });
+//------ KHOA DU AN -----//
+    $(document).ready(function() {
+    $('.lock').click(function() {
+        var projectId = $(this).data('id');
+        Swal.fire({
+            title: 'Khóa dự án?',
+            text: "Dự án của bạn sẽ không thể cập nhật cho đến khi bạn mở lại. Bạn chắc chắn chứ ?",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Khóa',
+            cancelButtonText: 'Từ chối'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    type: "POST",
+                    url: "{!!route('lockProjectpro')!!}",
+                    data: {
+                        "_token": "{{ csrf_token() }}",
+                        "id": projectId
+                    },
+                    success: function(response) {
+                        Swal.fire(
+                            'Thành công!',
+                            'Dự án của bạn đã được khóa.',
+                            'success'
+                        );
+                        $('.lock[data-id="' + projectId + '"]').hide();
+                        $('.lock[data-id="' + projectId + '"]').after('<button type="button" class="btn btn-outline-primary btn-sm unlock ri-lock-unlock-fill" title="UnLock" data-dialog="dialog-' + projectId + '" data-id="' + projectId + '"></button>');
+                    },
+                    error: function(response) {
+                        // Handle error here
+                    }
+                });
+            }
+        })
+    });
+    });
+//----- MO KHOA DU AN ----//
+    $(document).on('click', '.unlock', function() {
+        var projectId = $(this).data('id');
 
+        $.ajax({
+            type: "POST",
+            url: "{!!route('unlockProjectpro')!!}",
+            data: {
+                "_token": "{{ csrf_token() }}",
+                "id": projectId
+            },
+            success: function(response) {
+                Swal.fire(
+                    'Thành công!',
+                    'Dự án của bạn đã được mở khóa.',
+                    'success'
+                );
+                $('.unlock[data-id="' + projectId + '"]').remove();
+            },
+            error: function(response) {
+                // Handle error here
+            }
+        });
+    });
+//------ XOA DU AN ------//
+        $(document).ready(function() {
+            $('.delete').click(function() {
+                var projectId = $(this).data('id');
+                Swal.fire({
+                    title: 'Bạn có chắc chắn muốn xóa?',
+                    text: "Bạn không thể hoàn tác hành động này!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Có, xóa nó!',
+                    cancelButtonText: 'Hủy'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            type: "POST",
+                            url: "{!!route('deletePPP')!!}",
+                            data: {
+                                "_token": "{{ csrf_token() }}",
+                                "id": projectId
+                            },
+                            success: function(response) {
+                                Swal.fire(
+                                    'Đã Xóa!',
+                                    'Dự án của bạn đã được xóa.',
+                                    'success'
+                                );
+                                // fade out the row
+                                $(`tr[data-id="${projectId}"]`).fadeOut('slow', function(){
+                                    $(this).remove(); 
+                                });
+                            },
+                            error: function(response) {
+                                Swal.fire(
+                                    'Lỗi!',
+                                    'Có lỗi xảy ra, vui lòng thử lại sau.',
+                                    'error'
+                                )
+                            }
+                        });
+                    }
+                })
+            });
+        });
 
 </script>

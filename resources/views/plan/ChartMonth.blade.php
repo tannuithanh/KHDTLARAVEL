@@ -1,5 +1,5 @@
 @include('include.header')
-<header><script src="https://cdn.jsdelivr.net/npm/chart.js"></script></header>
+<header><script src="{{asset('assets/js/cdn.jsdelivr.net_npm_chart.js')}}"></script></header>
 <div class="col-lg-12">
     <div class="card">
         <div class="card-body">

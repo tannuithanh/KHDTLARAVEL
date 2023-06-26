@@ -1,11 +1,6 @@
 @include('include.header')
 <title>Quản lý kế hoạch tuần</title>
 
-<head>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/11.1.4/sweetalert2.min.css"
-        integrity="sha512-gIGX9wkL4l4+e4im+rM8WZ7VccvY2uUR7V+xdh8Waj7T0y0UsD94jKpCZU6oz+U6/CJn6e7UQLpWO1xGOn11/Q=="
-        crossorigin="anonymous" referrerpolicy="no-referrer" />
-</head>
 <meta name="csrf-token" content="{{ csrf_token() }}">
 <style>
     th {
@@ -356,7 +351,6 @@
     </div>
 </div>
 @include('include.footer')
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
 <script type="text/javascript">
     // ------------------------------------------ JS TÌM KIẾM PHÒNG BAN --------------------------------------------------//    
     $(document).ready(function() {
@@ -582,7 +576,6 @@
     });
     // ------------------------------------------ JS IN TABLE --------------------------------------------------//      
 </script>
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
 <script>
     const formattedDateStart = "{{ $formattedDateStart }}"; // đưa biến formattedDateStart từ PHP vào JavaScript
     const department = "{{ $user->department_id }}"; // đưa biến department từ PHP vào JavaScript

@@ -18,6 +18,8 @@ class Work_By_Project_Department extends Model
         'enddate',
         'status',
         'completion',
+        'preceding_work_id', 
+        'relationship_type' 
     ];
     
     public function work_lv4_projects()
