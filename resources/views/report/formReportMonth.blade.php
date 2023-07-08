@@ -69,7 +69,7 @@
                 </div>
                 <div class="mb-3 col-lg-4">
                     <label class="form-label">Kết quả</label>
-                    <input type="number" name="result" class="form-control" min="0" max="100">
+                    <input type="number" required name="result" class="form-control" min="0" max="100">
                 </div>
             
                 <div>

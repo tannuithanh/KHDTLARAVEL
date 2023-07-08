@@ -45,8 +45,7 @@ class ProjectProfessional extends Controller
         $user = Auth::user();
         $ngayHienTai = date('Y-m-d');
         $projectprochild1 = projectprochild1::with('user', 'department')->where('id', $id)->first();
-        $projectpro = ProjectPro::with('user', 'department')->where('id',$projectprochild1->id)->first();
-
+        $projectpro = ProjectPro::with('user', 'department')->where('id',$projectprochild1->projectpro_id)->first();
         $projectprochild2 = projectprochild2::with('user', 'department')->where('projectprochild1_id', $id)->get();
         $userAll = User::with('department')->where('department_id',$user->department_id)->orWhere('department_id',$user->department_id1)->get();
        

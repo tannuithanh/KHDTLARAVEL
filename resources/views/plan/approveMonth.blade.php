@@ -26,7 +26,7 @@
     <div class="card">
         <div class="card-body">
             <h4 class="card-title">Danh sách công việc 
-                <a href="{{route('creatWorkMonth')}}" class="btn btn-danger btn-rounded waves-effect waves-light"><i class="mdi mdi-plus me-1"></i> Tạo công việc tháng</a>
+                <a href="{{route('creatWorkMonth')}}" class="btn btn-danger btn-rounded waves-effect waves-light"><i class="mdi mdi-plus me-1"></i> Tạo công việc dài hạn</a>
             </h4>
             <form id="form_search" method="post" name="form_search">
                 @csrf
@@ -116,7 +116,33 @@
                     @endphp
                     @if (!$workmonths->isEmpty())
                         @foreach ($workmonths as $key => $workmonth)
+                        @if (($workmonth->status == 1 && $user['position_id'] == 7) || ($workmonth->status == 1 && $workmonth->responsibility == $user['name']))
                             <tr id="row-{{ $workmonth->id }}"> 
+                                <td style="text-align:center; vertical-align: middle;">{{ $stt++ }}</td>
+                                <td style="text-align:center; vertical-align: middle;">{{ $workmonth->categoryMonth }}</td>
+                                <td style="text-align:center; vertical-align: middle;">{!! nl2br($workmonth->describeMonth) !!}</td>
+                                <td style="text-align:center; vertical-align: middle;">{{ $workmonth->responsibility }}</td>
+                                <td style="text-align:center; vertical-align: middle;">{!! nl2br($workmonth->support) !!}</td>
+                                <td style="text-align:center; vertical-align: middle;">{{ \Carbon\Carbon::parse($workmonth->startMonth)->format('d/m/Y') }}</td>
+                                <td style="text-align:center; vertical-align: middle;">{{ \Carbon\Carbon::parse($workmonth->endMonth)->format('d/m/Y') }}</td>
+                                <td style="text-align:center; vertical-align: middle;">{{ $workmonth->note }}</td>
+                                <td style="text-align:center; vertical-align: middle;">
+                                        @if ($user['position_id'] == 7)
+                                                    <button type="button"
+                                                        class="btn duyettruongnhom btn-sm btn-outline-warning waves-effect waves-light ri-checkbox-line"
+                                                        title="Chấp thuận trưởng nhóm"
+                                                        data-dialog="dialog-{{ $workmonth->id }}"></button>
+                                                    <button type="button"
+                                                        class="btn tuchoitruongnhom btn-sm btn-outline-danger waves-effect waves-light  ri-checkbox-indeterminate-line"
+                                                        title="Từ chối trưởng nhóm"
+                                                        data-dialog="dialog-{{ $workmonth->id }}"></button>
+                                                @endif
+                                </td>
+                            </tr>
+                            @php $dataExists = true @endphp
+                        @elseif (($workmonth->status == 2 && ($user['position_id'] == 5 || $user['position_id'] == 6)) ||
+                                            ($workmonth->status == 2 && $workmonth->responsibility == $user['name']))
+                                            <tr id="row-{{ $workmonth->id }}"> 
                                 <td style="text-align:center; vertical-align: middle;">{{ $stt++ }}</td>
                                 <td style="text-align:center; vertical-align: middle;">{{ $workmonth->categoryMonth }}</td>
                                 <td style="text-align:center; vertical-align: middle;">{!! nl2br($workmonth->describeMonth) !!}</td>
@@ -139,6 +165,7 @@
                                 </td>
                             </tr>
                             @php $dataExists = true @endphp
+                        @endif
                         @endforeach
                         @if (!$dataExists)
                             <tr>

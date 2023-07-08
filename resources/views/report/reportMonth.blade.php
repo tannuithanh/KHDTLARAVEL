@@ -99,6 +99,9 @@
                         <th rowspan="2" style="text-align:center ; vertical-align: middle;" class="table-header col4">Trách nhiệm</th>
                         <th rowspan="2" style="text-align:center ; vertical-align: middle;" class="table-header hidden-column col5">Hỗ trợ</th>
                         <th colspan="2" style="text-align:center ; vertical-align: middle;" class="table-header hidden-column col5">Thời gian</th>
+                        <th rowspan="2" style="text-align:center ; vertical-align: middle;" class="table-header col1 hidden-column">Kết quả</th>
+                        <th rowspan="2" style="text-align:center ; vertical-align: middle;" class="table-header col1 hidden-column">Đề xuất</th>
+                        <th rowspan="2" style="text-align:center ; vertical-align: middle;" class="table-header col1 hidden-column">Giải pháp</th>
                         <th rowspan="2" style="text-align:center ; vertical-align: middle;" class="table-header col1 hidden-column">Ghi chú</th>
 
                     </tr>
@@ -122,6 +125,9 @@
                                 <td style="text-align:center; vertical-align: middle;">{!! nl2br($workmonth->support) !!}</td>
                                 <td style="text-align:center; vertical-align: middle;">{{ \Carbon\Carbon::parse($workmonth->startMonth)->format('d/m/Y') }}</td>
                                 <td style="text-align:center; vertical-align: middle;">{{ \Carbon\Carbon::parse($workmonth->endMonth)->format('d/m/Y') }}</td>
+                                <td style="text-align:center; vertical-align: middle;">{{ $workmonth->Result }}%</td>
+                                <td style="text-align:center; vertical-align: middle;">{{ $workmonth->propose }}</td>
+                                <td style="text-align:center; vertical-align: middle;">{{ $workmonth->inadequacy }}</td>
                                 <td style="text-align:center; vertical-align: middle;">{{ $workmonth->note }}</td>
                             </tr>
                             @php $dataExists = true @endphp

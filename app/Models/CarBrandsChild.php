@@ -18,4 +18,7 @@ class CarBrandsChild extends Model
         'created_at',
         'updated_at',
     ];
+    public function projects() {
+        return $this->hasMany(Project::class, 'car_brands_child_id');
+    }
 }

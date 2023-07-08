@@ -436,38 +436,37 @@ class ApproveDaiLyWeekly extends Controller
                 // dd($dates);
             //------------ Lấy dữ liệu công việc theo chức vụ ------------//    
             if ($user['position_id'] == 1 || $user['position_id'] == 2) {
-            $workWeek = Workweek::select('workweek.*')
-           
-            ->where('startdate', '>=', $start)
-            ->get();
-            }elseif ($user['position_id'] == 3) {
                 $workWeek = Workweek::select('workweek.*')
-               
+                ->whereBetween('startdate', [$start, $end])
+                ->whereBetween('enddate', [$start, $end])
+                ->get();
+            } elseif ($user['position_id'] == 3) {
+                $workWeek = Workweek::select('workweek.*')
                 ->join('departments', 'workweek.department_id', '=', 'departments.id')
                 ->join('trademark', 'departments.trademark_id', '=', 'trademark.id')
-                ->where(function($query) use ($start) {
-                    $query->where('startdate', '>=', $start)
+                ->where(function($query) use ($start, $end) {
+                    $query->whereBetween('startdate', [$start, $end])
+                          ->whereBetween('enddate', [$start, $end])
                           ->orWhere('workweek.responsibility', 'Tô Tấn Sơn');
                 })
                 ->where('trademark.id', '=', 1)
                 ->get();
-                // dd($workWeek->toArray());
-            }elseif ($user['position_id'] == 4) {
+            } elseif ($user['position_id'] == 4) {
                 $workWeek = Workweek::select('workweek.*')
-               
                 ->join('departments', 'workweek.department_id', '=', 'departments.id')
                 ->join('trademark', 'departments.trademark_id', '=', 'trademark.id')
-                ->where('startdate', '>=', $start)
+                ->whereBetween('startdate', [$start, $end])
+                ->whereBetween('enddate', [$start, $end])
                 ->where('trademark.id', '=', 2)
-                ->get();    
-            }else{
+                ->get();
+            } else {
                 $workWeek = Workweek::select('workweek.*')
-               
                 ->join('departments', 'workweek.department_id', '=', 'departments.id')
-                ->where('startdate', '>=', $start)
+                ->whereBetween('startdate', [$start, $end])
+                ->whereBetween('enddate', [$start, $end])
                 ->where('workweek.department_id', '=', $user['department_id'])
-                ->get();    
-            }
+                ->get();
+            }            
             if ($user['position_id'] == 1 || $user['position_id'] == 2) {
                 $departments = Department::get();
             } elseif ($user['position_id'] == 3) {
@@ -601,38 +600,37 @@ class ApproveDaiLyWeekly extends Controller
                 // dd($dates);
             //------------ Lấy dữ liệu công việc theo chức vụ ------------//    
             if ($user['position_id'] == 1 || $user['position_id'] == 2) {
-            $workWeek = Workweek::select('workweek.*')
-        
-            ->where('startdate', '>=', $start)
-            ->get();
-            }elseif ($user['position_id'] == 3) {
                 $workWeek = Workweek::select('workweek.*')
-            
+                ->whereBetween('startdate', [$start, $end])
+                ->whereBetween('enddate', [$start, $end])
+                ->get();
+            } elseif ($user['position_id'] == 3) {
+                $workWeek = Workweek::select('workweek.*')
                 ->join('departments', 'workweek.department_id', '=', 'departments.id')
                 ->join('trademark', 'departments.trademark_id', '=', 'trademark.id')
-                ->where(function($query) use ($start) {
-                    $query->where('startdate', '>=', $start)
-                        ->orWhere('workweek.responsibility', 'Tô Tấn Sơn');
+                ->where(function($query) use ($start, $end) {
+                    $query->whereBetween('startdate', [$start, $end])
+                          ->whereBetween('enddate', [$start, $end])
+                          ->orWhere('workweek.responsibility', 'Tô Tấn Sơn');
                 })
                 ->where('trademark.id', '=', 1)
                 ->get();
-                // dd($workWeek->toArray());
-            }elseif ($user['position_id'] == 4) {
+            } elseif ($user['position_id'] == 4) {
                 $workWeek = Workweek::select('workweek.*')
-            
                 ->join('departments', 'workweek.department_id', '=', 'departments.id')
                 ->join('trademark', 'departments.trademark_id', '=', 'trademark.id')
-                ->where('startdate', '>=', $start)
+                ->whereBetween('startdate', [$start, $end])
+                ->whereBetween('enddate', [$start, $end])
                 ->where('trademark.id', '=', 2)
-                ->get();    
-            }else{
+                ->get();
+            } else {
                 $workWeek = Workweek::select('workweek.*')
-            
                 ->join('departments', 'workweek.department_id', '=', 'departments.id')
-                ->where('startdate', '>=', $start)
+                ->whereBetween('startdate', [$start, $end])
+                ->whereBetween('enddate', [$start, $end])
                 ->where('workweek.department_id', '=', $user['department_id'])
-                ->get();    
-            }
+                ->get();
+            }            
             if ($user['position_id'] == 1 || $user['position_id'] == 2) {
                 $departments = Department::get();
             } elseif ($user['position_id'] == 3) {
@@ -793,7 +791,7 @@ class ApproveDaiLyWeekly extends Controller
         $departments = [];
         $teams = [];
         $users = [];
-
+        $mydate = date('Y-m-d');
         if (in_array($position_id, [10, 9, 8, 7, 6, 5])) {
             $query->where('department_id', $department_id)
                 ->orWhere('department_id', $department_id1)
@@ -828,106 +826,115 @@ class ApproveDaiLyWeekly extends Controller
         // dd($users->toarray());
         $workmonths = $query->get();
         
-        return view('plan.listPlanMonth', compact('user', 'workmonths', 'departments', 'teams', 'users'));
+        return view('plan.listPlanMonth', compact('user', 'workmonths', 'departments', 'teams', 'users','mydate'));
     }
     public function listStartMonthPost(request $request){
-        $user = auth::user();
-        $departmentId = $request->get('departmentsId');
-        $teamId = $request->get('teamId');
-        $userId = $request->get('userName');
-        $startDate = $request->get('startMonth');
-        $endDate = $request->get('endMonth');
-        $position_id = $user->position_id;
-        $department_id = $user->department_id;
-        $department_id1 = $user->department_id1;
-        $team_id = $user->team_id;
-    
-        // Tạo một query builder
-        $query = WorkMonth::query();
-        $query->where('status', 0);
-        if ($startDate && $endDate) {
-            $query->whereBetween('startMonth', [$startDate, $endDate])
-                ->orWhereBetween('endMonth', [$startDate, $endDate]);
-        }
-        // Nếu chỉ chọn department
-        if ($departmentId && !$teamId && !$userId) {
-            $query->where('department_id', $departmentId);
-        }
-    
-        // Nếu chỉ chọn team
-        if (!$departmentId && $teamId && !$userId) {
-            $query->where('team_id', $teamId);
-        }
-    
-        // Nếu chỉ chọn user
-        if (!$departmentId && !$teamId && $userId) {
-            $query->where('responsibility', $userId);
-        }
-    
-        // Nếu chọn department và team nhưng không chọn user
-        if ($departmentId && $teamId && !$userId) {
-            $query->where('department_id', $departmentId)->where('team_id', $teamId);
-        }
-    
-        // Nếu chọn team và user nhưng không chọn department
-        if (!$departmentId && $teamId && $userId) {
-            $query->where('team_id', $teamId)->where('responsibility', $userId);
-        }
-    
-        // Nếu chọn department và user nhưng không chọn team
-        if ($departmentId && !$teamId && $userId) {
-            $query->where('department_id', $departmentId)->where('responsibility', $userId);
-        }
-    
-        // Nếu chọn cả ba
-        if ($departmentId && $teamId && $userId) {
-            $query->where('department_id', $departmentId)->where('team_id', $teamId)->where('responsibility', $userId);
-        }
-    
-        // Thực hiện truy vấn và lấy kết quả
-        $workMonths = $query->get();
-    
-        $query = Workmonth::query()
-        ->where('status', 0);
+            $user = auth::user();
+            $departmentId = $request->get('departmentsId');
+            $teamId = $request->get('teamId');
+            $userId = $request->get('userName');
+            $startDate = $request->get('startMonth');
+            $endDate = $request->get('endMonth');
+            $position_id = $user->position_id;
+            $department_id = $user->department_id;
+            $department_id1 = $user->department_id1;
+            $team_id = $user->team_id;
+            $mydate = date('Y-m-d');
+        
+            // Initialize the query builder
+            $query = WorkMonth::query();
+            $query->where('status', 0);
+        
+            if ($startDate && $endDate) {
+                $query->where(function ($query) use ($startDate, $endDate) {
+                    $query->whereBetween('startMonth', [$startDate, $endDate])
+                        ->whereBetween('endMonth', [$startDate, $endDate]);
+                });
+            }
+        
+            if ($departmentId && !$teamId && !$userId) {
+                $query->where('department_id', $departmentId);
+            }
+        
+            if (!$departmentId && $teamId && !$userId) {
+                $query->where('team_id', $teamId);
+            }
+        
+            if (!$departmentId && !$teamId && $userId) {
+                $query->where('responsibility', $userId);
+            }
+        
+            if ($departmentId && $teamId && !$userId) {
+                $query->where(function ($query) use ($departmentId, $teamId) {
+                    $query->where('department_id', $departmentId)
+                        ->where('team_id', $teamId);
+                });
+            }
+        
+            if (!$departmentId && $teamId && $userId) {
+                $query->where(function ($query) use ($teamId, $userId) {
+                    $query->where('team_id', $teamId)
+                        ->where('responsibility', $userId);
+                });
+            }
+        
+            if ($departmentId && !$teamId && $userId) {
+                $query->where(function ($query) use ($departmentId, $userId) {
+                    $query->where('department_id', $departmentId)
+                        ->where('responsibility', $userId);
+                });
+            }
+        
+            if ($departmentId && $teamId && $userId) {
+                $query->where(function ($query) use ($departmentId, $teamId, $userId) {
+                    $query->where('department_id', $departmentId)
+                        ->where('team_id', $teamId)
+                        ->where('responsibility', $userId);
+                });
+            }
+        
+            //In accordance with the positions, add the related department, team, and user conditions
+            if (in_array($position_id, [10, 9, 8, 7, 6, 5])) {
+                $query->where(function ($query) use ($user) {
+                    $query->where('department_id', $user->department_id)
+                        ->orWhere('department_id', $user->department_id1)
+                        ->where('team_id', $user->team_id);
+                });
+            }
+        
+            $workmonths = $query->get();
             $departments = [];
             $teams = [];
             $users = [];
-        if (in_array($position_id, [10, 9, 8, 7, 6, 5])) {
-            $query->where('department_id', $department_id)
-                ->orWhere('department_id', $department_id1)
-                ->where('team_id', $team_id);
-            $departments = Department::whereIn('id', [$department_id, $department_id1])->get();
-            $teams = Team::where('department_id', $department_id)
-                ->orWhere('department_id', $department_id1)
-                ->get();
-            $users = User::where('department_id', $department_id)
-                ->orWhere('department_id', $department_id1)
-                ->get();
-        } 
-        else if ($position_id == 4) {
-            $department_ids = Department::where('trademark_id', 2)->pluck('id');
-            $query->whereIn('department_id', $department_ids);
-            $departments = Department::whereIn('id', $department_ids)->get();
-            $teams = Team::whereIn('department_id', $department_ids)->get();
-            $users = User::whereIn('department_id', $department_ids)->get();
-        } 
-        else if ($position_id == 3) {
-            $department_ids = Department::where('trademark_id', 1)->pluck('id');
-            $query->whereIn('department_id', $department_ids);
-            $departments = Department::whereIn('id', $department_ids)->get();
-            $teams = Team::whereIn('department_id', $department_ids)->get();
-            $users = User::whereIn('department_id', $department_ids)->get();
-        } 
-        else if (in_array($position_id, [2, 1])) {
-            $departments = Department::all();
-            $teams = Team::all();
-            $users = User::all();
-        }
-        // dd($users->toarray());
-        $workmonths = $query->get();
-
-        return view('plan.listPlanMonth', ['workMonths' => $workMonths],compact('user', 'workmonths', 'departments', 'teams', 'users'));
+        
+            if (in_array($position_id, [10, 9, 8, 7, 6, 5])) {
+                $departments = Department::whereIn('id', [$department_id, $department_id1])->get();
+                $teams = Team::where('department_id', $department_id)
+                    ->orWhere('department_id', $department_id1)
+                    ->get();
+                $users = User::where('department_id', $department_id)
+                    ->orWhere('department_id', $department_id1)
+                    ->get();
+            } else if ($position_id == 4) {
+                $department_ids = Department::where('trade_mark_id', 2)->pluck('id');
+                $departments = Department::whereIn('id', $department_ids)->get();
+                $teams = Team::whereIn('department_id', $department_ids)->get();
+                $users = User::whereIn('department_id', $department_ids)->get();
+            } else if ($position_id == 3) {
+                $department_ids = Department::where('trade_mark_id', 1)->pluck('id');
+                $departments = Department::whereIn('id', $department_ids)->get();
+                $teams = Team::whereIn('department_id', $department_ids)->get();
+                $users = User::whereIn('department_id', $department_ids)->get();
+            } else if (in_array($position_id, [2, 1])) {
+                $departments = Department::all();
+                $teams = Team::all();
+                $users = User::all();
+            }
+        
+                return view('plan.listPlanMonth',compact('mydate','user', 'workmonths', 'departments', 'teams', 'users'));
     }
+    // 
+       
     public function viewApproveMonthPost(request $request){
         $user = auth::user();
         $departmentId = $request->get('departmentsId');
@@ -939,62 +946,75 @@ class ApproveDaiLyWeekly extends Controller
         $department_id = $user->department_id;
         $department_id1 = $user->department_id1;
         $team_id = $user->team_id;
+        $mydate = date('Y-m-d');
     
-        // Tạo một query builder
+        // Initialize the query builder
         $query = WorkMonth::query();
         $query->whereIn('status', [1, 2]);
+    
         if ($startDate && $endDate) {
-            $query->whereBetween('startMonth', [$startDate, $endDate])
-                ->orWhereBetween('endMonth', [$startDate, $endDate]);
+            $query->where(function ($query) use ($startDate, $endDate) {
+                $query->whereBetween('startMonth', [$startDate, $endDate])
+                    ->whereBetween('endMonth', [$startDate, $endDate]);
+            });
         }
-        // Nếu chỉ chọn department
+    
         if ($departmentId && !$teamId && !$userId) {
             $query->where('department_id', $departmentId);
         }
     
-        // Nếu chỉ chọn team
         if (!$departmentId && $teamId && !$userId) {
             $query->where('team_id', $teamId);
         }
     
-        // Nếu chỉ chọn user
         if (!$departmentId && !$teamId && $userId) {
             $query->where('responsibility', $userId);
         }
     
-        // Nếu chọn department và team nhưng không chọn user
         if ($departmentId && $teamId && !$userId) {
-            $query->where('department_id', $departmentId)->where('team_id', $teamId);
+            $query->where(function ($query) use ($departmentId, $teamId) {
+                $query->where('department_id', $departmentId)
+                    ->where('team_id', $teamId);
+            });
         }
     
-        // Nếu chọn team và user nhưng không chọn department
         if (!$departmentId && $teamId && $userId) {
-            $query->where('team_id', $teamId)->where('responsibility', $userId);
+            $query->where(function ($query) use ($teamId, $userId) {
+                $query->where('team_id', $teamId)
+                    ->where('responsibility', $userId);
+            });
         }
     
-        // Nếu chọn department và user nhưng không chọn team
         if ($departmentId && !$teamId && $userId) {
-            $query->where('department_id', $departmentId)->where('responsibility', $userId);
+            $query->where(function ($query) use ($departmentId, $userId) {
+                $query->where('department_id', $departmentId)
+                    ->where('responsibility', $userId);
+            });
         }
     
-        // Nếu chọn cả ba
         if ($departmentId && $teamId && $userId) {
-            $query->where('department_id', $departmentId)->where('team_id', $teamId)->where('responsibility', $userId);
+            $query->where(function ($query) use ($departmentId, $teamId, $userId) {
+                $query->where('department_id', $departmentId)
+                    ->where('team_id', $teamId)
+                    ->where('responsibility', $userId);
+            });
         }
     
-        // Thực hiện truy vấn và lấy kết quả
-        $workMonths = $query->get();
-    
-        $query = Workmonth::query()
-        ->where('status', 1)
-        ->orWhere('status', 2);
-            $departments = [];
-            $teams = [];
-            $users = [];
+        //In accordance with the positions, add the related department, team, and user conditions
         if (in_array($position_id, [10, 9, 8, 7, 6, 5])) {
-            $query->where('department_id', $department_id)
-                ->orWhere('department_id', $department_id1)
-                ->where('team_id', $team_id);
+            $query->where(function ($query) use ($user) {
+                $query->where('department_id', $user->department_id)
+                    ->orWhere('department_id', $user->department_id1)
+                    ->where('team_id', $user->team_id);
+            });
+        }
+    
+        $workmonths = $query->get();
+        $departments = [];
+        $teams = [];
+        $users = [];
+    
+        if (in_array($position_id, [10, 9, 8, 7, 6, 5])) {
             $departments = Department::whereIn('id', [$department_id, $department_id1])->get();
             $teams = Team::where('department_id', $department_id)
                 ->orWhere('department_id', $department_id1)
@@ -1002,30 +1022,23 @@ class ApproveDaiLyWeekly extends Controller
             $users = User::where('department_id', $department_id)
                 ->orWhere('department_id', $department_id1)
                 ->get();
-        } 
-        else if ($position_id == 4) {
-            $department_ids = Department::where('trademark_id', 2)->pluck('id');
-            $query->whereIn('department_id', $department_ids);
+        } else if ($position_id == 4) {
+            $department_ids = Department::where('trade_mark_id', 2)->pluck('id');
             $departments = Department::whereIn('id', $department_ids)->get();
             $teams = Team::whereIn('department_id', $department_ids)->get();
             $users = User::whereIn('department_id', $department_ids)->get();
-        } 
-        else if ($position_id == 3) {
-            $department_ids = Department::where('trademark_id', 1)->pluck('id');
-            $query->whereIn('department_id', $department_ids);
+        } else if ($position_id == 3) {
+            $department_ids = Department::where('trade_mark_id', 1)->pluck('id');
             $departments = Department::whereIn('id', $department_ids)->get();
             $teams = Team::whereIn('department_id', $department_ids)->get();
             $users = User::whereIn('department_id', $department_ids)->get();
-        } 
-        else if (in_array($position_id, [2, 1])) {
+        } else if (in_array($position_id, [2, 1])) {
             $departments = Department::all();
             $teams = Team::all();
             $users = User::all();
         }
-        // dd($users->toarray());
-        $workmonths = $query->get();
 
-        return view('plan.approveMonth', ['workMonths' => $workMonths],compact('user', 'workmonths', 'departments', 'teams', 'users'));
+        return view('plan.approveMonth', compact('mydate','user', 'workmonths', 'departments', 'teams', 'users'));
     }
     public function viewApproveMonth()
     {
@@ -1137,63 +1150,75 @@ class ApproveDaiLyWeekly extends Controller
         $department_id = $user->department_id;
         $department_id1 = $user->department_id1;
         $team_id = $user->team_id;
+        $mydate = date('Y-m-d');
     
-        // Tạo một query builder
+        // Initialize the query builder
         $query = WorkMonth::query();
         $query->whereIn('status', [3, -1]);
-
+    
         if ($startDate && $endDate) {
-            $query->whereBetween('startMonth', [$startDate, $endDate])
-                ->orWhereBetween('endMonth', [$startDate, $endDate]);
+            $query->where(function ($query) use ($startDate, $endDate) {
+                $query->whereBetween('startMonth', [$startDate, $endDate])
+                    ->whereBetween('endMonth', [$startDate, $endDate]);
+            });
         }
-        // Nếu chỉ chọn department
+    
         if ($departmentId && !$teamId && !$userId) {
             $query->where('department_id', $departmentId);
         }
     
-        // Nếu chỉ chọn team
         if (!$departmentId && $teamId && !$userId) {
             $query->where('team_id', $teamId);
         }
     
-        // Nếu chỉ chọn user
         if (!$departmentId && !$teamId && $userId) {
             $query->where('responsibility', $userId);
         }
     
-        // Nếu chọn department và team nhưng không chọn user
         if ($departmentId && $teamId && !$userId) {
-            $query->where('department_id', $departmentId)->where('team_id', $teamId);
+            $query->where(function ($query) use ($departmentId, $teamId) {
+                $query->where('department_id', $departmentId)
+                    ->where('team_id', $teamId);
+            });
         }
     
-        // Nếu chọn team và user nhưng không chọn department
         if (!$departmentId && $teamId && $userId) {
-            $query->where('team_id', $teamId)->where('responsibility', $userId);
+            $query->where(function ($query) use ($teamId, $userId) {
+                $query->where('team_id', $teamId)
+                    ->where('responsibility', $userId);
+            });
         }
     
-        // Nếu chọn department và user nhưng không chọn team
         if ($departmentId && !$teamId && $userId) {
-            $query->where('department_id', $departmentId)->where('responsibility', $userId);
+            $query->where(function ($query) use ($departmentId, $userId) {
+                $query->where('department_id', $departmentId)
+                    ->where('responsibility', $userId);
+            });
         }
     
-        // Nếu chọn cả ba
         if ($departmentId && $teamId && $userId) {
-            $query->where('department_id', $departmentId)->where('team_id', $teamId)->where('responsibility', $userId);
+            $query->where(function ($query) use ($departmentId, $teamId, $userId) {
+                $query->where('department_id', $departmentId)
+                    ->where('team_id', $teamId)
+                    ->where('responsibility', $userId);
+            });
         }
     
-        // Thực hiện truy vấn và lấy kết quả
-        $workMonths = $query->get();
-    
-        $query = Workmonth::query()
-        ->where('status', 3)
-        ->orWhere('status', -1);
-            $departments = [];
-            $teams = [];
-            $users = [];
+        //In accordance with the positions, add the related department, team, and user conditions
         if (in_array($position_id, [10, 9, 8, 7, 6, 5])) {
-            $query->where('department_id', $department_id)
-                ->orWhere('department_id', $department_id1)
-                ->where('team_id', $team_id);
+            $query->where(function ($query) use ($user) {
+                $query->where('department_id', $user->department_id)
+                    ->orWhere('department_id', $user->department_id1)
+                    ->where('team_id', $user->team_id);
+            });
+        }
+    
+        $workmonths = $query->get();
+        $departments = [];
+        $teams = [];
+        $users = [];
+    
+        if (in_array($position_id, [10, 9, 8, 7, 6, 5])) {
             $departments = Department::whereIn('id', [$department_id, $department_id1])->get();
             $teams = Team::where('department_id', $department_id)
                 ->orWhere('department_id', $department_id1)
@@ -1201,30 +1226,23 @@ class ApproveDaiLyWeekly extends Controller
             $users = User::where('department_id', $department_id)
                 ->orWhere('department_id', $department_id1)
                 ->get();
-        } 
-        else if ($position_id == 4) {
-            $department_ids = Department::where('trademark_id', 2)->pluck('id');
-            $query->whereIn('department_id', $department_ids);
+        } else if ($position_id == 4) {
+            $department_ids = Department::where('trade_mark_id', 2)->pluck('id');
             $departments = Department::whereIn('id', $department_ids)->get();
             $teams = Team::whereIn('department_id', $department_ids)->get();
             $users = User::whereIn('department_id', $department_ids)->get();
-        } 
-        else if ($position_id == 3) {
-            $department_ids = Department::where('trademark_id', 1)->pluck('id');
-            $query->whereIn('department_id', $department_ids);
+        } else if ($position_id == 3) {
+            $department_ids = Department::where('trade_mark_id', 1)->pluck('id');
             $departments = Department::whereIn('id', $department_ids)->get();
             $teams = Team::whereIn('department_id', $department_ids)->get();
             $users = User::whereIn('department_id', $department_ids)->get();
-        } 
-        else if (in_array($position_id, [2, 1])) {
+        } else if (in_array($position_id, [2, 1])) {
             $departments = Department::all();
             $teams = Team::all();
             $users = User::all();
         }
-        // dd($users->toarray());
-        $workmonths = $query->get();
 
-        return view('plan.denyMonth', ['workMonths' => $workMonths],compact('user', 'workmonths', 'departments', 'teams', 'users'));
+        return view('plan.denyMonth', compact('mydate','user', 'workmonths', 'departments', 'teams', 'users'));
     }
     
     public function viewCreatWorkMonth(){
@@ -1284,11 +1302,11 @@ class ApproveDaiLyWeekly extends Controller
         if ($workmonth) {
             $workmonth->status = 0;
             $workmonth->save();
-    
+
             $start = Carbon::parse($workmonth->startMonth);
             $end = Carbon::parse($workmonth->endMonth);
             $numberOfWeeks = $start->diffInWeeks($end) + 1;
-    
+
             // Thêm thông tin vào bảng Workweek cho mỗi tuần
             for ($i = 0; $i < $numberOfWeeks; $i++) {
                 $workweek = new Workweek;
@@ -1299,9 +1317,30 @@ class ApproveDaiLyWeekly extends Controller
                 $workweek->team_id = $workmonth->team_id;
                 $workweek->note = $workmonth->note;
                 $workweek->status = -1;
+
+                // Calculate the start and end dates for this week
+                $weekStartDate = $start->copy()->addWeeks($i)->startOfWeek();
+                $weekEndDate = $weekStartDate->copy()->endOfWeek();
+
+                if ($weekEndDate->gt($end)) {
+                    $weekEndDate = $end->copy();
+                }
+
+                $workweek->startdate = $weekStartDate->toDateString();
+                $workweek->enddate = $weekEndDate->toDateString();
+
+                // Check each day of the week and assign null if it's a Sunday
+                $workweek->monday = ($weekStartDate->copy()->dayOfWeek == 0) ? null : $workmonth->workDescription_mon;
+                $workweek->tuesday = ($weekStartDate->copy()->addDay()->dayOfWeek == 0) ? null : $workmonth->workDescription_tue;
+                $workweek->wednesday = ($weekStartDate->copy()->addDays(2)->dayOfWeek == 0) ? null : $workmonth->workDescription_wed;
+                $workweek->thursday = ($weekStartDate->copy()->addDays(3)->dayOfWeek == 0) ? null : $workmonth->workDescription_thu;
+                $workweek->friday = ($weekStartDate->copy()->addDays(4)->dayOfWeek == 0) ? null : $workmonth->workDescription_fri;
+                $workweek->saturday = ($weekStartDate->copy()->addDays(5)->dayOfWeek == 0) ? null : $workmonth->workDescription_sat;
+                $workweek->sunday = null;
+
                 $workweek->save();
             }
-    
+
             return response()->json(['message' => 'Cập nhật thành công!'], 200);
         } else {
             return response()->json(['error' => 'Không tìm thấy dữ liệu'], 404);
@@ -1323,7 +1362,7 @@ class ApproveDaiLyWeekly extends Controller
     public function aprroveMonthTN(request $request){
         $workmonth = Workmonth::find($request->id);
         if ($workmonth) {
-            $workmonth->status = 1;
+            $workmonth->status = 2;
             $workmonth->save();
 
             return response()->json(['message' => 'Cập nhật thành công!'], 200);

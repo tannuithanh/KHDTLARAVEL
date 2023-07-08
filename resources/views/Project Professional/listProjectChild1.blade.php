@@ -54,14 +54,15 @@
                                             <td class="status">
                                                 @if ($value->status == 0 && $value->enddate < $ngayHienTai && $value->completion < 100)
                                                     <span style="color: red;">Trễ kế hoạch</span>
-                                                @elseif ($value->status == 0 && $value->enddate > $ngayHienTai && $value->completion < 100)
+                                                @elseif ($value->status == 0 && $value->startdate <= $ngayHienTai && $value->enddate >= $ngayHienTai && $value->completion < 100)
                                                     <span style="color:#ff8206;">Đang thực hiện</span>
-                                                @elseif ($value->status == 0 && $value->startdate < $ngayHienTai && $value->completion < 100)
+                                                @elseif ($value->status == 0 && $value->startdate > $ngayHienTai && $value->completion < 100)
                                                     <span style="color: black;">Chưa đến hạng</span>
-                                                @elseif ($value->completion == 100 )
+                                                @elseif ($value->completion == 100)
                                                     <span style="color: green;">Hoàn Thành</span>
                                                 @endif
-                                            </td>                                    
+
+                                            </td>                                  
                                             <td>
                                                 @if($projectpro->lock == 0)
                                                 {{-- NÚT XÓA, SỬA --}}

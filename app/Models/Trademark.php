@@ -14,4 +14,8 @@ class Trademark extends Model
         'id',
         'name',
     ];
+    public function departments() 
+{
+    return $this->hasMany(Department::class);
+}
 }

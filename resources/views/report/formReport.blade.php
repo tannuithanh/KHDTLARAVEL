@@ -74,7 +74,7 @@
                 </div>
                 <div class="mb-3">
                     <label class="form-label">Kết quả</label>
-                    <input type="number" name="result" class="form-control" min="0" max="100">
+                    <input type="number" required name="result" class="form-control" min="0" max="100">
                 </div>
                 <label class="file-upload-container">
                     <span>Chọn file:</span>

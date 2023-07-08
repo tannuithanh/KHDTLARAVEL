@@ -20,5 +20,8 @@ class CarBrands extends Model
 {
     return $this->hasMany(Project::class, 'car_brands_id');
 }
-
+public function children()
+{
+    return $this->hasMany(CarBrandsChild::class, 'car_brands_id');
+}
 }

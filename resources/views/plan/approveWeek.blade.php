@@ -281,8 +281,7 @@
 
                             @if (!$workWeek->isEmpty())
                                 @foreach ($workWeek as $value)
-                                    @if (
-                                        ($value->status == 1 && $user['position_id'] == 7) ||
+                                    @if (($value->status == 1 && $user['position_id'] == 7) ||
                                             ($value->status == 1 && $value->responsibility == $user['name']))
                                         <tr id="row-{{ $value->id }}">
                                             <td class="col1" style="text-align: center;">{{ $stt++ }}</td>

@@ -14,4 +14,8 @@ class Department extends Model
         'description',
         'trademark_id'
     ];
+    public function trademark() 
+{
+    return $this->belongsTo(Trademark::class);
+}
 }

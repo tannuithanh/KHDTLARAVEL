@@ -146,38 +146,37 @@ class WorkPlanWeek extends Controller
             // dd($dates);
         //------------ Lấy dữ liệu công việc theo chức vụ ------------//    
         if ($user['position_id'] == 1 || $user['position_id'] == 2) {
-        $workWeek = Workweek::select('workweek.*')
-       
-        ->where('startdate', '>=', $start)
-        ->get();
-        }elseif ($user['position_id'] == 3) {
             $workWeek = Workweek::select('workweek.*')
-           
+            ->whereBetween('startdate', [$start, $end])
+            ->whereBetween('enddate', [$start, $end])
+            ->get();
+        } elseif ($user['position_id'] == 3) {
+            $workWeek = Workweek::select('workweek.*')
             ->join('departments', 'workweek.department_id', '=', 'departments.id')
             ->join('trademark', 'departments.trademark_id', '=', 'trademark.id')
-            ->where(function($query) use ($start) {
-                $query->where('startdate', '>=', $start)
+            ->where(function($query) use ($start, $end) {
+                $query->whereBetween('startdate', [$start, $end])
+                      ->whereBetween('enddate', [$start, $end])
                       ->orWhere('workweek.responsibility', 'Tô Tấn Sơn');
             })
             ->where('trademark.id', '=', 1)
             ->get();
-            // dd($workWeek->toArray());
-        }elseif ($user['position_id'] == 4) {
+        } elseif ($user['position_id'] == 4) {
             $workWeek = Workweek::select('workweek.*')
-           
             ->join('departments', 'workweek.department_id', '=', 'departments.id')
             ->join('trademark', 'departments.trademark_id', '=', 'trademark.id')
-            ->where('startdate', '>=', $start)
+            ->whereBetween('startdate', [$start, $end])
+            ->whereBetween('enddate', [$start, $end])
             ->where('trademark.id', '=', 2)
-            ->get();    
-        }else{
+            ->get();
+        } else {
             $workWeek = Workweek::select('workweek.*')
-           
             ->join('departments', 'workweek.department_id', '=', 'departments.id')
-            ->where('startdate', '>=', $start)
+            ->whereBetween('startdate', [$start, $end])
+            ->whereBetween('enddate', [$start, $end])
             ->where('workweek.department_id', '=', $user['department_id'])
-            ->get();    
-        }
+            ->get();
+        }        
         if ($user['position_id'] == 1 || $user['position_id'] == 2) {
             $departments = Department::get();
         } elseif ($user['position_id'] == 3) {

@@ -20,11 +20,7 @@
     <link href="{{ asset('assets/css/icons.min.css') }}" rel="stylesheet" type="text/css" />
     <!-- App Css-->
     <link href="{{ asset('assets/css/app.min.css') }}" id="app-style" rel="stylesheet" type="text/css" />
-    
-    <link href="{{ asset('assets/css/chunhapnhay.css') }}" id="app-style" rel="stylesheet" type="text/css" />
-    <link href="{{ asset('assets/css/thongbao.css') }}" id="app-style" rel="stylesheet" type="text/css" />
-    <link href="{{ asset('assets/css/xuongdong.css') }}" id="app-style" rel="stylesheet" type="text/css" />
-    <link href="{{ asset('assets/css/pageloading.css') }}" id="app-style" rel="stylesheet" type="text/css" />
+
     <link href="{{ asset('assets/js/sweetalert2.min.css')}} " id="app-style" rel="stylesheet" type="text/css" />
 
     
@@ -190,7 +186,7 @@
                                 <span>Kế hoạch ngày</span>
                             </a>
                             <ul class="sub-menu" aria-expanded="false">
-                                <li><a href="{{route('viewDenyDaily')}}">Từ chối</a></li>
+                                <li><a href="{{route('viewDenyDaily')}}">Từ chối & Cập nhật</a></li>
                                 <li><a href="{{route('viewApproveDaily')}}">Duyệt & Kiểm tra</a></li>
                                 <li><a href="{{route('listWorkDaily')}}">Đang thực hiện</a></li>
                                 <li><a href="{{ route('listReportDaily') }}">Báo cáo</a></li>
@@ -202,7 +198,7 @@
                                 <span>Kế hoạch tuần</span>
                             </a>
                             <ul class="sub-menu" aria-expanded="false">
-                                <li><a href="{{route('viewDenyWeek')}}">Từ chối</a></li>
+                                <li><a href="{{route('viewDenyWeek')}}">Từ chối & Cập nhật</a></li>
                                 <li><a href="{{ route('viewApproveWeek')}}">Duyệt & Kiểm tra</a></li>
                                 <li><a href="{{route('listWorkWeek')}}">Đang thực hiện</a></li>
                                 <li><a href="{{ route('listReportWeekly') }}">Báo cáo</a></li>
@@ -215,7 +211,7 @@
                                 <span>Kế hoạch dài hạn</span>
                             </a>
                             <ul class="sub-menu" aria-expanded="false">
-                                <li><a href="{{route('viewDenyMonth')}}" >Từ chối</a></li>
+                                <li><a href="{{route('viewDenyMonth')}}" >Từ chối & Cập nhật</a></li>
                                 <li><a href="{{route('viewApproveMonth')}}">Duyệt & Kiểm tra</a></li>
                                 <li><a href="{{route('listStartMonth')}}">Đang thực hiện</a></li>
                                 <li><a href="{{route('listReportMonth')}}">Báo cáo</a></li>

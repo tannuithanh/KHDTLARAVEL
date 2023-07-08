@@ -126,16 +126,27 @@
                                 <td style="text-align:center; vertical-align: middle;">{{ \Carbon\Carbon::parse($workmonth->startMonth)->format('d/m/Y') }}</td>
                                 <td style="text-align:center; vertical-align: middle;">{{ \Carbon\Carbon::parse($workmonth->endMonth)->format('d/m/Y') }}</td>
                                 <td style="text-align:center; vertical-align: middle;">{{ $workmonth->note }}</td>
-                                @if($workmonth->status==0)
-                                <td style="text-align:center; vertical-align: middle; background-color: orange; color: black">
-                                    Đang thực hiện
-                                </td>
+                                @if ($mydate < $workmonth->startMonth && $workmonth->status == 0)
+                                                <td class="hidden-column col6">Chưa đến hạng </td>
+                                            @elseif($mydate <= $workmonth->endMonth && $workmonth->status == 0)
+                                                <td class="hidden-column col6"
+                                                    style="text-align: center; background-color:yellow"> Đang thực
+                                                    hiện </td>
+                                            @elseif ($mydate > $workmonth->endMonth && $workmonth->status == 0)
+                                                <td class="hidden-column col6"
+                                                    style="color:#ffffff; text-align: center; background-color:red">
+                                                    Trễ kế hoạch </td>
+                                            @elseif ($workmonth->status == 1)
+                                                <td class="hidden-column col6"
+                                                    style="color:#ffffff; text-align: center; background-color:green">
+                                                    Hoàn thành </td>
+                                            @endif
                                 <td style="text-align:center; vertical-align: middle;"> 
                                     @if ($workmonth->responsibility == $user['name'] && $workmonth->status == 0)
                                     <a href="{{ route('reportMonth.get', $workmonth->id) }}" class="btn btn-outline-primary waves-light btn-sm" title="Báo cáo"><i class="ri-book-mark-line"></i></a>
                                 @endif
                                 </td>
-                                @endif
+                               
                             </tr>
                             @php $dataExists = true @endphp
                         @endforeach
@@ -158,71 +169,82 @@
 </div>
 @include('include.footer')
 <script>
-    //---------------TÌM KIẾM---------//
-$(document).ready(function(){
-    // Khi chọn phòng ban
-    $('#department-select').change(function() {
-        var departmentId = $(this).val();
+ // ------------------------------------------ JS TÌM KIẾM PHÒNG BAN --------------------------------------------------//    
+ $(document).ready(function() {
+        $('[name="departmentsId"]').on('change', function() {
+            var departmentId = $('[name="departmentsId"]').val();
+            if (departmentId) {
+                $.ajax({
+                    url: "{!! route('listWorkWeekdepartments') !!}",
+                    type: 'GET',
+                    data: {
+                        departments_id: departmentId,
+                        token: '{!! csrf_token() !!}'
+                    },
+                    success: function(response) {
+                        console.log(response);
 
-        // Xóa các options hiện tại của nhóm và nhân sự
-        $('#team-select').empty();
-        $('#user-select').empty();
+                        var options1 = '<option value="0">Tất cả</option>';
+                        if (response.teamId && response.teamId.length > 0) {
+                            $.each(response.teamId, function(index, team) {
+                                options1 += '<option value="' + team.id + '">' +
+                                    team.name + '</option>';
 
-        // Nếu chọn một phòng ban cụ thể
-        if (departmentId) {
-            $.ajax({
-                url:  "/department/" + departmentId + "/teams",
-                method: 'GET',
-                success: function(data) {
-                    $('#team-select').append('<option value="">Tất cả</option>');
-                    $.each(data, function(index, team) {
-                        $('#team-select').append('<option value="' + team.id + '">' + team.name + '</option>');
-                    });
-                }
-            });
+                            });
 
-            $.ajax({
-                url: "/department/" + departmentId + "/users",
-                method: 'GET',
-                success: function(data) {
-                    $('#user-select').append('<option value="">Tất cả</option>');
-                    $.each(data, function(index, user) {
-                        $('#user-select').append('<option value="' + user.id + '">' + user.name + '</option>');
-                    });
-                }
-            });
-        } else {
-            // Nếu chọn "Tất cả", reset options của nhóm và nhân sự
-            $('#team-select').append('<option value="">Không có nhóm</option>');
-            $('#user-select').append('<option value="">Không có nhân sự</option>');
-        }
+                        } else {
+                            options = '<option value="0">Tất cả</option>';
+                        }
+                        $('select[name="teamId"]').html(options1).attr('selected',
+                            'selected');;
+
+                        var options = '<option value="">Tất cả</option>';
+                        if (response.users && response.users.length > 0) {
+                            $.each(response.users, function(index, user) {
+                                options += '<option value="' + user.name + '">' +
+                                    user
+                                    .name + '</option>';
+                            });
+                        } else {
+                            options = '<option value="0">Tất cả</option>';
+                        }
+                        $('select[name="userName"]').html(options);
+                    }
+                });
+            } else {
+                $('select[name="userName"]').html('<option value="">Tất cả</option>');
+            }
+        });
     });
 
-    // Khi chọn nhóm
-    $('#team-select').change(function() {
-        var teamId = $(this).val();
-
-        // Xóa các options hiện tại của nhân sự
-        $('#user-select').empty();
-
-        // Nếu chọn một nhóm cụ thể
+    // ------------------------------------------ JS TÌM KIẾM NHÂN SỰ --------------------------------------------------//    
+    $('[name="teamId"]').on('change', function() {
+        var teamId = $('[name="teamId"]').val();
         if (teamId) {
             $.ajax({
-                url: "/team/" + teamId + "/users",
-                method: 'GET',
-                success: function(data) {
-                    $('#user-select').append('<option value="">Tất cả</option>');
-                    $.each(data, function(index, user) {
-                        $('#user-select').append('<option value="' + user.id + '">' + user.name + '</option>');
-                    });
+                url: "{!! route('listWorkWeekUsers') !!}",
+                type: 'GET',
+                data: {
+                    team_id: teamId,
+                    token: '{!! csrf_token() !!}'
+                },
+                success: function(response) {
+                    console.log(response);
+
+                    var options = '<option value="">Tất cả</option>';
+                    if (response && response.length > 0) {
+                        $.each(response, function(index, user) {
+                            options += '<option value="' + user.name + '">' + user
+                                .name + '</option>';
+                        });
+                    } else {
+                        options = '<option value="">Tất cả</option>';
+                    }
+                    $('select[name="userName"]').html(options);
                 }
             });
         } else {
-            // Nếu chọn "Tất cả" hoặc không có nhóm, lấy người dùng dựa trên phòng ban đã chọn
-            $('#department-select').change();
+            $('select[name="userName"]').html('<option value="">Tất cả</option>');
         }
     });
-});
-
-
 </script>

@@ -10,6 +10,7 @@ use App\Http\Controllers\WorkPlanWeek;
 use App\Http\Controllers\setting\Teams;
 use App\Http\Controllers\setting\Users;
 use App\Http\Controllers\WorkPlanDaily;
+use App\Http\Controllers\TacVu;
 use App\Http\Controllers\ChatController;
 use App\Http\Controllers\ProjecManagement;
 use App\Http\Controllers\ApproveDaiLyWeekly;
@@ -17,7 +18,7 @@ use App\Http\Controllers\ProjectProfessional;
 use App\Http\Controllers\setting\Departments;
 
 Route::get('/', function () {
-    return redirect('/login');
+    return redirect(route('LoginGet'));
 });
 
 
@@ -346,8 +347,12 @@ Route::post('/save-note-Lv4', [ProjecManagement::class, 'saveNoteLv4'])->name('s
         Route::POST('/Edit-work-Child-2', [ProjectProfessional::class, 'editPP2'])->name('editPP2')->middleware('checkLogin');
         
         
-
-
+//------------------------------------------ TÁC VỤ CHO QUẢN LÝ DỰ án--------------------------------------//
+        Route::get('/TAC-VU-LV1/{id}', [TacVu::class, 'TacVuLv1'])->name('TacVuLv1')->middleware('checkLogin');
+        Route::get('/getAllWorks/{id}', [TacVu::class, 'getAllWorks'])->name('getAllWorks')->middleware('checkLogin');
+        Route::POST('/saveTacVu', [TacVu::class, 'saveTacVu'])->name('saveTacVu')->middleware('checkLogin');
+        Route::POST('/updateTacVu', [TacVu::class, 'updateTacVu'])->name('updateTacVu')->middleware('checkLogin');
+        Route::POST('/deleteTacVu', [TacVu::class, 'deleteTacVu'])->name('deleteTacVu')->middleware('checkLogin');
 
 
 

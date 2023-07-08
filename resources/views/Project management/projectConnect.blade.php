@@ -1,6 +1,38 @@
 @include('include.header')
 <meta name="csrf-token" content="{{ csrf_token() }}">
 <style>
+    .no-toggle {
+        margin-left: 20px;
+    }
+   .toggle {
+        cursor: pointer;
+        margin-right: 10px; 
+    }
+    .parent-ul, .child-ul {
+        display: none;
+        padding-left: 20px;
+    }
+    .my-swal {
+    max-height: 500px; 
+    overflow-y: auto;
+    }
+
+    ul {
+        list-style: none;
+    }
+
+    .parent-ul, .child-ul {
+        padding-left: 20px;
+    }
+
+    .parent-li, .child-li {
+        padding: 5px 0; 
+    }
+
+    .parent-li > div, .child-li > div {
+        display: flex;
+        align-items: center;
+    }
 
     tbody, thead{
         border-color: black !important;
@@ -14,6 +46,7 @@
     }
         td, th {
             border-color: black !important;
+            vertical-align: middle;
             border: 1px solid black;
             font-size: 20px;
             font-family: 'Times New Roman', Times, serif;
@@ -201,11 +234,42 @@
     }
     .timeline__content.hovered {
     top: -1.1em;
-}
+    }
 
-.timeline__content--end.hovered {
-    top: -1.1em;
-}
+    .timeline__content--end.hovered {
+        top: -1.1em;
+    }
+
+    .modal-overlay {
+    position: fixed;
+    z-index: 1040;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    display: none;
+    background: rgba(0, 0, 0, 0.5);
+    }
+
+    .slide-right {
+        position: fixed;
+        z-index: 1050;
+        right: 0;
+        top: 0;
+        width: 0;
+        height: 100%;
+        overflow-x: hidden;
+        transition: 0.5s;
+        background: white;
+    }
+
+    .slide-right.show {
+        width: 66.67%;
+    }
+
+    .modal-overlay.show {
+        display: block;
+    }
 </style>
 <div class="col-12">
     <div class="page-title-box d-sm-flex align-items-center justify-content-between">
@@ -225,7 +289,6 @@
                         @if ($user['name']==$project->name_create)
                         <button type="button" class="btn btn-warning btn-sm add " title="Thêm" style="font-size: 20px; font-family: 'Times New Roman', Times, serif !important;" data-dialog="dialog-{{ $project->id }}" ><i class="mdi mdi-database-import"></i></button>    
                         @endif
-                         
             </div>
             @if (Session::has('error'))
                 <div class="alert alert-info alert-dismissible fade show" role="alert">
@@ -245,12 +308,13 @@
                             <th style="text-align:center ;" class="table-header">STT</th>
                             <th style="text-align:center ;" class="table-header">Tên công việc</th>
                             <th style="text-align:center ;" class="table-header">Trách nhiệm</th>
+                            <th style="text-align:center ; width: 6%;" class="table-header">Thời gian</th>
                             <th style="text-align:center ;" class="table-header">Ngày bắt đầu</th>
                             <th style="text-align:center ;" class="table-header">Ngày kết thúc</th>
-                            <th style="text-align:center ; width: 30%;" class="table-header">Ghi chú</th>
-                            <th style="text-align:center ;" class="table-header">Kết quả</th>
+                            <th style="text-align:center ;" class="table-header">Ghi chú</th>
+                            <th style="text-align:center ; width: 6%;" class="table-header">Kết quả</th>
                             <th style="text-align:center ;" class="table-header">Trạng thái</th>
-                            <th style="text-align:center ; padding: 30px;" class="table-header">Thao tác</th>
+                            <th style="text-align:center ; padding: 70px;" class="table-header">Thao tác</th>
 
                         </tr>
                     </thead>
@@ -271,8 +335,8 @@
                                
                             @endphp
                             <tr data-id="{{ $value->id }}">
-                                <td style="text-align:center; width: 3%;">{{ $stt++ }}</td>
-                                <td style="text-align:left; width: 20%;">  
+                                <td style="text-align:center;">{{ $stt++ }}</td>
+                                <td style="text-align:left;">  
                                     
                                     <a class="expand-collapse btn btn-outline-success waves-effect waves-light" style="padding: 0.125rem 0.25rem;">
                                         <i class="fas fa-plus"></i>
@@ -288,7 +352,11 @@
                                         <span style="color: red;">*</span>
                                     @endif
                                 </td>
-                                <td style="text-align:left; width: 10%;">{{ $value->tenphongban }} </td>
+                                <td style="text-align:left; ">{{ $value->tenphongban }} </td>
+                                
+                                <td style="text-align:center; vertical-align: middle; width: 10%;">
+                                    {{ \Carbon\Carbon::parse($value->startdate)->diffInDays(\Carbon\Carbon::parse($value->enddate)) + 1 }} ngày
+                                </td>
 
                                 <td style="text-align:center; vertical-align: middle; width: 10%;">
                                     {{ date('d/m/Y', strtotime($value->startdate)) }}
@@ -346,9 +414,9 @@
                                         @if ($user['name'] == $project->name_create)
                                         <button type="button" class="btn btn-outline-secondary btn-sm sua ri-edit-box-fill" title="Sửa" data-dialog="dialog-{{ $value->id }}"></button>
                                         <button type="button" class="btn btn-outline-danger btn-sm delete ri-delete-bin-line" title="Xóa" data-dialog="dialog-{{ $value->id }}"></button>
-
                                         @endif
                                     @endif
+                                    <button type="button" class="btn btn-outline-info btn-sm link " title="Tác vụ" data-id="{{ $value->id }}" data-dialog="dialog-{{ $value->id }}">Liên kết</button>
                                 </td>
                             </tr>
                     {{-- ------------------------------------------------------- Bảng con ------------------------------------------------------------------------------- --}}
@@ -364,6 +432,7 @@
                                             $delay = $work->isDelayed();
                                     @endphp
                                     <tr class="child-row" data-parent-id="{{ $value->id }}" >
+                                        
                                         <td colspan="2" class="merged-cell">
                                             <span class="stt">{{ $stt-1 . '.' . $childStt++ }}</span>
                                             <span class="child-content">
@@ -375,8 +444,11 @@
                                                     <span style="color: red;">*</span>
                                                 @endif
                                             </span>
-                                        </td>                                        
+                                        </td>                                     
                                         <td style="text-align: left">{{ $work->responsibility }} </td>
+                                        <td style="text-align:center; vertical-align: middle; width: 10%;">
+                                            {{ \Carbon\Carbon::parse($work->startdate)->diffInDays(\Carbon\Carbon::parse($work->enddate)) + 1 }} ngày
+                                        </td>
                                         <td style="text-align: center">{{ date('d/m/Y', strtotime($work->startdate)) }}
                                         </td>
                                         <td style="text-align: center">{{ date('d/m/Y', strtotime($work->enddate)) }}
@@ -440,7 +512,7 @@
                                                         title="Cập nhật"><i class="ri-file-text-line"></i></a>
                                                     <a data-id1="{{ $work->id }}" class="btn btn btn-outline-info btn-sm note"
                                                         title="update"><i class="mdi mdi-microsoft-onenote"></i></a>
-                                                @endif`
+                                                @endif
                                             @endif
                                         </td>
                                     </tr>
@@ -453,6 +525,45 @@
         </div>
     </div>
 </div>
+{{---------TAC VU---------}}
+    <div class="modal-overlay">
+        <div id="myModal" class="slide-right">
+            <div class="modal-content">
+
+                <div class="modal-header">
+                    <h5 class="modal-title" id="myModalLabel">Liên kết</h5>
+                    <button type="button" class="btn btn-outline-success btn-sm save" title="Lưu liên kết" style="margin-left: 80% !important;" >Lưu liên kết</button>
+                    <button type="button" class="btn btn-outline-dark close btn-sm" title="Trở về">Trở về</button>
+                </div>
+
+                <div class="modal-body">
+                <h5 class="modal-title" id="myModalLabel" style="font-family:bold"></h5>
+                <button id="btn-add-link" class="btn btn-primary" type="submit">Thêm liên kết</button>
+                    <table class="table table-editable table-nowrap align-middle table-edits mt-2 mb-2">
+                        <thead>
+                            <tr>
+                                <th scope="col"># </th>
+                                <th scope="col">Tên công việc</th>
+                                <th scope="col">ID</th>
+                                <th scope="col">Level</th>
+                                <th scope="col">Kiểu phụ thuộc</th>
+                                <th scope="col">Số ngày</th>
+                                <th scope="col">Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                        
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+
 @include('include.footer')
 <script src="{{asset('assets/js/jquery-3.7.0.min.js')}}"></script>
 <script>
@@ -862,7 +973,9 @@
                             success: function(response) {
                                 Swal.fire('Thành công',
                                     'Ghi chú đã được lưu thành công',
-                                    'success');
+                                    'success').then(function () {
+                                    location.reload();
+                                });
 
                                 // Tìm ô Ghi chú tương ứng và cập nhật giá trị
                                 var formattedNoteText = noteText
@@ -1342,7 +1455,9 @@
                             success: function(response) {
                                 Swal.fire('Thành công',
                                     'Ghi chú đã được lưu thành công',
-                                    'success');
+                                    'success').then(function () {
+                                        location.reload();
+                                    });
 
                                 // Tìm ô Ghi chú tương ứng và cập nhật giá trị
                                 var formattedNoteText = noteText
@@ -1366,5 +1481,353 @@
             });
         });
     });
+//---------------- TÁC VỤ LV1------------------//
+    $(document).ready(function() {
+        $('.link').click(function() {
+            $('#myModal').addClass('show');
+            $('.modal-overlay').addClass('show');
+        });
 
+        $('.close').click(function() {
+            $('#myModal').removeClass('show');
+            $('.modal-overlay').removeClass('show');
+        });
+    });
+    $(document).ready(function() {
+        $('.link').click(function() {
+            $('#myModal').addClass('show');
+            $('.modal-overlay').addClass('show');
+        });
+
+        $('.close').click(function() {
+            $('#myModal').removeClass('show');
+            $('.modal-overlay').removeClass('show');
+        });
+    });
+    $('.link').on('click', function() {
+        var id = $(this).data('id');
+        $.ajax({
+            url: "{!! route('TacVuLv1', 'ID_TEMP') !!}".replace('ID_TEMP', id),
+            method: 'GET',
+            success: function(response) {
+                console.log(response);
+                $('#myModal .modal-body h5').text('Tên công việc: ' + response.task.name);
+                $('#btn-add-link').attr('data-id', response.task.id);
+                $('#btn-add-link').attr('data-table', 'project_department');
+                $('.modal-body table tbody').empty(); 
+                $.each(response.dependentTasks, function(i, taskLink) {
+                var relatedTaskTableDisplay = taskLink.related_task_table;
+
+                if (relatedTaskTableDisplay === 'work_by_project_department') {
+                    relatedTaskTableDisplay = '3';
+                }else if(relatedTaskTableDisplay == 'project_department'){
+                    relatedTaskTableDisplay = '2';
+                }else{
+                    relatedTaskTableDisplay = '4';
+                }
+
+                var row = `<tr data-id="${taskLink.id}">
+                    <td>${i + 1}</td>
+                    <td>${taskLink.related_task_name}</td> 
+                    <td style="text-align: center;">${taskLink.related_task_id}</td>
+                    <td style="text-align: center;">${relatedTaskTableDisplay}</td>
+                    <td class="dependencyType">${taskLink.relationship_type}</td>
+                    <td style="text-align: center;" class="numberOfDays">${taskLink.day != null ? taskLink.day : ''}</td>
+                    <td><button class="btn btn-danger btn-remove">Xóa</button> 
+                        <button type="button" class="btn btn-outline-secondary edittasklv1" title="Sửa" >Sửa</button>
+                    </td>
+                </tr>`;
+                    
+                    $('.modal-body table tbody').append(row);
+                });
+            }
+        });
+    });
+    //---- SUA TAC VU -----//
+    $(document).on('click', '.edittasklv1', function() {
+        var $row = $(this).closest('tr');
+        var taskId = $row.data('id');
+        
+        var dependencyType = $row.find('.dependencyType').val();
+        var numberOfDays = $row.find('.numberOfDays').val();
+    
+        Swal.fire({
+            title: 'Edit Task',
+            html: `
+                <select id="swalDependencyType" class="swal2-input">
+                    <option value="">Select Dependency Type</option>
+                    <option value="FS (Finish-to-Start)">Finish-to-Start</option>
+                    <option value="SS (Start-to-Start)">Start-to-Start</option>
+                    <option value="SF (Start-to-Finish)">Start-to-Finish</option>
+                    <option value="FF (Finish-to-Finish)">Finish-to-Finish</option>
+                </select>
+                <input id="swalNumberOfDays" class="swal2-input" type="number" min="0" placeholder="Number of days">
+            `,
+            preConfirm: function() {
+                return [
+                    document.getElementById('swalDependencyType').value,
+                    document.getElementById('swalNumberOfDays').value
+                ]
+            }
+        }).then(function(result) {
+            if(result.isConfirmed) {
+                var updatedDependencyType = result.value[0];
+                var updatedNumberOfDays = result.value[1];
+    
+                $.ajax({
+                    url: "{!! route('updateTacVu') !!}",
+                    method: 'POST',
+                    data: {
+                        _token: '{{ csrf_token() }}',
+                        id:taskId,
+                        dependencyType: updatedDependencyType,
+                        numberOfDays: updatedNumberOfDays
+                    },
+                    success: function(response) {
+                        console.log(response);
+                        $row.find('.dependencyType').text(updatedDependencyType);
+                        $row.find('.numberOfDays').text(updatedNumberOfDays);
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Thành công',
+                            text: 'Sửa thành công tác vụ',
+                        });
+                    },
+                    error: function(jqXHR, textStatus, errorThrown) {
+                        console.log(jqXHR, textStatus, errorThrown);
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: 'An error occurred while updating the task',
+                        });
+                    },
+                    complete: function(jqXHR, textStatus) {
+                        console.log('AJAX call completed with status: ' + textStatus);
+                    }
+                });
+            }
+        });
+    });
+    
+
+    $(document).on('click', '.btn-remove', function() {
+    var $row = $(this).closest('tr');
+    var taskId = $row.data('id');
+        $.ajax({
+            url: "{!! route('deleteTacVu') !!}",
+            method: 'POST',
+            data: {
+                id: taskId,
+                _token: '{{ csrf_token() }}'
+            },
+            success: function(response) {
+                console.log(response);
+                // Kiểm tra nếu việc xóa đã thành công
+                if (response.success) {
+                    // Biến mất dòng đó nếu việc xóa thành công
+                    $row.fadeOut(500, function(){ $(this).remove(); });
+                }
+            },
+            error: function(error) {
+                console.log(error);
+            }
+        });
+    });
+
+//----------LAY DANH SACH TẤT CẢ CÔNG VIỆC-----------//
+        $('#btn-add-link').click(function() {
+            var id = $(this).data('id');
+            $.ajax({
+                url: "{!! route('getAllWorks', 'ID_TEMP') !!}".replace('ID_TEMP', id),
+                method: 'GET',
+                success: function(data) {
+                    console.log('Data received:', data);
+                    var html = '<ul>';
+                    if (Array.isArray(data.project_departments)) {
+                        console.log('Project Departments:', data.project_departments);
+                        data.project_departments.forEach(function(projectDepartment) {
+                            html += '<li class="parent-li"><div>';
+                            if (Array.isArray(projectDepartment.works) && projectDepartment.works.length > 0) {
+                                html += '<span class="toggle">+</span>';
+                            }else {
+                                html += '<div class="no-toggle"></div>';
+                            }
+                            html += '<input type="checkbox" id="work-' + projectDepartment.id + '" value="' + projectDepartment.id + '" data-table="project_department">';
+                            html += '<label for="work-' + projectDepartment.id + '">' + projectDepartment.name + '</label></div>';
+                            html += '<ul class="parent-ul">';
+                            if (Array.isArray(projectDepartment.works)) {
+                                console.log('Works:', projectDepartment.works);
+                                projectDepartment.works.forEach(function(workLv2) {
+                                    html += '<li class="parent-li"><div>';
+                                    if (Array.isArray(workLv2.work_lv4_projects) && workLv2.work_lv4_projects.length > 0) {
+                                        html += '<span class="toggle">+</span>';
+                                    }else {
+                                        html += '<div class="no-toggle"></div>';
+                                    }
+                                    html += '<input type="checkbox" id="work-' + workLv2.id + '" value="' + workLv2.id + '" data-table="work_by_project_department">';
+                                    html += '<label for="work-' + workLv2.id + '">' + workLv2.name_work + '</label></div>';
+                                    html += '<ul class="child-ul">';
+                                    if (Array.isArray(workLv2.work_lv4_projects)) {
+                                        console.log('Work Level 4 Projects:', workLv2.work_lv4_projects);
+                                        workLv2.work_lv4_projects.forEach(function(workLv3) {
+                                            html += '<li class="child-li"><div>';
+                                            html += '<input type="checkbox" id="work-' + workLv3.id + '" value="' + workLv3.id + '" data-table="work_lv4_project">';
+                                            html += '<label for="work-' + workLv3.id + '">' + workLv3.name_work + '</label></div></li>';
+                                        });
+                                    }
+                                    html += '</ul></li>';
+                                });
+                            }
+                            html += '</ul></li>';
+                        });
+                    }
+        
+                    html += '</ul>';
+                    console.log('Final HTML:', html)
+                    var checkedItems = [];
+                    Swal.fire({
+                        title: 'Các công việc',
+                        html: html,
+                        confirmButtonText: 'Thêm',
+                        showCloseButton: true,
+                        customClass: {
+                            popup: 'my-swal'
+                        },
+                        didOpen: () => { 
+                            $('.parent-li > div, .child-li > div').on('click', function(e) {
+                                e.stopPropagation();
+                                var $toggle = $(this).find('.toggle');
+                                if ($toggle.text() === '+') {
+                                    $toggle.text('-');
+                                } else {
+                                    $toggle.text('+');
+                                }
+                                $(this).next('ul').slideToggle();
+                            });
+                            //-----------------THEM VAO BẢNG KHI CHECKBOX ----------------//
+                            
+                                $('input[type="checkbox"]').on('click', function() {
+                                    var nameWork = $(this).siblings('label').text();
+                                    var id = $(this).val();
+                                    var table = $(this).attr('data-table');
+                                
+                                    if (table === 'project_department') {
+                                        table = '2';
+                                    } else if (table === 'work_by_project_department') {
+                                        table = '3';
+                                    } else if (table === 'work_lv4_project') {
+                                        table = '4';
+                                    }
+                                
+                                    if ($(this).is(':checked')) {
+                                        // Checkbox has been checked
+                                        checkedItems.push({nameWork, id, table});
+                                    } else {
+                                        // Checkbox has been unchecked
+                                        checkedItems = checkedItems.filter(item => item.id != id || item.table != table);
+                                    }
+                                });
+                                
+                                },
+                                preConfirm: () => {
+                                    var rowNumber = 1;
+                                    $('.modal-body table tbody').empty();
+                                    checkedItems.forEach(({nameWork, id, table}) => {
+                                        var newRowHtml = `
+                                            <tr>
+                                                <td>${rowNumber++}</td>
+                                                <td>${nameWork}</td>
+                                                <td>${id}</td>
+                                                <td>${table}</td>
+                                                <td>
+                                                    <select class="dependencyType">
+                                                        <option value=""></option>
+                                                        <option value="FS (Finish-to-Start)">Finish-to-Start</option>
+                                                        <option value="SS (Start-to-Start)">Start-to-Start</option>
+                                                        <option value="SF (Start-to-Finish)">Start-to-Finish</option>
+                                                        <option value="FF (Finish-to-Finish)">Finish-to-Finish</option>
+                                                    </select>
+                                                </td>
+                                                <td><input type="number" min="0" class="numberOfDays" /></td>
+                                                <td></td>
+                                            </tr>
+                                        `;
+                                        $('.modal-body table tbody').append(newRowHtml);
+                                    });
+
+                                    }
+                        
+                    });
+                    
+                }
+            });
+        });
+            //------- LƯU LẠI NHỮNG GÌ ĐÃ THÊM VÀO TABLE --------//
+                function convertTableValue(tableValue) {
+                    switch(tableValue) {
+                        case '2': return 'project_department';
+                        case '3': return 'work_by_project_department';
+                        case '4': return 'work_lv4_project';
+                        default: return tableValue;
+                    }
+                }
+                $('.save').on('click', function() {
+                    var taskLinks = [];
+                    var currentTaskId = $('#btn-add-link').attr('data-id');
+                    var currentTaskTable = convertTableValue($('#btn-add-link').attr('data-table'));
+                
+                    $('.modal-body table tbody tr').each(function() {
+                        var id = $(this).find('td:nth-child(3)').text();
+                        var table = convertTableValue($(this).find('td:nth-child(4)').text());
+                        var relationshipType = $(this).find('.dependencyType').val();
+                        var day = $(this).find('.numberOfDays').val();
+                        
+                        if (!relationshipType) {
+                            alert('Kiểu phụ thuộc không được để trống!');
+                            return false;
+                        }
+                        if (id && table) {
+                            taskLinks.push({
+                                dependent_task_id: currentTaskId,
+                                dependent_task_table: currentTaskTable,
+                                related_task_id: id,
+                                related_task_table: table,
+                                relationship_type: relationshipType,
+                                day: day
+                            });
+                        }
+                    });                
+                    $.ajax({
+                        url: "{!! route('saveTacVu') !!}", 
+                        method: 'POST',
+                        data: {
+                            taskLinks: taskLinks,
+                            _token: '{{ csrf_token() }}'
+                        },
+                        success: function(response) {
+                            // Handle success
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Thành công',
+                                text: response.message,
+                                timer: 2000,
+                                showConfirmButton: false
+                            }).then(function () {
+                                location.reload();
+                            });
+                            // Refresh or update your table here
+                        },
+                        error: function(jqXHR, textStatus, errorThrown) {
+                            // Handle error
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Lỗi',
+                                text: jqXHR.responseJSON.message,
+                                timer: 2000,
+                                showConfirmButton: false
+                            });
+                        }
+                    });
+                });
+    
 </script>
