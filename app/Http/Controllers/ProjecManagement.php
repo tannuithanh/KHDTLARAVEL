@@ -6,6 +6,7 @@ use DateTime;
 use App\Models\Team;
 use App\Models\User;
 use App\Models\Project;
+use App\Models\TaskLink;
 use App\Models\Workweek;
 use App\Models\CarBrands;
 use App\Models\Workdaily;
@@ -270,7 +271,64 @@ class ProjecManagement extends Controller
     }
 
 //----------------- CẬP NHẬT TIẾN ĐỘ CÔNG VIỆC --------------------//
-    public function updateResult(request $request){
+public function updateResult(request $request){
+    $taskLink = TaskLink::where('related_task_id', $request['id'])->first();
+    if ($taskLink) {
+        $dependentTaskModel = null;
+
+        switch ($taskLink->dependent_task_table) {
+            case 'work_lv4_project':
+                $dependentTaskModel = work_lv4_project::find($taskLink->dependent_task_id);
+                break;
+            case 'work_by_project_department':
+                $dependentTaskModel = Work_By_Project_Department::find($taskLink->dependent_task_id);
+                break;
+            case 'project_department':
+                $dependentTaskModel = ProjectDepartment::find($taskLink->dependent_task_id);
+                break;
+            case 'project':
+                $dependentTaskModel = Project::find($taskLink->dependent_task_id);
+                break;
+        }
+
+        if ($dependentTaskModel) {
+            switch ($taskLink->relationship_type) {
+                case "FS":
+                    if ($dependentTaskModel->completion < 100) {
+                        return response()->json([
+                            'status' => 'error',
+                            'message' => 'Công việc này không thể bắt đầu cho đến khi công việc phụ thuộc hoàn thành',
+                        ]);
+                    }
+                    break;
+                case "SF":
+                    if ($request['completion'] < 100 && $dependentTaskModel->completion < 100) {
+                        return response()->json([
+                            'status' => 'error',
+                            'message' => 'Công việc này không thể hoàn thành cho đến khi công việc phụ thuộc bắt đầu',
+                        ]);
+                    }
+                    break;
+                case "SS":
+                    if ($dependentTaskModel->completion == 0) {
+                        return response()->json([
+                            'status' => 'error',
+                            'message' => 'Công việc này không thể bắt đầu cho đến khi công việc phụ thuộc bắt đầu',
+                        ]);
+                    }
+                    break;
+                case "FF":
+                    if ($request['completion'] == 100 && $dependentTaskModel->completion < 100) {
+                        return response()->json([
+                            'status' => 'error',
+                            'message' => 'Công việc này không thể hoàn thành cho đến khi công việc phụ thuộc hoàn thành',
+                        ]);
+                    }
+                    break;
+            }
+        }
+        }
+
         $updateResult = ProjectDepartment::find($request['id']);
         $updateResult->completion = $request['completion'];
         $updateResult->updated_at = Carbon::now();
@@ -283,6 +341,7 @@ class ProjecManagement extends Controller
             'new_completion' => $updateResult->completion,
         ]);
     }
+
 
 //----------------- DANH SÁCH DỰ ÁN CON ( TBP, TN, CHUYÊN VIÊN ) ------------------------//
     public function ProjectCon($id){
@@ -581,18 +640,78 @@ class ProjecManagement extends Controller
 
 //-----------------CẬP NHẬT TIẾN ĐỘ CÔNG VIỆC CON----------------------------//
     public function updateResultCon(request $request){
+        $taskLink = TaskLink::where('related_task_id', $request['id'])->first();
+
+        if ($taskLink) {
+            $dependentTaskModel = null;
+
+            switch ($taskLink->dependent_task_table) {
+                case 'work_lv4_project':
+                    $dependentTaskModel = work_lv4_project::find($taskLink->dependent_task_id);
+                    break;
+                case 'work_by_project_department':
+                    $dependentTaskModel = Work_By_Project_Department::find($taskLink->dependent_task_id);
+                    break;
+                case 'project_department':
+                    $dependentTaskModel = ProjectDepartment::find($taskLink->dependent_task_id);
+                    break;
+                case 'project':
+                    $dependentTaskModel = Project::find($taskLink->dependent_task_id);
+                    break;
+            }
+
+            if ($dependentTaskModel) {
+                switch ($taskLink->relationship_type) {
+                    case "FS":
+                        if ($dependentTaskModel->completion < 100) {
+                            return response()->json([
+                                'status' => 'error',
+                                'message' => 'Công việc này không thể bắt đầu cho đến khi công việc phụ thuộc hoàn thành',
+                            ]);
+                        }
+                        break;
+                    case "SF":
+                        if ($request['completion'] < 100 && $dependentTaskModel->completion < 100) {
+                            return response()->json([
+                                'status' => 'error',
+                                'message' => 'Công việc này không thể hoàn thành cho đến khi công việc phụ thuộc bắt đầu',
+                            ]);
+                        }
+                        break;
+                    case "SS":
+                        if ($dependentTaskModel->completion == 0) {
+                            return response()->json([
+                                'status' => 'error',
+                                'message' => 'Công việc này không thể bắt đầu cho đến khi công việc phụ thuộc bắt đầu',
+                            ]);
+                        }
+                        break;
+                    case "FF":
+                        if ($request['completion'] == 100 && $dependentTaskModel->completion < 100) {
+                            return response()->json([
+                                'status' => 'error',
+                                'message' => 'Công việc này không thể hoàn thành cho đến khi công việc phụ thuộc hoàn thành',
+                            ]);
+                        }
+                        break;
+                }
+            }
+        }
 
         $updateResult = Work_By_Project_Department::find($request['id']);
         $updateResult->completion = $request['completion'];
         $updateResult->save();
-        $projectDepartment = $updateResult->projectDepartment; // Sửa tại đây
-        $projectDepartment->updateCompletion(); // Gọi hàm updateCompletion của projectDepartment
+
+        $projectDepartment = $updateResult->projectDepartment;
+        $projectDepartment->updateCompletion();
+
         return response()->json([
             'status' => 'success',
             'message' => 'Tiến độ đã được cập nhật',
             'new_completion' => $updateResult->completion,
         ]);
     }
+
 
 //----------------- GHI CHÚ DỰ ÁN CON CUỐI CÙNG ----------------------------//
     public function saveNote(Request $request){
@@ -643,20 +762,6 @@ class ProjecManagement extends Controller
         return response()->json(['message' => 'Ghi chú đã được lưu thành công']);
     }
 
-//----------------- EXPORT EXECL ----------------------------//
-
-    public function downloadTempFile($fileName){
-        $file = storage_path('app/temp/' . $fileName);
-
-        // 4. Xóa tập tin Excel tạm thời sau khi người dùng tải xuống
-        $response = response()->download($file);
-        $response->deleteFileAfterSend(true);
-
-        return $response;
-    }
-    public function exportExcel(){
-    return Excel::download(new DelayedWorksExport(), 'delayed_works.xlsx');
-    }
 
 //------------------- CALL API ĐỂ SỬA DỰ ÁN CON LV2-----------------------//
     public function show($id){

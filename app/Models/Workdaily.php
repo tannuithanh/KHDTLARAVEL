@@ -28,5 +28,7 @@ class Workdaily extends Model
         'Result',
         'ResultByWookWeek',
     ];
-
+    public function department(){
+        return $this->belongsTo(Department::class);
+    }
 }

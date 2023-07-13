@@ -23,7 +23,13 @@ class work_lv4_project extends Model
         'preceding_work_id', 
         'relationship_type' 
     ];
-    
+    public function updateDates($daysChange)
+{
+    $this->startdate = date('Y-m-d', strtotime("{$this->startdate} +{$daysChange} days"));
+    $this->enddate = date('Y-m-d', strtotime("{$this->enddate} +{$daysChange} days"));
+
+    $this->save();
+}
     public function workByProjectDepartment()
     {
         return $this->belongsTo(Work_By_Project_Department::class, 'work_by_project_department_id');

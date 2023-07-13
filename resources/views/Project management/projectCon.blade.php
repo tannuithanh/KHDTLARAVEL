@@ -174,15 +174,17 @@
                             </td>
                         @endif
                         <td style="text-align:center;">
-                            @if ($projectlv1->lock==0)
+                            @php
+                                $isSpecialDepartment = $user['department_id'] == 2; 
+                            @endphp
+                            @if ($projectlv1->lock == 0 || $isSpecialDepartment)
                                 @if ($user['name'] == $work->responsibility && $work->completion != 100)
                                     <a data-id="{{ $work->id }}" class="btn btn-outline-warning btn-sm edit" title="Cập nhật"><i class="ri-file-text-line"></i></a>
                                     <a data-id1="{{ $work->id }}" class="btn btn btn-outline-info btn-sm note" title="update"><i class="mdi mdi-microsoft-onenote"></i></a>
                                 @endif
-                                @if ($user['name'] == $projectLv3->responsibility && $work->completion != 100)
-                                <button type="button" class="btn btn-outline-secondary btn-sm sua ri-edit-box-fill" title="Sửa" data-dialog="dialog-{{ $work->id }}" data-project-department-start="{{ $projectLv3->startdate }}" data-project-department-end="{{ $projectLv3->enddate }}"></button>
-                                <button type="button" class="btn btn-outline-danger btn-sm delete ri-delete-bin-line" title="Xóa" data-dialog="dialog-{{ $work->id }}"></button>
-
+                                @if (($user['name'] == $projectLv3->responsibility && $work->completion != 100) || $isSpecialDepartment)
+                                    <button type="button" class="btn btn-outline-secondary btn-sm sua ri-edit-box-fill" title="Sửa" data-dialog="dialog-{{ $work->id }}" data-project-department-start="{{ $projectLv3->startdate }}" data-project-department-end="{{ $projectLv3->enddate }}"></button>
+                                    <button type="button" class="btn btn-outline-danger btn-sm delete ri-delete-bin-line" title="Xóa" data-dialog="dialog-{{ $work->id }}"></button>
                                 @endif
                             @else
                                 @if ($user['name'] == $work->responsibility && $work->completion != 100)
@@ -190,7 +192,7 @@
                                     <a data-id1="{{ $work->id }}" class="btn btn btn-outline-info btn-sm note" title="update"><i class="mdi mdi-microsoft-onenote"></i></a>
                                 @endif
                             @endif
-                        </td>
+                        </td>                        
                     </tr>
                 @endforeach
             </tbody>

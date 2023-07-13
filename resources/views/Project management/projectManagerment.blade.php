@@ -150,9 +150,10 @@
                             @endif
                         </tbody>
                     </table>
+                </div>
                     @include('include.footer')
-                    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-                    <script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
 //---------------------------------- XÓA DỰ ÁN ---------------------------------------//
                         document.addEventListener('DOMContentLoaded', function() {
                             const deleteButtons = document.querySelectorAll('.delete');

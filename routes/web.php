@@ -349,10 +349,15 @@ Route::post('/save-note-Lv4', [ProjecManagement::class, 'saveNoteLv4'])->name('s
         
 //------------------------------------------ TÁC VỤ CHO QUẢN LÝ DỰ án--------------------------------------//
         Route::get('/TAC-VU-LV1/{id}', [TacVu::class, 'TacVuLv1'])->name('TacVuLv1')->middleware('checkLogin');
+        Route::get('/TAC-VU-LV2/{id}', [TacVu::class, 'TacVuLv2'])->name('TacVuLv2')->middleware('checkLogin');
         Route::get('/getAllWorks/{id}', [TacVu::class, 'getAllWorks'])->name('getAllWorks')->middleware('checkLogin');
+        Route::get('/getAllWorksLv2/{id}', [TacVu::class, 'getAllWorksLv2'])->name('getAllWorksLv2')->middleware('checkLogin');
         Route::POST('/saveTacVu', [TacVu::class, 'saveTacVu'])->name('saveTacVu')->middleware('checkLogin');
         Route::POST('/updateTacVu', [TacVu::class, 'updateTacVu'])->name('updateTacVu')->middleware('checkLogin');
         Route::POST('/deleteTacVu', [TacVu::class, 'deleteTacVu'])->name('deleteTacVu')->middleware('checkLogin');
+        Route::POST('/CheckTacVu', [TacVu::class, 'CheckTacVu'])->name('CheckTacVu')->middleware('checkLogin');
+        Route::POST('/kiemtraLv4', [TacVu::class, 'kiemtraLv4'])->name('kiemtraLv4')->middleware('checkLogin');
+        
 
 
 

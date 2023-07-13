@@ -26,4 +26,7 @@ class Workmonth extends Model
         'Result',
 
     ];
+    public function department(){
+        return $this->belongsTo(Department::class);
+    }
 }

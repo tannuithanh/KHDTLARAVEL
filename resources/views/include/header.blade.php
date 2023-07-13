@@ -28,50 +28,50 @@
 <style>
         body {
         font-family: 'Times New Roman', Times, serif !important;
-}
-    #preloader {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: #ffffff;
-  z-index: 1001;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
+    }
+        #preloader {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ffffff;
+    z-index: 1001;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    }
 
-.spinner {
-  width: 150px;
-  height: 150px;
-  position: relative;
-  margin: 100px auto;
-}
+    .spinner {
+    width: 150px;
+    height: 150px;
+    position: relative;
+    margin: 100px auto;
+    }
 
-.double-bounce1, .double-bounce2 {
-  width: 100%;
-  height: 100%;
-  border-radius: 50%;
-  background-color: #333;
-  opacity: 0.6;
-  position: absolute;
-  top: 0;
-  left: 0;
-  animation: sk-bounce 2.0s infinite ease-in-out;
-}
+    .double-bounce1, .double-bounce2 {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background-color: #333;
+    opacity: 0.6;
+    position: absolute;
+    top: 0;
+    left: 0;
+    animation: sk-bounce 2.0s infinite ease-in-out;
+    }
 
-.double-bounce2 {
-  animation-delay: -1.0s;
-}
+    .double-bounce2 {
+    animation-delay: -1.0s;
+    }
 
-@keyframes sk-bounce {
-  0%, 100% { 
-    transform: scale(0.0);
-  } 50% { 
-    transform: scale(1.0);
-  }
-}
+    @keyframes sk-bounce {
+    0%, 100% { 
+        transform: scale(0.0);
+    } 50% { 
+        transform: scale(1.0);
+    }
+    }
 
 </style>
 
