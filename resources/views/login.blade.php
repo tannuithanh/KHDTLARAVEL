@@ -109,7 +109,9 @@
     <script src="{{ asset('assets/login/vendor/countdowntime/countdowntime.js') }}"></script>
     <!--===============================================================================================-->
     <script src="{{ asset('assets/login/js/main.js') }}"></script>
-
+    <script>
+        localStorage.removeItem('hideModal');
+    </script>
 </body>
 
 </html>

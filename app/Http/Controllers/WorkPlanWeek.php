@@ -358,7 +358,7 @@ class WorkPlanWeek extends Controller
         }
         // dd($alldata['workDescription_mon']);
         $mytime = date('Y-m-d H:i:s');
-        if($alldata['enddate']>$alldata['startdate']){
+        if($alldata['enddate']>=$alldata['startdate']){
         Workweek::insertGetId(
             [
                 'categoryWeek' => $alldata['categoryWeek'],

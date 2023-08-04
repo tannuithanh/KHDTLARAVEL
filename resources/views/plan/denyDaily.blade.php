@@ -97,7 +97,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @php $stt = 1 @endphp
+                            @php $stt = 1;  $dataExists = false; @endphp
                             @if (!$workDaily->isEmpty())
                                 @foreach ($workDaily as $key => $value)
                                 @if ($value->status == 3 || $value->status == -1)
@@ -127,8 +127,14 @@
                                                     
                                             </td>
                                         </tr>
+                                        @php $dataExists = true @endphp
                                     @endif
                                 @endforeach
+                                @if (!$dataExists)
+                                    <tr>
+                                        <td colspan="15" style="text-align: center;">Không có dữ liệu</td>
+                                    </tr>
+                                @endif
                             @else
                                 <tr>
                                     <td colspan="10" style="text-align: center;">Không có dữ liệu</td>

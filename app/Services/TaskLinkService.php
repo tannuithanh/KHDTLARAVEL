@@ -3,9 +3,10 @@
 namespace App\Services;
 
 use App\Models\TaskLink;
+use Illuminate\Support\Carbon;
+use App\Models\work_lv4_project;
 use App\Models\ProjectDepartment;
 use App\Models\Work_By_Project_Department;
-use App\Models\work_lv4_project;
 
 class TaskLinkService 
 {
@@ -131,48 +132,106 @@ class TaskLinkService
         }
     }
 
+    // Hàm này để lấy các công việc con 
+    public function layCacCongViecCon($parentTaskId, $taskType) {
+        switch ($taskType) {
+            case 'project_department':
+                $parentTask = ProjectDepartment::find($parentTaskId);
+                return $parentTask->works;
+                break;
+            case 'work_by_project_department':
+                $parentTask = Work_By_Project_Department::find($parentTaskId);
+                return $parentTask->work_lv4_projects;
+                break;
+        }
+        return [];
+    }
+    
+
     // Hàm này để cập nhật ngày bắt đầu và kết thúc dựa trên loại mối quan hệ
+
     public function capNhatNgayTheoQuanHe($relationshipType, $dependentTaskId, $dependentTaskTable, $relatedTaskId, $relatedTaskTable) {
         $relatedTask = $this->layCongViecLienQuan($relatedTaskId, $relatedTaskTable);
         $dependentTask = $this->layCongViecPhuThuoc($dependentTaskId, $dependentTaskTable);
-
+    
+        $oldStartdate = Carbon::parse($relatedTask->startdate);
+        $oldEnddate = Carbon::parse($relatedTask->enddate);
+        // Cập nhật các công việc con dựa trên chênh lệch ngày giữa công việc cha và con trước khi công việc cha được cập nhật
+        switch ($relatedTaskTable) {
+            case 'project_department':
+                $this->capNhatCacCongViecCon($relatedTask, 'project_department');
+                break;
+            case 'work_by_project_department':
+                $this->capNhatCacCongViecCon($relatedTask, 'work_by_project_department');
+                break;
+        }
         switch ($relationshipType) {
-            case 'FS':
+            case 'FS (Finish-to-Start)':
                 // Quan hệ FS: công việc liên quan không thể bắt đầu cho đến khi công việc phụ thuộc hoàn thành.
-                if ($relatedTask->startdate < $dependentTask->enddate) {
-                    $relatedTask->startdate = $dependentTask->enddate->addDay(); // Hoặc thêm bất kỳ khoảng thời gian bạn muốn
+                $newStartdate = Carbon::parse($dependentTask->enddate)->addDay();
+                if ($oldStartdate < $newStartdate) {
+                    $dateDiff = $oldStartdate->diffInDays($newStartdate);
+                    $relatedTask->startdate = $newStartdate;
+                    $relatedTask->enddate = $oldEnddate->addDays($dateDiff);
                     $relatedTask->save();
                 }
                 break;
-            case 'SS':
+            case 'SS (Start-to-Start)':
                 // Quan hệ SS: công việc liên quan không thể bắt đầu cho đến khi công việc phụ thuộc bắt đầu.
-                if ($relatedTask->startdate < $dependentTask->startdate) {
-                    $relatedTask->startdate = $dependentTask->startdate;
+                $newStartdate = Carbon::parse($dependentTask->startdate);
+                if ($oldStartdate < $newStartdate) {
+                    $dateDiff = $oldStartdate->diffInDays($newStartdate);
+                    $relatedTask->startdate = $newStartdate;
+                    $relatedTask->enddate = $oldEnddate->addDays($dateDiff);
                     $relatedTask->save();
                 }
                 break;
-            case 'SF':
+            case 'SF (Start-to-Finish)':
                 // Quan hệ SF: công việc liên quan không thể kết thúc cho đến khi công việc phụ thuộc bắt đầu.
-                if ($relatedTask->enddate < $dependentTask->startdate) {
-                    $relatedTask->enddate = $dependentTask->startdate;
+                $newEnddate = Carbon::parse($dependentTask->startdate);
+                if ($oldEnddate < $newEnddate) {
+                    $dateDiff = $oldEnddate->diffInDays($newEnddate);
+                    $relatedTask->startdate = $oldStartdate->subDays($dateDiff);
+                    $relatedTask->enddate = $newEnddate;
                     $relatedTask->save();
                 }
                 break;
-            case 'FF':
+            case 'FF (Finish-to-Finish)':
                 // Quan hệ FF: công việc liên quan không thể kết thúc cho đến khi công việc phụ thuộc hoàn thành.
-                if ($relatedTask->enddate < $dependentTask->enddate) {
-                    $relatedTask->enddate = $dependentTask->enddate;
+                $newEnddate = Carbon::parse($dependentTask->enddate);
+                if ($oldEnddate < $newEnddate) {
+                    $dateDiff = $oldEnddate->diffInDays($newEnddate);
+                    $relatedTask->startdate = $oldStartdate->subDays($dateDiff);
+                    $relatedTask->enddate = $newEnddate;
                     $relatedTask->save();
                 }
                 break;
         }
-        
-        // Cập nhật các công việc khác liên kết với công việc liên quan vừa được cập nhật
-        $congViecLienKet = TaskLink::where('dependent_task_id', $relatedTaskId)->get();
-        foreach ($congViecLienKet as $task) {
-            $this->capNhatNgayTheoQuanHe($task->relationship_type, $task->dependent_task_id, $task->dependent_task_table, $task->related_task_id, $task->related_task_table);
+                // Cập nhật các công việc khác liên kết với công việc liên quan vừa được cập nhật
+                $taskLinks = TaskLink::where('dependent_task_id', $relatedTaskId)
+                ->where('dependent_task_table', $relatedTaskTable)
+                ->get();
+                foreach ($taskLinks as $taskLink) {
+                    $this->capNhatNgayTheoQuanHe($taskLink->relationship_type, $taskLink->dependent_task_id, $taskLink->dependent_task_table, $taskLink->related_task_id, $taskLink->related_task_table);
+                }
+                
+    }
+    public function capNhatCacCongViecCon($parentTask, $taskType) {
+        $congViecCon = $this->layCacCongViecCon($parentTask->id, $taskType);
+        $oldStartdate = $parentTask->startdate;
+        $oldEnddate = $parentTask->enddate;
+        foreach ($congViecCon as $task) {
+            // Lưu lại chênh lệch ngày bắt đầu và kết thúc giữa công việc cha cũ và con
+            $startDiff = Carbon::parse($task->startdate)->diffInDays($oldStartdate);
+            $endDiff = Carbon::parse($task->enddate)->diffInDays($oldEnddate);
+    
+            // Cập nhật ngày bắt đầu và kết thúc của công việc con dựa trên công việc cha mới và chênh lệch đã được lưu
+            $task->startdate = Carbon::parse($parentTask->startdate)->addDays($startDiff);
+            $task->enddate = Carbon::parse($parentTask->enddate)->addDays($endDiff);
+            $task->save();
         }
     }
+    
 
     public function addTaskLink($data) {
     

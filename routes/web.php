@@ -1,17 +1,20 @@
 <?php
 
 use App\Http\Controllers\Login;
+use App\Http\Controllers\TacVu;
 use App\Http\Controllers\Logout;
 use App\Http\Controllers\Profile;
 use App\Http\Controllers\dashboard;
 use App\Http\Controllers\ReportPlan;
+use App\Http\Controllers\ChartGoogle;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\WorkPlanWeek;
 use App\Http\Controllers\setting\Teams;
 use App\Http\Controllers\setting\Users;
 use App\Http\Controllers\WorkPlanDaily;
-use App\Http\Controllers\TacVu;
 use App\Http\Controllers\ChatController;
+use App\Http\Controllers\notifacecation;
+use App\Http\Controllers\TaoLichLamViec;
 use App\Http\Controllers\ProjecManagement;
 use App\Http\Controllers\ApproveDaiLyWeekly;
 use App\Http\Controllers\ProjectProfessional;
@@ -108,42 +111,42 @@ Route::get('/dashboard', [Dashboard::class, 'dashboardGet'])->name('DashBoard')-
         Route::POST('/WeedenyTP', [ApproveDaiLyWeekly::class, 'WeedenyTP'])->name('WeedenyTP');
     });
 //--------------------------------------Danh sách --------------------------------------------//
-Route::middleware('checkLogin')->prefix('/plan')->group(function () {
-    Route::get('/workWeek', [WorkPlanWeek::class, 'viewListWorkWeek'])->name('listWorkWeek');
-    Route::post('/workWeek', [WorkPlanWeek::class, 'searchListWork'])->name('searchlistWorkWeek');
-    //-------------------------------------- PHẢN HỒI TRẢ JSON VỀ AJAX  --------------------------------------------//    
-    Route::get('/workWeek/departments', [WorkPlanWeek::class, 'getDepartments'])->name('listWorkWeekdepartments');;
-    Route::get('/workWeek/users', [WorkPlanWeek::class, 'getUsers'])->name('listWorkWeekUsers');;
-    //-------------------------------------- PHẢN HỒI TRẢ JSON VỀ AJAX LÝ DO --------------------------------------------//  
-    Route::post('/update-reason', [WorkPlanWeek::class, 'updateReason'])->name('updateReason');
+    Route::middleware('checkLogin')->prefix('/plan')->group(function () {
+        Route::get('/workWeek', [WorkPlanWeek::class, 'viewListWorkWeek'])->name('listWorkWeek');
+        Route::post('/workWeek', [WorkPlanWeek::class, 'searchListWork'])->name('searchlistWorkWeek');
+        //-------------------------------------- PHẢN HỒI TRẢ JSON VỀ AJAX  --------------------------------------------//    
+        Route::get('/workWeek/departments', [WorkPlanWeek::class, 'getDepartments'])->name('listWorkWeekdepartments');;
+        Route::get('/workWeek/users', [WorkPlanWeek::class, 'getUsers'])->name('listWorkWeekUsers');;
+        //-------------------------------------- PHẢN HỒI TRẢ JSON VỀ AJAX LÝ DO --------------------------------------------//  
+        Route::post('/update-reason', [WorkPlanWeek::class, 'updateReason'])->name('updateReason');
 
-    //-------------------------------------- PHẢN HỒI TRẢ JSON VỀ ĐỒNG Ý LÝ DO --------------------------------------------//  
-    Route::post('/accept-reason', [WorkPlanWeek::class, 'acceptReason'])->name('acceptReason');
-    //-------------------------------------- PHẢN HỒI TRẢ JSON VỀ TỪ CHỐI LÝ DO --------------------------------------------//  
-    Route::post('/deny-reason', [WorkPlanWeek::class, 'denyReason'])->name('denyReason');
-});
+        //-------------------------------------- PHẢN HỒI TRẢ JSON VỀ ĐỒNG Ý LÝ DO --------------------------------------------//  
+        Route::post('/accept-reason', [WorkPlanWeek::class, 'acceptReason'])->name('acceptReason');
+        //-------------------------------------- PHẢN HỒI TRẢ JSON VỀ TỪ CHỐI LÝ DO --------------------------------------------//  
+        Route::post('/deny-reason', [WorkPlanWeek::class, 'denyReason'])->name('denyReason');
+    });
 
 //-------------------------------------- TẠO/XÓA/SỬA KẾ HOẠCH  --------------------------------------------//    
-Route::middleware('checkLogin')->prefix('/creat')->group(function () {
+    Route::middleware('checkLogin')->prefix('/creat')->group(function () {
 
-    //-------------------------------------- TẠO KẾ HOẠCH TUẦN  --------------------------------------------//
-    Route::get('/choosedate', [WorkPlanWeek::class, 'chooseDate'])->name('chooseDate.get');
-    Route::POST('/choosedate', [WorkPlanWeek::class, 'showWeekdays'])->name('showWeekdays.get');
+        //-------------------------------------- TẠO KẾ HOẠCH TUẦN  --------------------------------------------//
+        Route::get('/choosedate', [WorkPlanWeek::class, 'chooseDate'])->name('chooseDate.get');
+        Route::POST('/choosedate', [WorkPlanWeek::class, 'showWeekdays'])->name('showWeekdays.get');
 
 
-    Route::get('/creatWorkWeek', [WorkPlanWeek::class, 'creatWorkWeek'])->name('creatWorkWeek.get');
-    Route::post('/creatWorkWeek', [WorkPlanWeek::class, 'insertWorkWeek']);
-    //-------------------------------------- XÓA KẾ HOẠCH TUẦN  --------------------------------------------//
-    Route::post('/deleteWorkWeek', [WorkPlanWeek::class, 'deleteWorkWeek'])->name('deleteWorkWeek');
+        Route::get('/creatWorkWeek', [WorkPlanWeek::class, 'creatWorkWeek'])->name('creatWorkWeek.get');
+        Route::post('/creatWorkWeek', [WorkPlanWeek::class, 'insertWorkWeek']);
+        //-------------------------------------- XÓA KẾ HOẠCH TUẦN  --------------------------------------------//
+        Route::post('/deleteWorkWeek', [WorkPlanWeek::class, 'deleteWorkWeek'])->name('deleteWorkWeek');
 
-    //-------------------------------------- SỬA KẾ HOẠCH TUẦN  --------------------------------------------//
-    Route::get('/editWorkWeek/{id}', [WorkPlanWeek::class, 'editWorkWeek'])->name('editWorkWeek');
-    Route::post('/editWorkWeek/{id}', [WorkPlanWeek::class, 'updateWorkWeek'])->name('updateWorkWeekEdit');
+        //-------------------------------------- SỬA KẾ HOẠCH TUẦN  --------------------------------------------//
+        Route::get('/editWorkWeek/{id}', [WorkPlanWeek::class, 'editWorkWeek'])->name('editWorkWeek');
+        Route::post('/editWorkWeek/{id}', [WorkPlanWeek::class, 'updateWorkWeek'])->name('updateWorkWeekEdit');
 
-    //-------------------------------------- CẬP NHẬT KẾ HOẠCH TUẦN  --------------------------------------------//
-    Route::get('/updateWorkWeek/{id}', [WorkPlanWeek::class, 'updateWorkWeekGet'])->name('updateWorkWeek');
-    Route::post('/updateWorkWeek/{id}', [WorkPlanWeek::class, 'updateWorkWeekPost'])->name('updateWorkWeekpost');
-});
+        //-------------------------------------- CẬP NHẬT KẾ HOẠCH TUẦN  --------------------------------------------//
+        Route::get('/updateWorkWeek/{id}', [WorkPlanWeek::class, 'updateWorkWeekGet'])->name('updateWorkWeek');
+        Route::post('/updateWorkWeek/{id}', [WorkPlanWeek::class, 'updateWorkWeekPost'])->name('updateWorkWeekpost');
+    });
 
 
 
@@ -297,8 +300,7 @@ Route::delete('/project-Lv4/{id}', [ProjecManagement::class, 'deleteLv4'])->name
     Route::put('/lock/{id}', [ProjecManagement::class, 'lock'])->name('lock');
     Route::put('/unlock/{id}', [ProjecManagement::class, 'unlock'])->name('unlock');
     Route::post('/updateProjectStatus', [ProjecManagement::class, 'updateStatus'])->name('update.status');
-    Route::post('import-excel', [ProjecManagement::class, 'importExcel'])->name('importExcel');
-    Route::get('export-excel', [ProjecManagement::class, 'exportExcel'])->name('exportExcel');
+    Route::post('import-excel', [ProjecManagement::class, 'importExcel'])->name('importExcel');;
     Route::post('import-Handmade', [ProjecManagement::class, 'importHandmade'])->name('importHandmade');
     Route::post('import-Handmade-Lv4', [ProjecManagement::class, 'importHandmadeLv4'])->name('importHandmadeLv4');
     Route::post('import-excel-lv4', [ProjecManagement::class, 'importExcelLv4'])->name('importExcelLv4');
@@ -358,15 +360,16 @@ Route::post('/save-note-Lv4', [ProjecManagement::class, 'saveNoteLv4'])->name('s
         Route::POST('/CheckTacVu', [TacVu::class, 'CheckTacVu'])->name('CheckTacVu')->middleware('checkLogin');
         Route::POST('/kiemtraLv4', [TacVu::class, 'kiemtraLv4'])->name('kiemtraLv4')->middleware('checkLogin');
         
+//------------------------------------------ LICH LÀM VIỆC--------------------------------------//
+        Route::get('/TaoLichLamviec', [TaoLichLamViec::class, 'TaoLichLamViec'])->name('TaoLichLamViec');
+        Route::Post('/TaoLichLamviec1', [TaoLichLamViec::class, 'TaoLichLamViec1'])->name('TaoLichLamViec1');
 
 
 
 
 
-
-
- //-------------------- CHAT REALTIME -----------------------//
-Route::get('/chat', [ChatController::class, 'chat'])->middleware('auth');
+ //-------------------- CHUÔNG THÔNG BÁO -----------------------//
+Route::get('/notiface', [notifacecation::class, 'notiface']);
 
 
 

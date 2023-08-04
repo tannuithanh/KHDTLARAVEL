@@ -139,7 +139,10 @@
                                                         title="Xóa" data-dialog="dialog-{{ $value->id }}"
                                                         data-id="{{ $value->id }}"></button>
                                             @endif
-                                            
+                                            <button type="button"
+                                            class="btn btn-outline-danger btn-sm delete ri-delete-bin-line"
+                                            title="Xóa" data-dialog="dialog-{{ $value->id }}"
+                                            data-id="{{ $value->id }}"></button>
                                         </td>
                                     </tr>
                                 @endforeach
@@ -151,9 +154,10 @@
                         </tbody>
                     </table>
                 </div>
+            </div>
                     @include('include.footer')
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<script>
+                    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+                    <script>
 //---------------------------------- XÓA DỰ ÁN ---------------------------------------//
                         document.addEventListener('DOMContentLoaded', function() {
                             const deleteButtons = document.querySelectorAll('.delete');

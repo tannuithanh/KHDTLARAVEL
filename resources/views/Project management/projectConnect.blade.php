@@ -316,6 +316,8 @@
                         style="font-size: 20px; font-family: 'Times New Roman', Times, serif !important;"
                         data-dialog="dialog-{{ $project->id }}"><i class="mdi mdi-database-import"></i></button>
                 @endif
+                <button id="showGanttChartButton" type="button" class="btn ri ri-line-chart-fill btn-outline-info waves-effect waves-light" data-bs-toggle="offcanvas" data-bs-target="#offcanvasChart" aria-controls="offcanvasChart"></button>
+                <button class="btn btn-outline-success waves-effect waves-light" ><i class="mdi mdi-microsoft-excel"></i></button>
             </div>
             @if (Session::has('error'))
                 <div class="alert alert-info alert-dismissible fade show" role="alert">
@@ -326,8 +328,6 @@
             <div class="card-body">
                 <div id="project-json" style="display:none;">{!! json_encode($projectJson) !!}</div>
                 <div id="timeline" class="timeline" style="margin-top:10px"></div>
-
-
                 <table class="table table-bordered border-primary mb-2 mt-5">
                     <thead>
                         <tr>
@@ -340,7 +340,7 @@
                             <th style="text-align:center ;" class="table-header">Ghi chú</th>
                             <th style="text-align:center ; width: 6%;" class="table-header">Kết quả</th>
                             <th style="text-align:center ;" class="table-header">Trạng thái</th>
-                            <th style="text-align:center ; padding: 70px;" class="table-header">Thao tác</th>
+                            <th style="text-align:center ; padding: 70px;" class="table-header thactac3">Thao tác</th>
 
                         </tr>
                     </thead>
@@ -430,8 +430,8 @@
                                 @endif
                                 <td style="width: 10px;text-align: center;" class="thaotac">
                                     @php
-                                        $isEditable = $value->completion != 100 && !$hasWorkByProjectDepartment && $user['department_id'] == $value['department_id'];
-                                        $addTask = $value->completion != 100 && $user['department_id'] == $value['department_id'];
+                                        $isEditable = $value->completion != 100 && !$hasWorkByProjectDepartment && ($user['department_id'] == $value['department_id'] || $user['department_id1'] == $value['department_id']);
+                                        $addTask = $value->completion != 100 && ($user['department_id'] == $value['department_id'] || $user['department_id1'] == $value['department_id']);
                                         $isManager = in_array($user['position_id'], [5, 6, 7, 1, 2]);
                                         $canAddTask = in_array($user['position_id'], [5, 6, 1, 2]);
                                         $isCreator = $user['name'] == $project->name_create;
@@ -458,16 +458,16 @@
                                             <button type="button"
                                                 class="btn btn-outline-danger btn-sm delete ri-delete-bin-line"
                                                 title="Xóa" data-dialog="dialog-{{ $value->id }}"></button>
-                                            <button type="button" class="btn btn-outline-info btn-sm link mt-1 mb-1"
-                                                title="Tác vụ" data-id="{{ $value->id }}"
-                                                data-dialog="dialog-{{ $value->id }}">Liên kết</button>
+
                                         @endif
                                     @endif
-
-                                    <button type="button"
+                                    {{-- <button type="button" class="btn btn-outline-info btn-sm link mt-1 mb-1"
+                                    title="Tác vụ" data-id="{{ $value->id }}"
+                                    data-dialog="dialog-{{ $value->id }}">Liên kết</button> --}}
+                                    {{-- <button type="button"
                                         class="btn btn-link btn-rounded waves-effect check_task_link mt-1 mb-1"
                                         title="Kiểm tra liên kết" data-id="{{ $value->id }}"
-                                        data-dialog="dialog-{{ $value->id }}">Link</button>
+                                        data-dialog="dialog-{{ $value->id }}">Link</button> --}}
                                 </td>
                             </tr>
                             {{-- ------------------------------------------------------- Bảng con ------------------------------------------------------------------------------- --}}
@@ -484,18 +484,15 @@
                                     @endphp
                                     <tr class="child-row" data-parent-id="{{ $value->id }}"data-id="{{ $work->id }}">
 
-                                        <td colspan="2" class="merged-cell">
-                                            <span class="stt">{{ $stt - 1 . '.' . $childStt++ }}</span>
-                                            <span class="child-content">
-                                                <a class="texta"
-                                                    href="{{ route('ProjectCon', $work->id) }}">{{ $work->name_work }}</a>
-                                                @php
-                                                    $hasChildTaskWithUserResponsibility = $workByProjectDepartment->work_lv4_projects->firstWhere('responsibility', $user['name']) !== null;
-                                                @endphp
-                                                @if ($hasChildTaskWithUserResponsibility)
-                                                    <span style="color: red;">*</span>
-                                                @endif
-                                            </span>
+                                        <td class="stt" style="text-align: center">{{ $stt - 1 . '.' . $childStt++ }}</td>
+                                        <td class="child-content">
+                                            {{ $work->name_work }}
+                                            @php
+                                                $hasChildTaskWithUserResponsibility = $workByProjectDepartment->work_lv4_projects->firstWhere('responsibility', $user['name']) !== null;
+                                            @endphp
+                                            @if ($hasChildTaskWithUserResponsibility)
+                                                <span style="color: red;">*</span>
+                                            @endif
                                         </td>
                                         <td style="text-align: left">{{ $work->responsibility }} </td>
                                         <td style="text-align:center; vertical-align: middle; width: 10%;">
@@ -546,14 +543,14 @@
                                         <td style="text-align: center" class="thaotac2">
                                             @php
                                                 // Định nghĩa các biến kiểm tra
-                                                $canUpdate = $user['department_id'] == $value->department_id && $work->completion != 100 && !$hasWorkLv4Projects && $user['name'] == $work['responsibility'];
-                                                $isManager = $user['department_id'] == $value->department_id && in_array($user['position_id'], [5, 6]);
+                                                $canUpdate = $work->completion != 100 && !$hasWorkLv4Projects && $user['name'] == $work['responsibility'];
+                                                $isManager = ( $user['department_id'] == $value->department_id || $user['department_id1'] == $value->department_id ) && in_array($user['position_id'], [5, 6]);
                                                 $isSpecialDepartment = $user['department_id'] == 2; // Kiểm tra nếu user thuộc phòng ban số 2
                                             @endphp
 
                                             <!-- Kiểm tra nếu project chưa bị khóa hoặc user thuộc phòng ban số 2 -->
-                                            @if ($project->lock == 0 || $isSpecialDepartment )
-                                                @if ($canUpdate || $user['name'] == $work->responsibility)
+                                            @if ($project->lock == 0 || $isSpecialDepartment  )
+                                                @if ($canUpdate)
                                                     <a data-id1="{{ $work->id }}"
                                                         class="btn btn-outline-warning btn-sm edit1"
                                                         title="Cập nhật"><i class="ri-file-text-line"></i></a>
@@ -572,10 +569,7 @@
                                                         class="btn btn-outline-danger btn-sm deleteWork ri-delete-bin-line"
                                                         title="Xóa" data-dialog="dialog-{{ $work->id }}"
                                                         data-work-id="{{ $work->id }}"></button>
-                                                    <button type="button"
-                                                        class="btn btn-outline-info btn-sm linkLv2 mt-1 mb-1"
-                                                        title="Tác vụ" data-id="{{ $work->id }}"
-                                                        data-dialog="dialog-{{ $work->id }}">Liên kết</button>
+                                                    
                                                 @endif
                                             @else
                                                 @if ($canUpdate || $isSpecialDepartment )
@@ -587,10 +581,10 @@
                                                             class="mdi mdi-microsoft-onenote"></i></a>
                                                 @endif
                                             @endif
-                                            <button type="button"
+                                            {{-- <button type="button"
                                                 class="btn btn-link btn-rounded waves-effect check_task_link mt-1 mb-1"
                                                 title="Kiểm tra liên kết" data-id="{{ $work->id }}"
-                                                data-dialog="dialog-{{ $work->id }}">Link</button>
+                                                data-dialog="dialog-{{ $work->id }}">Link</button> --}}
                                         </td>
                                     </tr>
                                 @endforeach
@@ -641,8 +635,24 @@
         </div>
     </div>
 
+<!-- Phần offcanvas chứa biểu đồ Gantt -->
+<div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasChart" aria-labelledby="offcanvasChartLabel" style="width: 100%;">
+    <div class="offcanvas-header">
+        <h5 id="offcanvasChartLabel">Biểu đồ Gantt: <span style="color: red">{{$project->name_project}}</span></h5>
+        <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body">
+        <!-- Đặt biểu đồ Gantt ở đây -->
+        <div id="chart_div" style="height: auto;"></div>
+    </div>
+</div>
 
 @include('include.footer')
+<script src="https://unpkg.com/xlsx/dist/xlsx.full.min.js"></script>
+<script src="https://code.highcharts.com/gantt/highcharts-gantt.js"></script>
+<script src="https://code.highcharts.com/gantt/modules/exporting.js"></script>
+<script src="https://code.highcharts.com/gantt/modules/accessibility.js"></script>
+
 <script src="{{ asset('assets/js/jquery-3.7.0.min.js') }}"></script>
 <script>
 //----------------------------------- CÂY THƯỚC THỂ HIỂN ----------------------///
@@ -1732,7 +1742,7 @@
             }
         });
     });
-    //---- SUA TAC VU -----//
+//---- SUA TAC VU -----//
     $(document).on('click', '.edittasklv1', function() {
         var $row = $(this).closest('tr');
         var taskId = $row.data('id');
@@ -2256,7 +2266,7 @@
             }
         });
     });
-    //---- SUA TAC VU -----//
+//---- SUA TAC VU -----//
     $(document).on('click', '.edittasklv1', function() {
         var $row = $(this).closest('tr');
         var taskId = $row.data('id');
@@ -2348,4 +2358,155 @@
             }
         });
     });
+</script>
+<script type="text/javascript">
+    document.getElementById("showGanttChartButton").addEventListener("click", function() {
+        veBieuDo();
+    });
+
+    function veBieuDo() {
+        var duAn = {!! json_encode($project) !!};
+        var conDuAn = {!! json_encode($project_department) !!};
+
+        var tasks = [];
+
+        // Thêm dữ liệu cho dự án chính
+        tasks.push({
+            start: Date.parse(duAn.start_date),
+            end: Date.parse(duAn.end_date),
+            name: duAn.name_project,
+            completed: {
+                amount: duAn.completion / 100
+            }
+        });
+
+        // Xử lý thời gian cho từng công việc con
+        for (var i = 0; i < conDuAn.length; i++) {
+            var start = Date.parse(conDuAn[i].startdate);
+            var end = Date.parse(conDuAn[i].enddate);
+
+            // Nếu ngày bắt đầu bằng ngày kết thúc, thêm 1 ngày vào ngày kết thúc
+            if (start === end) {
+                end += 24 * 60 * 60 * 1000; // Thêm 1 ngày (tính bằng milliseconds)
+            }
+
+            tasks.push({
+                start: start,
+                end: end,
+                name: conDuAn[i].name,
+                completed: {
+                    amount: conDuAn[i].completion / 100
+                }
+            });
+        }
+
+        Highcharts.ganttChart('chart_div', {
+            chart: {
+                height: 1000 // Chiều cao của biểu đồ
+            },
+            title: {
+                text: 'Biểu đồ Gantt'
+            },
+            xAxis: {
+                minPadding: 0.05,
+                maxPadding: 0.05
+            },
+            series: [{
+                name: 'Dự án',
+                data: tasks
+            }]
+        });
+    }
+
+
+</script>
+<script>
+document.querySelector('.btn.btn-outline-success').addEventListener('click', function(e) {
+    e.preventDefault();
+
+    // Hiển thị tất cả các hàng con
+    var childRows = document.querySelectorAll('.child-row');
+    childRows.forEach(function(row) {
+        row.style.display = 'table-row';
+    });
+
+    // Ẩn cột "Thao tác"
+    var actionColumns = document.querySelectorAll('.thaotac, .thaotac2 ,thaotac3');
+    actionColumns.forEach(function(column) {
+        column.style.display = 'none';
+    });
+
+    // Lấy ra bảng HTML
+    var table = document.querySelector('table');
+    var tbody = table.querySelector('tbody');
+
+    var data = Array.from(tbody.querySelectorAll('tr')).map(function(row) {
+        var cells = row.querySelectorAll('td');
+        return [
+            cells[0].textContent.trim(),
+            cells[1].textContent.trim(),
+            cells[2].textContent.trim(),
+            cells[3].textContent.trim().replace(/\s+/g, ' '),
+            cells[4].textContent.trim(),
+            cells[5].textContent.trim(),
+            cells[6].textContent.trim(),
+            cells[7].textContent.trim(),
+            cells[8].textContent.trim(),
+        ];
+    });
+
+    // Tạo một Workbook
+    var wb = XLSX.utils.book_new();
+
+    // Headers
+    var headers = ['STT', 'Tên công việc', 'Trách nhiệm', 'Thời gian', 'Ngày bắt đầu', 'Ngày kết thúc', 'Ghi chú', 'Kết quả', 'Trạng thái'];
+
+    // Thêm headers vào đầu array of arrays
+    data.unshift(headers);
+
+    // Tạo một Worksheet từ dữ liệu array of arrays
+    var ws = XLSX.utils.aoa_to_sheet(data);
+
+    // Define border styles
+    var border = { top: { style: 'thin' }, bottom: { style: 'thin' }, left: { style: 'thin' }, right: { style: 'thin' } };
+
+    // Apply borders to all cells
+    var range = XLSX.utils.decode_range(ws['!ref']);
+    for(var R = range.s.r; R <= range.e.r; ++R) {
+        for(var C = range.s.c; C <= range.e.c; ++C) {
+            var cell_address = {c:C, r:R};
+            var cell_ref = XLSX.utils.encode_cell(cell_address);
+            if(!ws[cell_ref]) ws[cell_ref] = {t:'s', v:""};
+            ws[cell_ref].s = { border: border };
+        }
+    }
+
+    // Set background color for the first row (headers)
+    for(var C = range.s.c; C <= range.e.c; ++C) {
+        var cell_address = {c:C, r:0};
+        var cell_ref = XLSX.utils.encode_cell(cell_address);
+        if(!ws[cell_ref]) ws[cell_ref] = {t:'s', v:""};
+        ws[cell_ref].s = { 
+            fill: { fgColor: { rgb: "FFFF00" } },  // yellow background
+            border: border
+        };
+    }
+
+    // Thêm Worksheet vào Workbook
+    XLSX.utils.book_append_sheet(wb, ws, "@php echo $project->name_project; @endphp");
+
+    // Xuất ra file Excel
+    XLSX.writeFile(wb, "@php echo $project->name_project; @endphp.xlsx");
+
+    // Hiển thị lại cột "Thao tác"
+    actionColumns.forEach(function(column) {
+        column.style.display = 'table-cell';
+    });
+
+    // Ẩn lại các hàng con
+    childRows.forEach(function(row) {
+        row.style.display = 'none';
+    });
+});
+
 </script>

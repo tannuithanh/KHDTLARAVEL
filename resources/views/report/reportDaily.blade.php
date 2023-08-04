@@ -90,7 +90,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @php $stt = 1 @endphp
+                            @php $stt = 1; $dataExists = false; @endphp
                                 @foreach ($workDaily as $value)
                                 @if ($value->status == 4)
                                 <tr>
@@ -110,12 +110,18 @@
                                     <td style="text-align:left ;" >{!! nl2br($value->inadequacy) !!}</td>
                                     <td style="text-align:left ;" >{!! nl2br($value->propose) !!}</td>
                                 </tr>
+                                @php $dataExists = true @endphp
                                 @endif
                                 @endforeach
+                                @if (!$dataExists)
+                                    <tr>
+                                        <td colspan="15" style="text-align: center;">Không có dữ liệu</td>
+                                    </tr>
+                                @endif
                         </tbody>
                     </table>
                     @if (in_array($user['position_id'], [5, 6, 7, 8,9,10,11]))
-                    <button id="send-email-btn" class="btn btn-info waves-effect waves-light">
+                    <button id="send-email-btn" class=" mt-2 btn btn-info waves-effect waves-light">
                         <span>Gửi mail</span>
                         <i class="fab fa-telegram-plane ms-2"></i>
                     </button>

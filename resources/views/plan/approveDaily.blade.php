@@ -118,7 +118,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @php $stt = 1 @endphp
+                            @php $stt = 1; $dataExists = false; @endphp
                             @if (!$workDaily->isEmpty())
                                 @foreach ($workDaily as $key => $value)
                                 @if (($value->status == 1 && $user['position_id'] == 7) || ($value->status == 1 && $value->responsibility == $user['name']))
@@ -181,8 +181,10 @@
                                                 @endif
                                             </td>
                                         </tr>
+                                        @php $dataExists = true @endphp
                                     @endif
                                 @endforeach
+                            
                             @else
                                 <tr>
                                     <td colspan="10" style="text-align: center;">Không có dữ liệu</td>
@@ -198,76 +200,44 @@
 </div>
 @include('include.footer')
 <script>
-        // ------------------------------------------ JS TÌM KIẾM PHÒNG BAN --------------------------------------------------//    
-        $(document).ready(function() {
-        $('[name="departmentsId"]').on('change', function() {
-            var departmentId = $('[name="departmentsId"]').val();
-            if (departmentId) {
-                $.ajax({
-                    url: "{!! route('listWorkWeekdepartments') !!}",
-                    type: 'GET',
-                    data: {
-                        departments_id: departmentId,
-                        token: '{!! csrf_token() !!}'
-                    },
-                    success: function(response) {
-                        console.log(response);
-
-                        var options1 = '<option value="0">Tất cả</option>';
-                        if (response.teamId && response.teamId.length > 0) {
-                            $.each(response.teamId, function(index, team) {
-                                options1 += '<option value="' + team.id + '">' +
-                                    team.name + '</option>';
-
-                            });
-
-                        } else {
-                            options = '<option value="0">Tất cả</option>';
-                        }
-                        $('select[name="teamId"]').html(options1).attr('selected',
-                            'selected');;
-
-                        var options = '<option value="">Tất cả</option>';
-                        if (response.users && response.users.length > 0) {
-                            $.each(response.users, function(index, user) {
-                                options += '<option value="' + user.name + '">' +
-                                    user
-                                    .name + '</option>';
-                            });
-                        } else {
-                            options = '<option value="0">Tất cả</option>';
-                        }
-                        $('select[name="userName"]').html(options);
-                    }
-                });
-            } else {
-                $('select[name="userName"]').html('<option value="">Tất cả</option>');
-            }
-        });
-    });
-
-    // ------------------------------------------ JS TÌM KIẾM NHÂN SỰ --------------------------------------------------//    
-    $('[name="teamId"]').on('change', function() {
-        var teamId = $('[name="teamId"]').val();
-        if (teamId) {
+    // ------------------------------------------ JS TÌM KIẾM PHÒNG BAN --------------------------------------------------//    
+    $(document).ready(function() {
+    $('[name="departmentsId"]').on('change', function() {
+        var departmentId = $('[name="departmentsId"]').val();
+        if (departmentId) {
             $.ajax({
-                url: "{!! route('listWorkWeekUsers') !!}",
+                url: "{!! route('listWorkWeekdepartments') !!}",
                 type: 'GET',
                 data: {
-                    team_id: teamId,
+                    departments_id: departmentId,
                     token: '{!! csrf_token() !!}'
                 },
                 success: function(response) {
                     console.log(response);
 
+                    var options1 = '<option value="0">Tất cả</option>';
+                    if (response.teamId && response.teamId.length > 0) {
+                        $.each(response.teamId, function(index, team) {
+                            options1 += '<option value="' + team.id + '">' +
+                                team.name + '</option>';
+
+                        });
+
+                    } else {
+                        options = '<option value="0">Tất cả</option>';
+                    }
+                    $('select[name="teamId"]').html(options1).attr('selected',
+                        'selected');;
+
                     var options = '<option value="">Tất cả</option>';
-                    if (response && response.length > 0) {
-                        $.each(response, function(index, user) {
-                            options += '<option value="' + user.name + '">' + user
+                    if (response.users && response.users.length > 0) {
+                        $.each(response.users, function(index, user) {
+                            options += '<option value="' + user.name + '">' +
+                                user
                                 .name + '</option>';
                         });
                     } else {
-                        options = '<option value="">Tất cả</option>';
+                        options = '<option value="0">Tất cả</option>';
                     }
                     $('select[name="userName"]').html(options);
                 }
@@ -276,53 +246,105 @@
             $('select[name="userName"]').html('<option value="">Tất cả</option>');
         }
     });
+});
+
+// ------------------------------------------ JS TÌM KIẾM NHÂN SỰ --------------------------------------------------//    
+$('[name="teamId"]').on('change', function() {
+    var teamId = $('[name="teamId"]').val();
+    if (teamId) {
+        $.ajax({
+            url: "{!! route('listWorkWeekUsers') !!}",
+            type: 'GET',
+            data: {
+                team_id: teamId,
+                token: '{!! csrf_token() !!}'
+            },
+            success: function(response) {
+                console.log(response);
+
+                var options = '<option value="">Tất cả</option>';
+                if (response && response.length > 0) {
+                    $.each(response, function(index, user) {
+                        options += '<option value="' + user.name + '">' + user
+                            .name + '</option>';
+                    });
+                } else {
+                    options = '<option value="">Tất cả</option>';
+                }
+                $('select[name="userName"]').html(options);
+            }
+        });
+    } else {
+        $('select[name="userName"]').html('<option value="">Tất cả</option>');
+    }
+});
 //------------ DUYỆT TP/PP -----------//
-        $(document).ready(function(){
-            $('.truongphongduyet').click(function(){
-                var id = $(this).data('dialog').replace('dialog-', '');
-                $.ajax({
-                    url: "{!! route('aprroveTP') !!}",
-                    method: 'POST',            // Phương thức gửi dữ liệu
-                    data: {
-                            id: id,
-                            _token: '{!! csrf_token() !!}' // Đổi 'token' thành '_token'
-                        },
-                    success: function(data) {  // Hàm xử lý khi nhận được phản hồi thành công từ server
-                        $('#row-' + id).fadeOut();
+    $(document).ready(function(){
+        $('.truongphongduyet').click(function(){
+            var id = $(this).data('dialog').replace('dialog-', '');
+            $.ajax({
+                url: "{!! route('aprroveTP') !!}",
+                method: 'POST',            // Phương thức gửi dữ liệu
+                data: {
+                        id: id,
+                        _token: '{!! csrf_token() !!}' // Đổi 'token' thành '_token'
                     },
-                    error: function(data) {    // Hàm xử lý khi nhận được phản hồi lỗi từ server
-                    
-                    }
-                });
+                success: function(data) {  // Hàm xử lý khi nhận được phản hồi thành công từ server
+                    $('#row-' + id).fadeOut();
+                },
+                error: function(data) {    // Hàm xử lý khi nhận được phản hồi lỗi từ server
+                
+                }
             });
         });
+    });
 //------------ TỪ CHỐI TP/PP -----------//
-        $(document).ready(function(){
-            $('.truongphongtuchoi').click(function(){
-                var id = $(this).data('dialog').replace('dialog-', '');
-                $.ajax({
-                    url: "{!! route('denyTP') !!}",
-                    method: 'POST',            // Phương thức gửi dữ liệu
-                    data: {
-                            id: id,
-                            _token: '{!! csrf_token() !!}' // Đổi 'token' thành '_token'
-                        },
-                    success: function(data) {  // Hàm xử lý khi nhận được phản hồi thành công từ server
-                        $('#row-' + id).fadeOut();
+    $(document).ready(function(){
+        $('.truongphongtuchoi').click(function(){
+            var id = $(this).data('dialog').replace('dialog-', '');
+            $.ajax({
+                url: "{!! route('denyTP') !!}",
+                method: 'POST',            // Phương thức gửi dữ liệu
+                data: {
+                        id: id,
+                        _token: '{!! csrf_token() !!}' // Đổi 'token' thành '_token'
                     },
-                    error: function(data) {    // Hàm xử lý khi nhận được phản hồi lỗi từ server
-                    
-                    }
-                });
+                success: function(data) {  // Hàm xử lý khi nhận được phản hồi thành công từ server
+                    $('#row-' + id).fadeOut();
+                },
+                error: function(data) {    // Hàm xử lý khi nhận được phản hồi lỗi từ server
+                
+                }
             });
         });
+    });
 
 //----------- DUYỆT TN---------//
-    $(document).ready(function(){
-                $('.duyettruongnhom').click(function(){
+$(document).ready(function(){
+            $('.duyettruongnhom').click(function(){
+                var id = $(this).data('dialog').replace('dialog-', '');
+                $.ajax({
+                    url: "{!! route('aprroveTN') !!}",
+                    method: 'POST',            // Phương thức gửi dữ liệu
+                    data: {
+                            id: id,
+                            _token: '{!! csrf_token() !!}' // Đổi 'token' thành '_token'
+                        },
+                    success: function(data) {  // Hàm xử lý khi nhận được phản hồi thành công từ server
+                        $('#row-' + id).fadeOut();
+                    },
+                    error: function(data) {    // Hàm xử lý khi nhận được phản hồi lỗi từ server
+                    
+                    }
+                });
+            });
+        });
+//----------- TỪ CHỐI TN---------//
+$(document).ready(function(){
+                $('.tuchoitruongnhom').click(function(){
                     var id = $(this).data('dialog').replace('dialog-', '');
                     $.ajax({
-                        url: "{!! route('aprroveTN') !!}",
+                        url: "{!! route('denyTN') !!}",
                         method: 'POST',            // Phương thức gửi dữ liệu
                         data: {
                                 id: id,
@@ -337,24 +359,4 @@
                     });
                 });
             });
-//----------- TỪ CHỐI TN---------//
-    $(document).ready(function(){
-                    $('.tuchoitruongnhom').click(function(){
-                        var id = $(this).data('dialog').replace('dialog-', '');
-                        $.ajax({
-                            url: "{!! route('denyTN') !!}",
-                            method: 'POST',            // Phương thức gửi dữ liệu
-                            data: {
-                                    id: id,
-                                    _token: '{!! csrf_token() !!}' // Đổi 'token' thành '_token'
-                                },
-                            success: function(data) {  // Hàm xử lý khi nhận được phản hồi thành công từ server
-                                $('#row-' + id).fadeOut();
-                            },
-                            error: function(data) {    // Hàm xử lý khi nhận được phản hồi lỗi từ server
-                            
-                            }
-                        });
-                    });
-                });
 </script>

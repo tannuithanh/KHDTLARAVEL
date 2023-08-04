@@ -86,8 +86,8 @@ class Dashboard extends Controller
                     'completed' => $completedTasks,
                     'none' => $noTasks,
                 ];
-
-                $now = Carbon::now();
+                
+                $now = now()->startOfDay();
                 $unreportedWeekTasks = clone $weekQuery;
                 $unreportedWeekTasks = $unreportedWeekTasks->where('status', 0)->whereDate('enddate', '<', $now)->count();
 

@@ -10,7 +10,10 @@ use App\Models\Workdaily;
 use App\Models\Workmonth;
 use App\Models\Department;
 use Illuminate\Http\Request;
+use App\Events\WorkStatusChanged;
 use Illuminate\Support\Facades\Auth;
+use App\Events\WorkdailyStatusUpdated;
+use App\Events\WorkmonthStatusUpdated;
 
 class ApproveDaiLyWeekly extends Controller
 {
@@ -286,18 +289,23 @@ class ApproveDaiLyWeekly extends Controller
         if ($workdaily) {
             $workdaily->status = 0;
             $workdaily->save();
-
+            
+            // Gửi sự kiện
+            event(new WorkdailyStatusUpdated($workdaily));
+    
             return response()->json(['message' => 'Cập nhật thành công!'], 200);
         } else {
             return response()->json(['error' => 'Không tìm thấy dữ liệu'], 404);
         }
     }
+    
+    
     public function denyTP(request $request){
         $workdaily = Workdaily::find($request->id);
         if ($workdaily) {
             $workdaily->status = 3;
             $workdaily->save();
-
+            event(new WorkdailyStatusUpdated($workdaily));
             return response()->json(['message' => 'Cập nhật thành công!'], 200);
         } else {
             return response()->json(['error' => 'Không tìm thấy dữ liệu'], 404);
@@ -308,7 +316,10 @@ class ApproveDaiLyWeekly extends Controller
         if ($workdaily) {
             $workdaily->status = 2;
             $workdaily->save();
-
+    
+            // Gửi sự kiện
+            event(new WorkdailyStatusUpdated($workdaily));
+    
             return response()->json(['message' => 'Cập nhật thành công!'], 200);
         } else {
             return response()->json(['error' => 'Không tìm thấy dữ liệu'], 404);
@@ -319,7 +330,7 @@ class ApproveDaiLyWeekly extends Controller
         if ($workdaily) {
             $workdaily->status = 3;
             $workdaily->save();
-
+            event(new WorkdailyStatusUpdated($workdaily));
             return response()->json(['message' => 'Cập nhật thành công!'], 200);
         } else {
             return response()->json(['error' => 'Không tìm thấy dữ liệu'], 404);
@@ -1340,7 +1351,7 @@ class ApproveDaiLyWeekly extends Controller
 
                 $workweek->save();
             }
-
+            event(new WorkmonthStatusUpdated($workmonth));
             return response()->json(['message' => 'Cập nhật thành công!'], 200);
         } else {
             return response()->json(['error' => 'Không tìm thấy dữ liệu'], 404);
@@ -1352,7 +1363,7 @@ class ApproveDaiLyWeekly extends Controller
         if ($workmonth) {
             $workmonth->status = 3;
             $workmonth->save();
-
+            event(new WorkmonthStatusUpdated($workmonth));
             return response()->json(['message' => 'Cập nhật thành công!'], 200);
         } else {
             return response()->json(['error' => 'Không tìm thấy dữ liệu'], 404);
@@ -1364,7 +1375,7 @@ class ApproveDaiLyWeekly extends Controller
         if ($workmonth) {
             $workmonth->status = 2;
             $workmonth->save();
-
+            event(new WorkmonthStatusUpdated($workmonth));
             return response()->json(['message' => 'Cập nhật thành công!'], 200);
         } else {
             return response()->json(['error' => 'Không tìm thấy dữ liệu'], 404);

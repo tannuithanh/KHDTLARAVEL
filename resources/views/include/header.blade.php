@@ -22,11 +22,11 @@
     <link href="{{ asset('assets/css/app.min.css') }}" id="app-style" rel="stylesheet" type="text/css" />
 
     <link href="{{ asset('assets/js/sweetalert2.min.css')}} " id="app-style" rel="stylesheet" type="text/css" />
-
-    
-
+    <link href="https://cdn.jsdelivr.net/npm/@pnotify/core@5/dist/PNotify.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/@pnotify/mobile@5/dist/PNotifyMobile.css" rel="stylesheet" />
 <style>
-        body {
+  
+    body {
         font-family: 'Times New Roman', Times, serif !important;
     }
         #preloader {
@@ -74,7 +74,13 @@
     }
 
 </style>
-
+<style>
+    .pnotify {
+        background-color: white !important;
+        border-radius: 10px !important;
+        border: 1px solid #ddd !important;
+    }
+</style>
 
 </head>
 
@@ -186,8 +192,10 @@
                                 <span>Kế hoạch ngày</span>
                             </a>
                             <ul class="sub-menu" aria-expanded="false">
-                                <li><a href="{{route('viewDenyDaily')}}">Từ chối & Cập nhật</a></li>
-                                <li><a href="{{route('viewApproveDaily')}}">Duyệt & Kiểm tra</a></li>
+                                @if ($user->msnv != '0904029')
+                                    <li><a href="{{route('viewDenyDaily')}}">Từ chối & Cập nhật</a></li>
+                                    <li><a href="{{route('viewApproveDaily')}}">Duyệt & Kiểm tra</a></li>
+                                @endif
                                 <li><a href="{{route('listWorkDaily')}}">Đang thực hiện</a></li>
                                 <li><a href="{{ route('listReportDaily') }}">Báo cáo</a></li>
                             </ul>
@@ -198,8 +206,10 @@
                                 <span>Kế hoạch tuần</span>
                             </a>
                             <ul class="sub-menu" aria-expanded="false">
-                                <li><a href="{{route('viewDenyWeek')}}">Từ chối & Cập nhật</a></li>
-                                <li><a href="{{ route('viewApproveWeek')}}">Duyệt & Kiểm tra</a></li>
+                                @if ($user->msnv != '0904029')
+                                    <li><a href="{{route('viewDenyWeek')}}">Từ chối & Cập nhật</a></li>
+                                    <li><a href="{{ route('viewApproveWeek')}}">Duyệt & Kiểm tra</a></li>
+                                @endif
                                 <li><a href="{{route('listWorkWeek')}}">Đang thực hiện</a></li>
                                 <li><a href="{{ route('listReportWeekly') }}">Báo cáo</a></li>
                                 <li><a href="{{ route('ChartWeek') }}">Biểu đồ</a></li>
@@ -211,8 +221,10 @@
                                 <span>Kế hoạch dài hạn</span>
                             </a>
                             <ul class="sub-menu" aria-expanded="false">
-                                <li><a href="{{route('viewDenyMonth')}}" >Từ chối & Cập nhật</a></li>
-                                <li><a href="{{route('viewApproveMonth')}}">Duyệt & Kiểm tra</a></li>
+                                @if ($user->msnv != '0904029')
+                                    <li><a href="{{route('viewDenyMonth')}}" >Từ chối & Cập nhật</a></li>
+                                    <li><a href="{{route('viewApproveMonth')}}">Duyệt & Kiểm tra</a></li>
+                                @endif
                                 <li><a href="{{route('listStartMonth')}}">Đang thực hiện</a></li>
                                 <li><a href="{{route('listReportMonth')}}">Báo cáo</a></li>
                                 <li><a href="{{route('ChartMonth')}}">Biểu đồ</a></li>
@@ -220,6 +232,15 @@
                         </li>
                         
                     </ul>
+                    <ul class="metismenu list-unstyled" id="side-menu">
+                        <li class="menu-title">Công Cụ Trực Quan</li>
+                        <li>
+                            <a href="{{ route('TaoLichLamViec') }}" class="waves-effect">
+                                <i class="ri ri-line-chart-line"></i>
+                                <span>Tạo Lịch Làm Việc</span>
+                            </a>
+                        </li>
+                    </ul>    
                 </div>
             </div>
         </div>

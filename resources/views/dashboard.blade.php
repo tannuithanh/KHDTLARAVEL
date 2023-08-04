@@ -26,6 +26,9 @@
         .modal-extra-large {
             max-width: 86%;
         }
+        #piechart {
+            font-family: 'Times New Roman', serif;
+        }
     </style>
 
 
@@ -69,6 +72,7 @@
                         aria-expanded="false">
                         <i class="ri-search-line"></i>
                     </button>
+                    
                     <div class="dropdown-menu dropdown-menu-lg dropdown-menu-end p-0"
                         aria-labelledby="page-header-search-dropdown">
                         <form class="p-3">
@@ -90,6 +94,54 @@
                             <i class="ri-fullscreen-line"></i>
                         </button>
                     </div>
+                {{-- CHUÔNG THÔNG BÁO --}}
+                        <div class="dropdown d-inline-block">
+                            <button type="button" class="btn header-item noti-icon waves-effect" id="page-header-notifications-dropdown" data-bs-toggle="dropdown" aria-expanded="true">
+                                <i class="ri-notification-3-line"></i>
+                                <span class="noti-dot"></span>
+                            </button>
+                            <div class="dropdown-menu dropdown-menu-lg dropdown-menu-end p-0" aria-labelledby="page-header-notifications-dropdown" style="position: absolute; inset: 0px 0px auto auto; margin: 0px; transform: translate(0px, 72px);" data-popper-placement="bottom-end">
+                                <div class="p-3">
+                                    <div class="row align-items-center">
+                                        <div class="col">
+                                            <h6 class="m-0"> Notifications </h6>
+                                        </div>
+                                        <div class="col-auto">
+                                            <a href="#!" class="small"> View All</a>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div data-simplebar="init" style="max-height: 230px;"><div class="simplebar-wrapper" style="margin: 0px;"><div class="simplebar-height-auto-observer-wrapper"><div class="simplebar-height-auto-observer"></div></div><div class="simplebar-mask"><div class="simplebar-offset" style="right: -17px; bottom: 0px;"><div class="simplebar-content-wrapper" style="height: auto; overflow: hidden scroll;"><div class="simplebar-content" style="padding: 0px;">
+                                    <a href="" class="text-reset notification-item">
+                                        <div class="d-flex">
+                                            <div class="flex-shrink-0 me-3">
+                                                <div class="avatar-xs">
+                                                    <span class="avatar-title bg-primary rounded-circle font-size-16">
+                                                        <i class="ri-shopping-cart-line"></i>
+                                                    </span>
+                                                </div>
+                                            </div>                                
+                                            <div class="flex-grow-1">
+                                                <h6 class="mb-1">Your order is placed</h6>
+                                                <div class="font-size-12 text-muted">
+                                                    <p class="mb-1">If several languages coalesce the grammar</p>
+                                                    <p class="mb-0"><i class="mdi mdi-clock-outline"></i> 3 min ago</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </a>
+                                 
+                                </div></div></div></div><div class="simplebar-placeholder" style="width: auto; height: 393px;"></div></div><div class="simplebar-track simplebar-horizontal" style="visibility: hidden;"><div class="simplebar-scrollbar" style="transform: translate3d(0px, 0px, 0px); display: none;"></div></div><div class="simplebar-track simplebar-vertical" style="visibility: visible;"><div class="simplebar-scrollbar" style="transform: translate3d(0px, 0px, 0px); display: block; height: 134px;"></div></div></div>
+                                <div class="p-2 border-top">
+                                    <div class="d-grid">
+                                        <a class="btn btn-sm btn-link font-size-14 text-center" href="javascript:void(0)">
+                                            <i class="mdi mdi-arrow-right-circle me-1"></i> View More..
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {{-- kết thúc chuông thông báo --}}
                     <div class="dropdown d-inline-block">
                         <button type="button" class="btn header-item waves-effect" id="page-header-user-dropdown"
                             data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -157,13 +209,14 @@
                                 <span>Kế hoạch ngày</span>
                             </a>
                             <ul class="sub-menu" aria-expanded="false">
-
-                                <li><a href="{{ route('viewDenyDaily') }}">Từ chối & Cập nhật</a></li>
-                                <li>
-                                    <a href="{{ route('viewApproveDaily') }}" class="waves-effect">
-                                        <span>Duyệt & Kiểm tra</span>
-                                    </a>
-                                </li>
+                                @if ($user->msnv != '0904029')
+                                    <li><a href="{{ route('viewDenyDaily') }}">Từ chối & Cập nhật</a></li>
+                                    <li>
+                                        <a href="{{ route('viewApproveDaily') }}" class="waves-effect">
+                                            <span>Duyệt & Kiểm tra</span>
+                                        </a>
+                                    </li>
+                                @endif
                                 <li><a href="{{ route('listWorkDaily') }}">Đang thực hiện</a></li>
                                 <li><a href="{{ route('listReportDaily') }}">Báo cáo</a></li>
                             </ul>
@@ -174,8 +227,10 @@
                                 <span>Kế hoạch tuần</span>
                             </a>
                             <ul class="sub-menu" aria-expanded="false">
-                                <li><a href="{{ route('viewDenyWeek') }}">Từ chối & Cập nhật</a></li>
-                                <li><a href="{{ route('viewApproveWeek') }}">Duyệt & Kiểm tra</a></li>
+                                @if ($user->msnv != '0904029')
+                                    <li><a href="{{ route('viewDenyWeek') }}">Từ chối & Cập nhật</a></li>
+                                    <li><a href="{{ route('viewApproveWeek') }}">Duyệt & Kiểm tra</a></li>
+                                @endif
                                 <li><a href="{{ route('listWorkWeek') }}">Đang thực hiện</a></li>
                                 <li><a href="{{ route('listReportWeekly') }}">Báo cáo</a></li>
                             </ul>
@@ -183,17 +238,29 @@
                         <li>
                             <a href="javascript: void(0);" class="has-arrow waves-effect">
                                 <i class="ri-book-read-fill"></i>
-                                <span>Kế hoạch tháng</span>
+                                <span>Kế hoạch dài hạn</span>
                             </a>
                             <ul class="sub-menu" aria-expanded="false">
+                                @if ($user->msnv != '0904029')
                                 <li><a href="{{ route('viewDenyMonth') }}">Từ chối & Cập nhật</a></li>
                                 <li><a href="{{ route('viewApproveMonth') }}">Duyệt & Kiểm tra</a></li>
+                                
+                                @endif
                                 <li><a href="{{ route('listStartMonth') }}">Đang thực hiện</a></li>
                                 <li><a href="{{ route('listReportMonth') }}">Báo cáo</a></li>
                                 <li><a href="{{ route('ChartMonth') }}">Biểu đồ</a></li>
                             </ul>
                         </li>
                     </ul>
+                    <ul class="metismenu list-unstyled" id="side-menu">
+                        <li class="menu-title">Công Cụ Trực Quan</li>
+                        <li>
+                            <a href="{{ route('TaoLichLamViec') }}" class="waves-effect">
+                                <i class="ri ri-line-chart-line"></i>
+                                <span>Tạo Lịch Làm việc</span>
+                            </a>
+                        </li>
+                    </ul>    
                 </div>
             </div>
         </div>
@@ -246,8 +313,9 @@
                             <div class="modal-content" style="background-color: #f2f2f2;">
                                 <div class="modal-header" style="background-color: #e6e6e6;">
                                     <img src="{{ asset('assets/images/KIA.png') }}" alt="Logo" style="height: 30px; margin-right: 10px;">
-                                    <span style="    font-size: 20px; margin-left: 29%; font-weight: bold; ">THÔNG BÁO</span>
-                                    <button type="button" class="btn-close" ></button>
+                                    <span style="    font-size: 20px; margin-left: -7%; font-weight: bold; ">THÔNG BÁO</span>
+                                    <input type="checkbox" id="modal-checkbox" name="modal-checkbox" style="width: 84px;height: 20px;display: flex;margin-right: -39%;">
+                                    <label for="modal-checkbox">Không hiển thị lại</label>
                                 </div>
                                 
                                 <div class="modal-body" id="notifacation" style="color: #4b0082;">
@@ -263,28 +331,95 @@
                                                                 <th>Tình trạng</th>
                                                 
                                                             </tr>
+                                {{--------------------------------KẾ HOẠCH NGÀY----------------------------------------------------------}}
                                                             <tr><th colspan="3" style="background-color: silver;">I. Kế hoạch ngày</th></tr>
                                                         </thead>
-                                                        <tbody> 
+                                                        <tbody>
+                                                            @php $sttDaily = 1 @endphp
                                                             @foreach($overdueDailyTasks as $value)
-                                                            <tr>
-                                                                <td style="text-align: center;"> 1 </td>
-                                                                <td>{{ $value->categoryDaily }}</td>
-                                                                <td style="color:red">Kế hoạch bị trễ</td>
-                                                            </tr>
+                                                                <tr>
+                                                                    <td style="text-align: center;"> {{$sttDaily++}} </td>
+                                                                    <td>{{ $value->categoryDaily }}</td>
+                                                                    <td style="color:red">Kế hoạch bị trễ</td>
+                                                                </tr>
+                                                            @endforeach
+                                                        
+                                                            @foreach($currentDailyTasks as $value)
+                                                                <tr>
+                                                                    <td style="text-align: center;"> {{$sttDaily++}} </td>
+                                                                    <td>{{ $value->categoryDaily }}</td>
+                                                                    <td style="color:orange">Đang thực hiện</td>
+                                                                </tr>
+                                                            @endforeach
+                                                        
+                                                            @foreach($doneDailyTasks as $value)
+                                                                <tr>
+                                                                    <td style="text-align: center;"> {{$sttDaily++}} </td>
+                                                                    <td>{{ $value->categoryDaily }}</td>
+                                                                    <td style="color:green">Đã hoàn thành</td>
+                                                                </tr>
                                                             @endforeach
                                                         </tbody>
+                                {{--------------------------------KẾ HOẠCH TUẦN----------------------------------------------------------}}                        
                                                         <thead>                                                    
                                                             <tr><th colspan="3" style="background-color: silver;">II. Kế hoạch tuần</th></tr>
                                                         </thead>
-                                                        <tbody> 
-                                                            {{-- <tr>
-                                                                <td colspan="3">Không có dữ liệu</td>
-                                                            </tr> --}}
+                                                        <tbody>
+                                                            @php $sttWeek = 1 @endphp
+                                                            @foreach($overdueWeekTasks as $value)
+                                                                <tr>
+                                                                    <td style="text-align: center;"> {{$sttWeek++}} </td>
+                                                                    <td>{{ $value->categoryWeek }}</td>
+                                                                    <td style="color:red">Đang bị trễ</td>
+                                                                </tr>
+                                                            @endforeach
+                                                        
+                                                            @foreach($pendingWeekTasks as $value)
+                                                                <tr>
+                                                                    <td style="text-align: center;"> {{$sttWeek++}} </td>
+                                                                    <td>{{ $value->categoryWeek }}</td>
+                                                                    <td style="color:orange">Đang thực hiện</td>
+                                                                </tr>
+                                                            @endforeach
+                                                        
+                                                            @foreach($doneWeekTasks as $value)
+                                                                <tr>
+                                                                    <td style="text-align: center;"> {{$sttWeek++}} </td>
+                                                                    <td>{{ $value->categoryWeek }}</td>
+                                                                    <td style="color:green">Đã hoàn thành</td>
+                                                                </tr>
+                                                            @endforeach
                                                         </tbody>
+                                {{--------------------------------KẾ HOẠCH DÀI HẠN----------------------------------------------------------}}     
                                                         <thead>                                                    
                                                             <tr><th colspan="3" style="background-color: silver;">III. Kế hoạch dài hạn</th></tr>
                                                         </thead>
+                                                        <tbody>
+                                                            @php $sttWeek = 1 @endphp
+                                                            @foreach($overdueWeekTasks as $value)
+                                                                <tr>
+                                                                    <td style="text-align: center;"> {{$sttWeek++}} </td>
+                                                                    <td>{{ $value->categoryWeek }}</td>
+                                                                    <td style="color:red">Đang bị trễ</td>
+                                                                </tr>
+                                                            @endforeach
+                                                        
+                                                            @foreach($pendingWeekTasks as $value)
+                                                                <tr>
+                                                                    <td style="text-align: center;"> {{$sttWeek++}} </td>
+                                                                    <td>{{ $value->categoryWeek }}</td>
+                                                                    <td style="color:orange">Đang thực hiện</td>
+                                                                </tr>
+                                                            @endforeach
+                                                        
+                                                            @foreach($doneWeekTasks as $value)
+                                                                <tr>
+                                                                    <td style="text-align: center;"> {{$sttWeek++}} </td>
+                                                                    <td>{{ $value->categoryWeek }}</td>
+                                                                    <td style="color:green">Đã hoàn thành</td>
+                                                                </tr>
+                                                            @endforeach
+                                                        </tbody>
                                                  </table>
                                             </div>
                                         </div>
@@ -316,208 +451,255 @@
 
 </html>
 <script type="text/javascript" src="{{ asset('assets/js/gstatic.com_charts_loader.js') }}"></script>
+
+
 <script>
-    google.charts.load('current', {
-        packages: ['corechart']
+//--------- Lưu giá trị checkbox vào storage -------//
+    $(document).ready(function() {
+        var checkbox = document.getElementById('modal-checkbox');
+        
+        // Kiểm tra nếu giá trị 'hideModal' có trong localStorage hay không
+        if(localStorage.getItem('hideModal') == 'true') {
+            // Nếu có, đặt trạng thái checkbox thành checked
+            checkbox.checked = true;
+        } else {
+            // Nếu không, hiển thị modal
+            $('#exampleModalScrollable').modal('show');
+        }
+
+        // Khi trạng thái checkbox thay đổi, lưu nó vào localStorage hoặc xóa nó
+        checkbox.addEventListener('change', function() {
+            if(this.checked) {
+                localStorage.setItem('hideModal', 'true');
+            } else {
+                localStorage.removeItem('hideModal');
+            }
+        });
     });
-    google.charts.setOnLoadCallback(drawChart);
 
-    function drawChart() {
-        var data = new google.visualization.DataTable();
-        data.addColumn('string', 'Task');
-        data.addColumn('number', 'Hours per Day');
-        data.addRows([
-            ['Trễ ', {{ $taskCounts['unreported'] }}],
-            ['Đang thực hiện', {{ $taskCounts['ongoing'] }}],
-            ['Hoàn thành', {{ $taskCounts['completed'] }}],
-            ['Trống', {{$taskCounts['none']}}],
-        ]);
 
-        var options = {
-            title: 'Tổng số công việc ngày: {{ array_sum($taskCounts) }}',
-            pieHole: 0.3,
-            slices: {
-                0: {
-                    color: 'red'
+//---------- BIỂU ĐỒ CÔNG VIỆC NGÀY --------//
+    var options = {
+        chart: {
+            type: 'pie',
+            height: 350, // Điều chỉnh chiều cao của biểu đồ
+            width: '66%', // Điều chỉnh chiều rộng của biểu đồ
+        },
+        title: {
+            text: 'Tổng số công việc ngày',
+            align: 'center',
+            style: {
+                    fontSize:  '14px',
+                    fontWeight:  'bold',
+                    fontFamily:  'Timenewroman',
+                    color:  '#263238'
+                    },
+        },
+        series: [{{ $taskCounts['unreported'] }}, {{ $taskCounts['ongoing'] }}, {{ $taskCounts['completed'] }}, {{$taskCounts['none']}}],
+        labels: ['Trễ', 'Đang thực hiện', 'Hoàn thành', 'Trống'],
+        colors: ['#FF0000', '#FF7F00', '#008000', '#000000'], // Mảng màu, mỗi màu tương ứng với mỗi phần tử trong mảng series
+        legend: {
+            position: 'bottom',
+        },
+        responsive: [{
+            breakpoint: 480,
+            options: {
+                chart: {
+                    width: 200
                 },
-                1: {
-                    color: 'orange'
-                },
-                2: {
-                    color: 'green'
-                },
-                3: {
-                    color: 'black'
+                legend: {
+                    position: 'bottom'
                 }
-            },
-        };
-
-        var chart = new google.visualization.PieChart(document.getElementById('piechart'));
-        chart.draw(data, options);
+            }
+        }]
     }
+
+    var chart = new ApexCharts(document.querySelector("#piechart"), options);
+    chart.render();
+
 </script>
 <script type="text/javascript">
-    google.charts.load('current', {'packages':['corechart']});
-    google.charts.setOnLoadCallback(drawChart);
-
-    function drawChart() {
-
-        var data = google.visualization.arrayToDataTable([
-            ['Task', 'Hours per Day'],
-            ['Trễ', {{$weekTaskCounts['unreported']}}],
-            ['Đang thực hiện', {{$weekTaskCounts['ongoing']}}],
-            ['Hoàn thành', {{$weekTaskCounts['completed']}}],
-            ['Trống', {{$taskCounts['none']}}],
-        ]);
-
-        var options = {
-            title: 'Tổng số công việc tuần: {{ array_sum($weekTaskCounts) }}',
-            pieHole: 0.3,
-            slices: {
-                0: {
-                    color: 'red'
+//---------- BIỂU ĐỒ CÔNG VIỆC TUẦN --------//
+    var options = {
+        chart: {
+            type: 'pie',
+            height: 350, // Điều chỉnh chiều cao của biểu đồ
+            width: '66%', // Điều chỉnh chiều rộng của biểu đồ
+        },
+        title: {
+            text: 'Tổng số công việc tuần: {{ array_sum($weekTaskCounts) }}',
+            align: 'center',
+            style: {
+                    fontSize:  '14px',
+                    fontWeight:  'bold',
+                    fontFamily:  'Timenewroman',
+                    color:  '#263238'
+                    },
+        },
+        series: [{{$weekTaskCounts['unreported']}}, {{$weekTaskCounts['ongoing']}}, {{$weekTaskCounts['completed']}}, {{$weekTaskCounts['none']}}],
+        labels: ['Trễ', 'Đang thực hiện', 'Hoàn thành', 'Trống'],
+        colors: ['#FF0000', '#FF7F00', '#008000', '#000000'], // Mảng màu, mỗi màu tương ứng với mỗi phần tử trong mảng series
+        legend: {
+            position: 'bottom',
+        },
+        responsive: [{
+            breakpoint: 480,
+            options: {
+                chart: {
+                    width: 200
                 },
-                1: {
-                    color: 'orange'
-                },
-                2: {
-                    color: 'green'
-                },
-                3: {
-                    color: 'black'
+                legend: {
+                    position: 'bottom'
                 }
-            },
-        };
-
-        var chart = new google.visualization.PieChart(document.getElementById('piechartWeek'));
-
-        chart.draw(data, options);
+            }
+        }]
     }
+
+    var chart = new ApexCharts(document.querySelector("#piechartWeek"), options);
+    chart.render();
+
 </script>
 <script type="text/javascript">
-    google.charts.load('current', {'packages':['corechart']});
-    google.charts.setOnLoadCallback(drawChart);
-
-    function drawChart() {
-
-        var data = google.visualization.arrayToDataTable([
-            ['Task', 'Hours per Day'],
-            ['Trễ', {{$monthTaskCounts['unreported']}}],
-            ['Đang thực hiện', {{$monthTaskCounts['ongoing']}}],
-            ['Hoàn thành', {{$monthTaskCounts['completed']}}],
-            ['Trống', {{$monthTaskCounts['none']}}],
-        ]);
-
-        var options = {
-            title: 'Tổng số công việc dài hạn:{{ array_sum($monthTaskCounts) }} ',
-            pieHole: 0.3,
-            slices: {
-                0: {
-                    color: 'red'
+//---------- BIỂU ĐỒ CÔNG VIỆC DÀI HẠN --------//
+    var options = {
+        chart: {
+            type: 'pie',
+            height: 350, // Điều chỉnh chiều cao của biểu đồ
+            width: '66%', // Điều chỉnh chiều rộng của biểu đồ
+        },
+        title: {
+            text: 'Tổng số công việc dài hạn: {{ array_sum($monthTaskCounts) }}',
+            align: 'center',
+            style: {
+                        fontSize:  '14px',
+                        fontWeight:  'bold',
+                        fontFamily:  'Timenewroman',
+                        color:  '#263238'
+                    },
+        },
+        series: [{{$monthTaskCounts['unreported']}}, {{$monthTaskCounts['ongoing']}}, {{$monthTaskCounts['completed']}}, {{$monthTaskCounts['none']}}],
+        labels: ['Trễ', 'Đang thực hiện', 'Hoàn thành', 'Trống'],
+        colors: ['#FF0000', '#FF7F00', '#008000', '#000000'], // Mảng màu, mỗi màu tương ứng với mỗi phần tử trong mảng series
+        legend: {
+            position: 'bottom',
+        },
+        responsive: [{
+            breakpoint: 480,
+            options: {
+                chart: {
+                    width: 200
                 },
-                1: {
-                    color: 'orange'
-                },
-                2: {
-                    color: 'green'
-                },
-                3: {
-                    color: 'black'
+                legend: {
+                    position: 'bottom'
                 }
-            },
-        };
-
-        var chart = new google.visualization.PieChart(document.getElementById('monthPiechart'));
-
-        chart.draw(data, options);
+            }
+        }]
     }
+
+    var chart = new ApexCharts(document.querySelector("#monthPiechart"), options);
+    chart.render();
+
 </script>
+
 <script>
-    google.charts.load('current', {packages: ['corechart']});
-    google.charts.setOnLoadCallback(drawChart);
+//---------- BIỂU ĐỒ DỰ ÁN XE TẠI TRUNG TÂM --------//    
+    var carBrands = <?php echo json_encode($chartData); ?>;
 
-    function drawChart() {
-        var data = new google.visualization.DataTable();
-        data.addColumn('string', 'Car Brand');
-        data.addColumn('number', 'Dự án');
+    var categories = carBrands.map(function(carBrand) {
+        return carBrand[0]; // Chú ý rằng carBrand[0] phụ thuộc vào cấu trúc của dữ liệu của bạn
+    });
 
-        var carBrands = <?php echo json_encode($chartData); ?>;
+    var data = carBrands.map(function(carBrand) {
+        return carBrand[1]; // Tương tự như trên, carBrand[1] phụ thuộc vào cấu trúc dữ liệu
+    });
 
-        carBrands.forEach(function(carBrand) {
-            data.addRow(carBrand);
+    var options = {
+        chart: {
+            type: 'bar',
+            height: 350, // Điều chỉnh chiều cao của biểu đồ
+            width: '100%', // Điều chỉnh chiều rộng của biểu đồ
+        },
+        plotOptions: {
+            bar: {
+                horizontal: false,
+            }
+        },
+        dataLabels: {
+            enabled: false
+        },
+        title: {
+            text: 'Biểu đồ các dự án xe tại trung tâm R&D Ô tô',
+            align: 'center',
+            style: {
+                    fontSize:  '14px',
+                    fontWeight:  'bold',
+                    fontFamily:  'Timenewroman',
+                    color:  '#263238'
+                    },
+        },
+        series: [{
+            name: 'Dự án',
+            data: data
+        }],
+        xaxis: {
+            categories: categories,
+        }
+    };
+
+    var chart = new ApexCharts(document.querySelector("#chart_div"), options);
+    chart.render();
+
+//---------- BIỂU ĐỒ DỰ ÁN NGHIỆP VỤ --------//
+        var projects = <?php echo json_encode($projects); ?>;
+
+        var categories = projects.map(function(project) {
+            return project.name; // project.name phụ thuộc vào cấu trúc của dữ liệu của bạn
         });
 
-        var options = {
-            title: 'Biểu đồ các dự án xe tại trung tâm R&D Ô tô',
-            titleTextStyle: {
-                color: 'black',
-                fontSize: 16,
-                bold: true,
-                fontName: 'Times New Roman',
-            },
-            hAxis: {title: 'Thương hiệu xe',fontName: 'Times New Roman',  titleTextStyle: {color: '#333'}},
-            vAxis: {minValue: 0}
-        };
-
-        var chart = new google.visualization.ColumnChart(document.getElementById('chart_div'));
-        chart.draw(data, options);
-    }
-
-</script>
-<script>
-    google.charts.load('current', {packages: ['corechart', 'bar']});
-    google.charts.setOnLoadCallback(drawChart);
-
-    function drawChart() {
-        var data = new google.visualization.DataTable();
-        data.addColumn('string', 'Tên dự án');
-        data.addColumn('number', 'Phần trăm (%)');
-        
-        var projects = <?php echo json_encode($projects); ?>;
-        
-        projects.forEach(function(project) {
-            data.addRow([project.name, project.completion]);
+        var data = projects.map(function(project) {
+            return project.completion; // Tương tự như trên, project.completion phụ thuộc vào cấu trúc dữ liệu
         });
 
         var options = {
             chart: {
-                titleTextStyle: {
-                    color: 'black',
-                    fontName: 'Times New Roman',
-                    fontSize: 24,
+                type: 'bar',
+                height: 350, // Điều chỉnh chiều cao của biểu đồ
+                width: '100%', // Điều chỉnh chiều rộng của biểu đồ
+            },
+            plotOptions: {
+                bar: {
+                    horizontal: true,
+                }
+            },
+            dataLabels: {
+                enabled: false
+            },
+            title: {
+                text: 'Biểu đồ các dự án nghiệp vụ',
+                align: 'center',
+                style: {
+                    fontSize:  '14px',
+                    fontWeight:  'bold',
+                    fontFamily:  'Timenewroman',
+                    color:  '#263238'
+                    },
+            },
+            series: [{
+                name: 'Phần trăm (%)',
+                data: data
+            }],
+            xaxis: {
+                categories: categories,
+                title: {
+                    text: 'Mức độ hoàn thành',
                 },
-            },
-            title: 'Biểu đồ các dự án nghiệp vụ',
-            titleTextStyle: {
-                color: 'black',
-                fontSize: 16,
-                bold: true,
-                fontName: 'Times New Roman',
-            },
-            hAxis: {
-                title: 'Mức độ hoàn thành',
-                minValue: 0,
-                maxValue: 100,
-                titleTextStyle: {
-                    fontSize: 16,
-                    fontName: 'Times New Roman',
-                },
-            },
-            bars: 'horizontal'
+                min: 0,
+                max: 100
+            }
         };
 
-        var chart = new google.charts.Bar(document.getElementById('projecPro'));
-        chart.draw(data, google.charts.Bar.convertOptions(options));
-    }
-</script>
-<script>
-    $(document).ready(function(){
-        $("#exampleModalScrollable").modal('show');
-    });
-    $(document).ready(function(){
-    $(".btn-close").click(function(){
-        $("#exampleModalScrollable").modal('hide');
-    });
-    });
+        var chart = new ApexCharts(document.querySelector("#projecPro"), options);
+        chart.render();
+
 </script>
 

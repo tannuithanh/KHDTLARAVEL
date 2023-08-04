@@ -3,6 +3,13 @@
 
 <meta name="csrf-token" content="{{ csrf_token() }}">
 <style>
+    .modal-full {
+        min-width: 80%;
+    }
+
+    td, th {
+        min-width: 150px;
+    }
     th {
         background-color: #16c745a2 !important;
         text-align: center;
@@ -27,81 +34,23 @@
     }
 
     @media print {
-
-        @page {
-            margin: 10mm;
-            size: A4;
-
+        body * {
+            visibility: hidden;
         }
-
-        td,
-        th {
-            font-family: 'Times New Roman', Times, serif;
+        #preview-modal .modal-body, #preview-modal .modal-body *, #preview-modal .modal-header-info, #preview-modal .modal-header-info * {
+            visibility: visible;
         }
-
-        table.print-table th {
-            -webkit-print-color-adjust: exact;
-            color-adjust: exact;
-            -webkit-filter: brightness(0) invert(1);
-            filter: brightness(0) invert(1);
-            background-color: gray;
-            color: white;
+        #preview-modal .modal-header,
+        #preview-modal .modal-footer,
+        #preview-modal .close {
+            display: none;
         }
-
-        td {
-            width: 100% !important;
-            white-space: pre-wrap;
+        #preview-modal .modal-header-info img {
+            width: 40px;
         }
-
-        th {
-            width: auto !important;
-        }
-
-        table.print-table {
-            width: 100%;
-            max-width: 700px;
-        }
-
-        .hidden-column {
-            display: none !important;
-        }
-
-        .left-align {
-            text-align: left;
-        }
-
-        .print-table {
-            border: 1px solid #000 !important;
-        }
-
-        .print-table th {
-            font-weight: bold !important;
-        }
-
-        .col1,
-        .col2,
-        .col3,
-        .col4,
-        .col5,
-        .col6,
-        .col7,
-        .col20 {
-            font-size: 19px;
-            font-family: 'Times New Roman', Times, serif;
-        }
-
-        .col3 {
-            max-width: var(--col3);
-            min-width: var(--col3);
-            white-space: normal;
-        }
-
-        .col2 {
-            white-space: normal !important;
-            max-width: var(--col2);
-            min-width: var(--col2);
-        }
+        
     }
+
 
     .col3 {
         max-width: var(--col3);
@@ -350,6 +299,76 @@
         </div>
     </div>
 </div>
+<!-- Modal -->
+<div class="modal fade" id="confirmModal" tabindex="-1" role="dialog" aria-labelledby="confirmModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="confirmModalLabel">Xác nhận</h5>
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          Bạn có muốn bổ sung "Kiểm tra" trong bản in không?
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" id="no-btn" data-dismiss="modal">Không</button>
+          <button type="button" class="btn btn-primary" id="yes-btn">Có</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+<div id="preview-modal" class="modal fade" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-full">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="preview-modal-label">Xem trước</h5>
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-header-info" style="display: flex; align-items: center;">
+            @php
+                $imagePath = public_path('assets/images/KIA.png');
+                $imageData = base64_encode(file_get_contents($imagePath));
+                $finfo = finfo_open(FILEINFO_MIME_TYPE);
+                $mimeType = finfo_file($finfo, $imagePath);
+                finfo_close($finfo);
+                $dataURL = "data:$mimeType;base64,$imageData";
+            @endphp
+            <img src="{{ $dataURL }}" alt="Logo" style="width: 220px; margin-right: 10px;">
+            <div class="header-text" style="text-align: center; width: calc(100% - 180px);margin-right: 150px;">
+                <h4 style="font-family: 'Cambria';" class="modal-title">KẾ HOẠCH CÔNG VIỆC TUẦN {{ $weekNumber }} THÁNG {{ $month }}</h4>
+                <h3 style="font-family: 'Cambria';">Phòng: {{$user->department_name}}</h3>
+            </div>
+        </div>
+        
+        <div class="modal-body" style="overflow:auto;">
+            
+          <!-- nội dung xem trước sẽ được thêm vào đây -->
+          
+        </div>
+        <div style="margin-top: 50px;" id="signatures">
+            <div style="display: flex; justify-content: space-around;">
+                <div>
+                    <h5>Người lập</h5>
+                </div>
+                <div>
+                    <h5 id="kiemtrakehoach">Kiểm tra</h5>
+                </div>
+                <div>
+                    <h5>Phê duyệt</h5>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
+          <button type="button" class="btn btn-primary printerTable">In</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
 @include('include.footer')
 <script type="text/javascript">
     // ------------------------------------------ JS TÌM KIẾM PHÒNG BAN --------------------------------------------------//    
@@ -574,118 +593,75 @@
             }
         });
     });
-    // ------------------------------------------ JS IN TABLE --------------------------------------------------//      
+
 </script>
 <script>
-    const formattedDateStart = "{{ $formattedDateStart }}"; // đưa biến formattedDateStart từ PHP vào JavaScript
-    const department = "{{ $user->department_id }}"; // đưa biến department từ PHP vào JavaScript
-    const team = "{{ $user->team_name }}"; // đưa biến team từ PHP vào JavaScript
-    const formattedDateEnd = "{{ $formattedDateEnd }}";
-    const departmentName = "{{ $user->department_name }}";
-    const weeknumber = "{{ $weekNumber }}"; // đưa biến weeknumber từ PHP vào JavaScript
-    var logoImage = "{{ asset('assets/images/KIA.png') }}";
-    // $(document).ready(function() {
-
-    // });
-    $('#preview-btn').click(function() {
-        const tableHtml = $('#my-table').prop('outerHTML');
-        const $table = $(tableHtml);
-
-        $table.find('.hidden-column').each(function() {
-            $(this).attr('style', 'display:none !important');
+    // ------------------------------------------ JS IN TABLE --------------------------------------------------//      
+    $(document).ready(function() {
+        $('.btn.btn-secondary').click(function() {
+            $('.modal').modal('hide');
+        });
+        $("#preview-btn").click(function() {
+            // hiển thị modal hỏi trước khi hiển thị modal "Xem trước"
+            $("#confirmModal").modal("show");
         });
 
-        $table.find('.left-align').each(function() {
-            $(this).css('text-align', 'left');
+        // Khi người dùng chọn "Có"
+        $("#yes-btn").click(function() {
+            preparePreviewModal(true);
         });
 
-        $table.find('th').css({
-            'background-color': 'black',
-            'color': 'white',
-            'font-weight': '900',
-            'font-size': '16px',
-        });
-        $table.find('.col3').css({
-            'white-space': 'wrap',
-            'max-width': '180px',
-            'min-width': '180px',
-        });
-        $table.find('.col2').css({
-            'white-space': 'normal',
-            'max-width': '180px',
-            'min-width': '180px',
-        });
-        $table.find('td').css({
-            'color': 'black',
-        });
-        $table.css('font-size', '12px');
-
-        let headerHtml =
-            `<div style="font-size: 20px; margin-top:40px;  text-align: center;"><b>KẾ HOẠCH CÔNG VIỆC TUẦN:</b> ${weeknumber}</div>`;
-        headerHtml +=
-            `<div style="font-size: 20px;   text-align: center;"><b>TỪ NGÀY:</b> ${formattedDateStart} - <b>ĐẾN NGÀY:</b> ${formattedDateEnd} </div>`;
-        headerHtml +=
-            `<div style="font-size: 20px;   text-align: center;"><b>PHÒNG:</b> ${departmentName}</div>`;
-        headerHtml += `<div style="font-size: 20px;   text-align: center;"><b>Nhóm:</b> ${team}</div>`;
-        headerHtml +=
-            `<img src="${logoImage}" alt="KIA" style="width: 221px;height: 48px;position: absolute;top:0;left: 40px; margin-top:40px;  " id="logo-img">`;
-        let tannuithanh = `<div style="display:flex; align-items:center;margin-top: 40px;margin-left: 50px;">`
-        let temp =
-            'font-size: 12px; font-family: "Times New Roman", Times, serif; white-space: nowrap; width: max-content;'
-        tannuithanh += `<h1 style="text-align: right;${temp}">Phê duyệt</h1>`;
-        tannuithanh += `<h1 style="text-align: center;margin-left:400px;${temp}">Trưởng phòng</h1>`;
-        tannuithanh += `<h1 style="text-align: right;;margin-left:400px;${temp}">Người lập</h1>`;
-        tannuithanh += '</div>';
-        $table.css({
-            'margin-left': 'auto',
-            'margin-right': 'auto',
-            'display': 'table'
+        // Khi người dùng chọn "Không"
+        $("#no-btn").click(function() {
+            preparePreviewModal(false);
         });
 
-        const printContents = headerHtml + $table[0].outerHTML + tannuithanh;
+        // Chuẩn bị và hiển thị modal "Xem trước"
+        function preparePreviewModal(isChecked) {
+            console.log(isChecked)
+            var content = $("#my-table").clone();
+            content.find('th:contains("Hỗ trợ"), th:contains("Trạng thái"), th:contains("Ghi chú"), th:contains("Thao tác")').remove();
+            content.find('td:nth-child(5), td:nth-child(13), td:nth-child(14), td:nth-child(15)').remove();
 
-        Swal.fire({
-            html: printContents,
-            width: "auto",
-            padding: "1rem",
-            backdrop: true,
-            showCloseButton: false,
-            showCancelButton: true,
-            confirmButtonText: "In",
-            cancelButtonText: "Hủy bỏ",
-            didClose: () => {
-                $table.find('.hidden-column').removeAttr('style');
-                $table.find('.left-align').css('text-align', 'center');
-            },
-            willOpen: () => {
-                let _$ = $('.swal2-container')[0]
-                _$.style.display = 'flex'
-                console.log(_$.style.display, "wwwww")
-            },
-            willClose: (e) => {
-                let _$ = $('.swal2-container')[0]
-                _$.style.display = 'none'
-                console.dir(_$)
+            // Ẩn hoặc hiện chữ "Kiểm tra" dựa vào sự lựa chọn của người dùng
+            if (isChecked == false) {
+                $(document).ready(function(){
+                    $("#kiemtrakehoach").hide();
+                })
+                $("#confirmModal").modal("hide");
+            }else{
+                $(document).ready(function(){
+                    $("#kiemtrakehoach").show();
+                })
+                $("#confirmModal").modal("hide");
             }
 
-        }).then(function(result) {
-            if (result.isConfirmed) {
-                const originalContents = document.body.innerHTML;
+            // hiển thị nội dung vào một modal
+            $("#preview-modal .modal-body").html(content);
+            $("#preview-modal").modal("show");
+        }
 
-                const printCSS =
-                    '<style type="text/css"> table.print-table th, table.print-table td {border: 1px solid black; font-weight: bold; }</style>';
-
-                document.body.innerHTML =
-                    '<html><head><title></title><style>@media print { @page {size: a4 landscape; margin: 0;}table.print-table {width: 80%;max-width: 800%;}}</style></head><body>' +
-                    printContents + '</body></html>';
-
-                window.print();
-
-                document.body.innerHTML = originalContents;
-            }
+        $('.printerTable').click(function() {
+            var headerContent = document.getElementById('preview-modal').getElementsByClassName('modal-header-info')[0].outerHTML;
+            var bodyContent = document.getElementById('preview-modal').getElementsByClassName('modal-body')[0].outerHTML;
+            var signatureContent = document.getElementById('signatures').outerHTML;
+            var printContents = headerContent + bodyContent + signatureContent;            
+            var printWindow = window.open('', '', 'width=800,height=600');
+            printWindow.document.write('<html><head><title>In</title>');
+            printWindow.document.write('<style type="text/css">');
+            printWindow.document.write('@media print{');
+            printWindow.document.write('table {border-collapse: collapse;}');
+            printWindow.document.write('img {max-width: none !important; height: auto;}');
+            printWindow.document.write('td, th {border: 1px solid black; padding: 5px; vertical-align: middle; text-align: center;}');
+            printWindow.document.write('}');
+            printWindow.document.write('</style>');
+            printWindow.document.write('</head><body >');
+            printWindow.document.write(printContents);
+            printWindow.document.write('</body></html>');
+            printWindow.document.close();
+            printWindow.print();
         });
-
-        $('.swal2-actions').append($('.swal2-cancel').detach());
-        $('.swal2-content table').addClass('print-table');
     });
+
+
 </script>

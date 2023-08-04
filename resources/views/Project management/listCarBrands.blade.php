@@ -34,7 +34,6 @@
             <div class="card-body">
                 <h4 class="card-title" style="font-size:30px;font-family: 'Times New Roman', Times, serif !important;font-weight: bold">KẾ HOẠCH PHÁT TRIỂN SẢN PHẨM NĂM 2023 R&D Ô TÔ</h4>
                 <h4 class="card-title" style="font-size:30px;font-family: 'Times New Roman', Times, serif !important;font-weight: bold ">TỔNG SỐ DỰ ÁN XE ĐANG PHÁT TRIỂN: <span style="color: red">{{$totalProjects}}</span></h4>
-                <a href="{{route('exportExcel')}}" class="btn btn-outline-success waves-effect waves-light" style="font-size:20px; position: absolute; right:20px ; top:10px"><i class="mdi mdi-microsoft-excel"></i></a>
                 <div class="table-responsive class scrollable-table-wrapper mt-3">
                     <table class="table table-sm m-0">
                         <thead>

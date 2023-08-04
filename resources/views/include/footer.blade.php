@@ -1,7 +1,4 @@
 </div>
-<!-- container-fluid -->
-
-
 
 </div>
 <!-- End Page-content -->
@@ -38,6 +35,7 @@
             </div>
         </div>
     </div>
+
 </footer>
 <!-- Right bar overlay-->
 <div class="rightbar-overlay"></div>
@@ -54,8 +52,9 @@
 <script src="{{asset('assets/libs/bootstrap-maxlength/bootstrap-maxlength.min.js')}}"></script>
 <script src="{{asset('assets/js/app.js')}}"></script>
 <script src="{{ asset('assets/js/sweetalert2.all.min.js') }}"></script>
-
-
+<script src="https://js.pusher.com/7.0/pusher.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@pnotify/core@5/dist/PNotify.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@pnotify/mobile@5/dist/PNotifyMobile.js"></script>
 
 </body>
 </html>
@@ -72,4 +71,51 @@ $(window).on('load', function() {
 
 
 
+</script>
+<script>
+$(document).ready(function() {
+    // Kết nối đến Pusher
+    var pusher = new Pusher('7d8971148f0705c48349', {
+        cluster: 'ap1'
+    });
+
+    // Đăng ký kênh và sự kiện cho công việc ngày
+    var dailyChannel = pusher.subscribe('workdaily');
+    dailyChannel.bind('WorkdailyStatusUpdated', function(data) {
+        var message = data.message;
+        showPNotifyNotification(message);
+    });
+
+    // Đăng ký kênh và sự kiện cho công việc tháng
+    var monthlyChannel = pusher.subscribe('workmonth');
+    monthlyChannel.bind('WorkmonthStatusUpdated', function(data) {
+        var message = data.message;
+        showPNotifyNotification(message);
+    });
+});
+
+let stackBottomLeft = new PNotify.Stack({
+    dir1: "up",
+    dir2: "right",
+    firstpos1: 20,
+    firstpos2: 20,
+    context: document.body,
+    remove: false,  // Đặt thành false để ngăn thông báo cũ bị loại bỏ
+    maxOpen: 2,  // Số lượng thông báo tối đa mở cùng một lúc
+    modal: false,  // Đặt modal là false để loại bỏ tính chất modalish
+    overlayClose: false  // Đặt overlayClose là false để ngăn người dùng đóng thông báo bằng cách nhấp vào màn hình
+});
+
+
+// Sử dụng Stack trong thông báo
+function showPNotifyNotification(message) {
+    PNotify.notice({
+        title: 'THÔNG BÁO',
+        text: message,
+        stack: stackBottomLeft,
+        modules: new Map([
+            ...PNotify.defaultModules,
+        ])
+    });
+}
 </script>
